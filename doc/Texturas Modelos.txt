@@ -1,0 +1,11 @@
+Dentro de las carpetas de los modelos, tenemos unas carpetas
+con el mismo nombres que estas con las texturas, esto sirve
+para que en "tiempo de modelado" podamos asignar bien las texturas
+con el milkshape :D Luego habria que borrarlas -> cuando todo sea
+estable.
+
+|
+|- tracks	  = modelos de las pistas
+|- data		  = modelos del suelo y del decorado
+|- vehicles	  = modelos de los vehiculos
+\

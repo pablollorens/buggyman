@@ -1,0 +1,18 @@
+
+EJECUCION, MAIN LOOP
+
+	Game :: RUN
+
+	    drawstuff : dsSimulationLoop
+
+	    windows : dsPlatformSimLoop
+
+		fn -> start [Engine::start]
+
+		while
+
+		    drawstuff : dsDrawFrame
+
+			fn -> step [Engine::simLoop]
+
+		fn -> stop [null]

@@ -1,0 +1,8 @@
+
+	Milkshape3D
+
+		hay q prehacer en reloadTextures antes de Draw, en fase de render
+
+		la ruta de las texturas es distinta:
+			respecto al modelo	(en editor 3D)
+			respecto al ejecutable	(en ejecución)

@@ -1,0 +1,28 @@
+Supongo que este sera el modulo definitivo sobre el que al fin trabajaremos los 4.
+
+Estructura del proyecto:
+
+[carpeta raiz]
+ |- proyecto.cbp
+ |- bin
+ |   |- ejecutable.exe
+ |   |- dlls
+ |   |- texturas, modelos, etc.
+ |   \- ...
+ |- doc
+ |   \-Documentacion
+ |- include
+ |   \- ficheros .h de librerias externas y nuestras
+ |      cada uno en su directorio
+ |- lib
+ |   \- librerias externas
+ |- src
+ |   \- ficheros .cpp's nuestros y de alguna libreria
+ |      que no este compilada como .a o .dll
+ \- trash (a extinguir)
+     \- carpeta que, segun hammet, tiene codigo en desuso o desechado
+
+
+sugerencias:
+para que quede mas bonito, los fuentes de milkshape deberian ir en una carpeta
+a parte al igual que la drawstuff no?

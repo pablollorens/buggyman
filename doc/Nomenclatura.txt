@@ -1,0 +1,42 @@
+
+
+-------------------------------------------------------------------
+	NOMENCLATURA
+-------------------------------------------------------------------
+	
+
+
+Idioma			Inglés
+	
+Abreviar exclusivamente cosas triviales (max,min,num,aux..)
+	
+Clases			MyClassName
+
+Metodos Públicos	MyMethodName()
+Metodos Privados	myMethodName()
+
+Propiedades 		SetMyPropertieName()
+			GetMyPropertieName()
+
+Defines			MY_DEFINE_NAME
+
+Variables Estáticas	My_Var_Name
+Variables Privadas	my_Var_Name
+Variables Locales	my_var_name
+
+
+
+
+-------------------------------------------------------------------
+	ORGANIZACIÓN
+-------------------------------------------------------------------
+	
+- NO Variables públicas (acceso mediante propiedades)
+
+- Los nombres deben guardan una organizacion jerárquica en su orden de escritura
+
+- Clases/Ficheros estilo Java:
+	- 1 sola clase por fichero CPP/H (en el caso de haber más serán auxiliares de la principal)
+	- los ficheros CPP/H tienen exactamente el nombre de la clase
+
+
