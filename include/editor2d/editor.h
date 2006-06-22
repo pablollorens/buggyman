@@ -65,7 +65,7 @@ class Editor
         Editor(const Editor&);
         Editor& operator=(const Editor&);
         ~Editor();
-        int Run(char* path_to_save_circuit=NULL);
+        int Run(SDL_Surface* screen, char* path_to_save_circuit=NULL);
     private methods:
         void Add_Tracks(Grid3D & grid);
     private:

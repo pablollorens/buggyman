@@ -4,10 +4,13 @@
 #include <editor.h>
 #include <vector>
 #include <SDL/SDL.h>
+#include <SDL/SDL_thread.h>
 #include <game/Game.h>
 
 using namespace std;
 IMG_Collection image_collection;
+
+SDL_Surface *screen;
 
 #define MENU_NEW_GAME_X 271
 #define MENU_NEW_GAME_Y 255
@@ -24,6 +27,15 @@ IMG_Collection image_collection;
 #define MENU_EXIT_W 115
 #define MENU_EXIT_H 37
 
+int Run_Game(void* data)
+{
+    SDL_Quit();
+    Game::SetResolution(320,240);
+    Game::SetFullScreen(false);
+    Game::Run();
+    return 0;
+}
+
 int main ( int argc, char** argv )
 {
     bool update_required = 1;
@@ -36,7 +48,7 @@ int main ( int argc, char** argv )
     //atexit(SDL_Quit);
 
     // create a new window
-    SDL_Surface* screen = SDL_SetVideoMode(
+    /*SDL_Surface* */screen = SDL_SetVideoMode(
         800, 600, 32,
         SDL_HWSURFACE|SDL_DOUBLEBUF);
     if ( !screen ) { printf("Unable to set video: %s\n", SDL_GetError()); return 1; }
@@ -77,22 +89,22 @@ int main ( int argc, char** argv )
                     event.button.y >= MENU_NEW_GAME_Y &&
                     event.button.y < MENU_NEW_GAME_Y + MENU_NEW_GAME_H)
                 {
-                    SDL_Quit();
+                    //SDL_Quit();
                     Game::SetResolution(640,480);
                     Game::SetFullScreen(false);
                     Game::Run();
 
-                    if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
-                    {
-                        printf( "Unable to init SDL: %s\n", SDL_GetError() );
-                        return 1;
-                    }
+//                    if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
+//                    {
+//                        printf( "Unable to init SDL: %s\n", SDL_GetError() );
+//                        return 1;
+//                    }
                     // recreate a new window
                     screen = SDL_SetVideoMode(
                         800, 600, 32,
                         SDL_HWSURFACE|SDL_DOUBLEBUF);
                     if ( !screen ) { printf("Unable to set video: %s\n", SDL_GetError()); return 1; }
-                    update_required = 1;
+                    update_required = 0;
                 }
                 else
                 if( event.button.x >= MENU_TRACK_EDITOR_X &&
@@ -103,20 +115,20 @@ int main ( int argc, char** argv )
 //                    SDL_WM_IconifyWindow();
 //                    system("BuggyTracks.exe");
 
-                    SDL_Quit();
+                    //SDL_Quit();
                     Editor ed;
-                    ed.Run("terreno.cfg");
+                    ed.Run(screen, "terreno.cfg");
 
-                    if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
-                    {
-                        printf( "Unable to init SDL: %s\n", SDL_GetError() );
-                        return 1;
-                    }
+//                    if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
+//                    {
+//                        printf( "Unable to init SDL: %s\n", SDL_GetError() );
+//                        return 1;
+//                    }
                     // create a new window
-                    SDL_Surface* screen = SDL_SetVideoMode(
-                        800, 600, 32,
-                        SDL_HWSURFACE|SDL_DOUBLEBUF);
-                    if ( !screen ) { printf("Unable to set video: %s\n", SDL_GetError()); return 1; }
+//                    SDL_Surface* screen = SDL_SetVideoMode(
+//                        800, 600, 32,
+//                        SDL_HWSURFACE|SDL_DOUBLEBUF);
+//                    if ( !screen ) { printf("Unable to set video: %s\n", SDL_GetError()); return 1; }
                     update_required = 1;
                 }
                 else

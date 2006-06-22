@@ -15,6 +15,7 @@ class IMG_Collection
         IMG_Collection& operator=(const IMG_Collection&);
         ~IMG_Collection();
         SDL_Surface* operator()(char* file);
+        void Clear();
     private:
         map< string , SDL_Surface* > surfaces;
         map< string, SDL_Surface* >::iterator itr;

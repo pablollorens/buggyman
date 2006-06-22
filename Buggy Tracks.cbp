@@ -19,6 +19,7 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-g"/>
 			<Add directory="include"/>
 			<Add directory="include\GL"/>
 			<Add directory="include\SDL"/>
@@ -27,6 +28,7 @@
 			<Add directory="include\drawstuff"/>
 			<Add directory="include\editor2d"/>
 			<Add directory="include\game"/>
+			<Add directory="include\menu"/>
 		</Compiler>
 		<Linker>
 			<Add option="-lmingw32"/>
@@ -201,6 +203,11 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
+		<Unit filename="include\menu\button.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+		</Unit>
 		<Unit filename="src\SDL_Config\SDL_config.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
@@ -286,6 +293,9 @@
 		<Unit filename="src\main\main.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
+		</Unit>
+		<Unit filename="src\menu\button.cpp">
+			<Option compilerVar="CPP"/>
 		</Unit>
 	</Project>
 </CodeBlocks_project_file>

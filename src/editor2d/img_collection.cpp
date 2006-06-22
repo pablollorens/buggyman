@@ -21,10 +21,7 @@ IMG_Collection::operator=(const IMG_Collection& some)
 
 IMG_Collection::~IMG_Collection()
 {
-    for(itr = surfaces.begin(); itr != surfaces.end(); itr++)
-        SDL_FreeSurface((*itr).second);
-    surfaces.clear();
-    itr = surfaces.begin();
+    Clear();
 }
 
 SDL_Surface*
@@ -41,5 +38,14 @@ IMG_Collection::operator()(char* file)
         }
     }
     return tmp;
+}
+
+void
+IMG_Collection::Clear()
+{
+    for(itr = surfaces.begin(); itr != surfaces.end(); itr++)
+        SDL_FreeSurface((*itr).second);
+    surfaces.clear();
+    itr = surfaces.begin();
 }
 

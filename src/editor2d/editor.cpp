@@ -109,7 +109,7 @@ Editor::Add_Tracks(Grid3D & grid)
 }
 
 int
-Editor::Run(char* path_to_save_circuit)
+Editor::Run(SDL_Surface* screen, char* path_to_save_circuit)
 {
     //event flags
     bool update_required = true;
@@ -130,27 +130,27 @@ Editor::Run(char* path_to_save_circuit)
 
 
     // initialize SDL video
-    printf("Starting SDL_Init... \0");
-    if ( SDL_Init( SDL_INIT_VIDEO ) < 0 ) { printf( "Unable to init SDL: %s\n", SDL_GetError() ); return 1; }
-    printf("ok\n");
+//    printf("Starting SDL_Init... \0");
+//    if ( SDL_Init( SDL_INIT_VIDEO ) < 0 ) { printf( "Unable to init SDL: %s\n", SDL_GetError() ); return 1; }
+//    printf("ok\n");
 
     // make sure SDL cleans up before exit
     //atexit(SDL_Quit);
 
-    printf("Setting window icon... \0");
-    SDL_WM_SetIcon(IMG_Load("textures/icon.gif"), NULL);
-    printf("ok\n");
+//    printf("Setting window icon... \0");
+//    SDL_WM_SetIcon(IMG_Load("textures/icon.gif"), NULL);
+//    printf("ok\n");
 
     // create a new window
-    printf("Setting VideoMode... \0");
-    SDL_Surface* screen = SDL_SetVideoMode(
-        VIDEO_width, VIDEO_height, VIDEO_depth,
-        SDL_HWSURFACE|SDL_DOUBLEBUF|FULLSCREEN_FLAG);
-//        SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN|SDL_OPENGLBLIT);
-    if ( !screen ) { printf("Unable to set %dx%d video: %s\n", VIDEO_width, VIDEO_height, SDL_GetError()); return 1; }
-    printf("ok\n");
+//    printf("Setting VideoMode... \0");
+//    /*SDL_Surface* */screen = SDL_SetVideoMode(
+//        VIDEO_width, VIDEO_height, VIDEO_depth,
+//        SDL_HWSURFACE|SDL_DOUBLEBUF|FULLSCREEN_FLAG);
+////        SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN|SDL_OPENGLBLIT);
+//    if ( !screen ) { printf("Unable to set %dx%d video: %s\n", VIDEO_width, VIDEO_height, SDL_GetError()); return 1; }
+//    printf("ok\n");
 
-    SDL_ShowCursor(SDL_DISABLE);
+    //SDL_ShowCursor(SDL_DISABLE);
 
     // load an image
     printf("Loading background and cursors... \n");
@@ -390,10 +390,6 @@ Editor::Run(char* path_to_save_circuit)
         if(make_pause) SDL_framerateDelay(&manager);
     } // end main loop
 
-    printf("Ending game and freeing screen... \0");
-    SDL_FreeSurface(background);
-    printf("ok\n");
-
     if(path_to_save_circuit)
     {
         printf("Saving Circuit... \0");
@@ -402,8 +398,8 @@ Editor::Run(char* path_to_save_circuit)
     }
 
     // all is well ;)
-    printf("Exit cleanly.\n");
-    SDL_Quit();
+    printf("Editor Terminated cleanly.\n");
+    //SDL_Quit();
     return 0;
 }
 

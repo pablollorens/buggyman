@@ -10,7 +10,7 @@
 /// //////////////////////////////////////////////////////////////////////// ///
 /// GLOBAL VARIABLES
 
-SDL_Surface *screen;
+extern SDL_Surface *screen;
 TTF_Font *font_Courier;
 
 bool done = false;          // variable global, finaliza el MAIN LOOP
