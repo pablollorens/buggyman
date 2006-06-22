@@ -160,7 +160,7 @@ void dsDrawLine (const float pos1[3], const float pos2[3]);
 void dsSetSphereQuality (int n);		/* default = 1 */
 void dsSetCappedCylinderQuality (int n);	/* default = 3 */
 
-void drawSky(float[3]);
+//void drawSky(float[3]);
 
 /* closing bracket for extern "C" */
 #ifdef __cplusplus

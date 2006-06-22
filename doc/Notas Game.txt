@@ -16,3 +16,51 @@ EJECUCION, MAIN LOOP
 			fn -> step [Engine::simLoop]
 
 		fn -> stop [null]
+
+
+--------------------------------------------------------
+--------------------------------------------------------
+--------------------------------------------------------
+
+
+EJECUCION OpenGL
+
+Game :: RUN
+
+	drawstuff : dsSimulationLoop (command line flags)
+
+		windows : dsPlatformSimLoop
+
+			drawstuff  : dsStartGraphics	//texture paths
+
+				//enables..
+
+				//viewport
+				//PROJECTION
+				//I
+
+				//lights
+
+
+				//light position
+
+				//enables..
+
+			Engine : start()		//load car/ground textures	-> PUSH/POP
+
+				drawstuff : dsSetViewpoint
+
+			//gl clear
+
+			drawstuff : dsDrawFrame
+
+
+				//MODELVIEW
+				//I
+
+				Engine : step   --->   Engine : SimLoop
+
+					// Sim
+
+					// Draw
+						camera update

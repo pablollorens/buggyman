@@ -297,22 +297,19 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
     if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
         dsPanic( "Unable to init SDL: %s\n", SDL_GetError() );
 
-    // make sure SDL cleans up before exit
-    atexit(SDL_Quit);
-
     // TTF Fonts
     TTF_Init();
-    atexit(TTF_Quit);
     font_Courier = TTF_OpenFont( "Fonts\\cour.ttf", 26 );
 
     // create a new window
     screen = SDL_SetVideoMode(window_width, window_height, 32, video_mode);
     if ( !screen )
         dsPanic("Unable to set %dx%d video: %s\n", window_width, window_height, SDL_GetError());
-
     dsPrint("OK\n");
 
+    // Setup OpenGL
     dsStartGraphics (window_width, window_height, fn);
+    // Load Textures
     if (fn->start) fn->start();
 
     dsPrint(".. Main Loop\n");
@@ -328,10 +325,10 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
 
     while (!done)
     {
-        // Message events
+        /// EVENTS ///
         Events(in);
 
-        /// DRAWING STARTS HERE ///
+        /// DRAW STARTS ///
 
         // clear screen 2D
         SDL_FillRect(screen, 0, SDL_MapRGB(screen->format, 0, 0, 0));
@@ -340,12 +337,12 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
         // 3D
-        dsDrawFrame (window_width, window_height, fn, initial_pause);
+        dsDrawFrame (fn, initial_pause);
 
         // 2Do3D
         dsGLPrint(2,2,"%2.2f FPS",((float)frames/(SDL_GetTicks()-start_time))*1000.0);
 
-        /// DRAWING ENDS HERE ///
+        /// DRAW ENDS ///
 
 		// Check for error conditions. //
 
@@ -390,6 +387,11 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
 
     if (fn->stop) fn->stop();
     dsStopGraphics();
+
+    // Close TTF
+    TTF_Quit();
+    // Close SDL
+    SDL_Quit();
 }
 
 GLuint SDL_GL_LoadTexture(SDL_Surface *surface, GLfloat *texcoord)

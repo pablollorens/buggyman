@@ -9,6 +9,8 @@ dsInterfaces Game::interfaces;
 
 Engine Game::engine;
 
+// Default Values
+
 int Game::width = 640;
 int Game::height = 480;
 bool Game::fullScreen = false;
@@ -26,7 +28,7 @@ SDLKey Game::Key_Action = SDLK_z;
 void Game::Run()
 {
   // Init //
-  dsPrint("Inicializando...\n");
+  dsPrint("Initializing Game...\n");
 
   FunctionsInit();
   InterfacesInit();
@@ -37,7 +39,7 @@ void Game::Run()
   CarInit();
 
   // Simulacion //
-  dsPrint("Simulacion...\n");
+  dsPrint("Simulating...\n");
 
   dsSimulationLoop (0,0,width,height,fullScreen,&functions,&interfaces);
 

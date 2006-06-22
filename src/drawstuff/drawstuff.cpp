@@ -736,12 +736,14 @@ static float view_hpr[3];	// heading, pitch, roll (degrees)
 
 static void initMotionModel()
 {
+  /*
   view_xyz[0] = 2;
   view_xyz[1] = 0;
   view_xyz[2] = 1;
   view_hpr[0] = 180;
   view_hpr[1] = 0;
   view_hpr[2] = 0;
+  */
 }
 
 
@@ -811,134 +813,8 @@ void dsStartGraphics (int width, int height, dsFunctions *fn)
   strcpy (s,prefix);
   strcat (s,"/wood.ppm");
   wood_texture = new Texture (s);
-}
 
-// destruye las texturas
-void dsStopGraphics()
-{
-  delete sky_texture;
-  delete ground_texture;
-  delete wood_texture;
-
-  sky_texture = 0;
-  ground_texture = 0;
-  wood_texture = 0;
-}
-
-
-void drawSky (float view_xyz[3])
-{
-  glDisable (GL_LIGHTING);
-  if (use_textures) {
-    glEnable (GL_TEXTURE_2D);
-    sky_texture->bind (0);
-  }
-  else {
-    glDisable (GL_TEXTURE_2D);
-    glColor3f (0,0.5,1.0);
-  }
-
-  // make sure sky depth is as far back as possible
-  glShadeModel (GL_FLAT);
-  glEnable (GL_DEPTH_TEST);
-  glDepthFunc (GL_LEQUAL);
-  glDepthRange (1,1);
-
-  const float ssize = 1000.0f;
-  static float offset = 0.0f;
-
-  float x = ssize*sky_scale;
-  float z = view_xyz[2] + sky_height;
-
-  glBegin (GL_QUADS);
-  glNormal3f (0,0,-1);
-  glTexCoord2f (-x+offset,-x+offset);
-  glVertex3f (-ssize+view_xyz[0],-ssize+view_xyz[1],z);
-  glTexCoord2f (-x+offset,x+offset);
-  glVertex3f (-ssize+view_xyz[0],ssize+view_xyz[1],z);
-  glTexCoord2f (x+offset,x+offset);
-  glVertex3f (ssize+view_xyz[0],ssize+view_xyz[1],z);
-  glTexCoord2f (x+offset,-x+offset);
-  glVertex3f (ssize+view_xyz[0],-ssize+view_xyz[1],z);
-  glEnd();
-
-  offset = offset + 0.002f;
-  if (offset > 1) offset -= 1;
-
-  glDepthFunc (GL_LESS);
-  glDepthRange (0,1);
-}
-
-
-static void drawGround()
-{
-  glDisable (GL_LIGHTING);
-  glShadeModel (GL_FLAT);
-  glEnable (GL_DEPTH_TEST);
-  glDepthFunc (GL_LESS);
-  // glDepthRange (1,1);
-
-  if (use_textures) {
-    glEnable (GL_TEXTURE_2D);
-    ground_texture->bind (0);
-  }
-  else {
-    glDisable (GL_TEXTURE_2D);
-    glColor3f (GROUND_R,GROUND_G,GROUND_B);
-  }
-
-  // ground fog seems to cause problems with TNT2 under windows
-/*
-  GLfloat fogColor[4] = {0.5, 0.5, 0.5, 1};
-  glEnable (GL_FOG);
-  glFogi (GL_FOG_MODE, GL_EXP2);
-  glFogfv (GL_FOG_COLOR, fogColor);
-  glFogf (GL_FOG_DENSITY, 0.25f);
-  glHint (GL_FOG_HINT, GL_NICEST); // GL_DONT_CARE);
-  glFogf (GL_FOG_START, 1.0);
-  glFogf (GL_FOG_END, 5.0);
-*/
-
-  const float gsize = 100.0f;
-  const float offset = 0; // -0.001f; ... polygon offsetting doesn't work well
-
-  glBegin (GL_QUADS);
-  glNormal3f (0,0,1);
-  glTexCoord2f (-gsize*ground_scale + ground_ofsx,
-		-gsize*ground_scale + ground_ofsy);
-  glVertex3f (-gsize,-gsize,offset);
-  glTexCoord2f (gsize*ground_scale + ground_ofsx,
-		-gsize*ground_scale + ground_ofsy);
-  glVertex3f (gsize,-gsize,offset);
-  glTexCoord2f (gsize*ground_scale + ground_ofsx,
-		gsize*ground_scale + ground_ofsy);
-  glVertex3f (gsize,gsize,offset);
-  glTexCoord2f (-gsize*ground_scale + ground_ofsx,
-		gsize*ground_scale + ground_ofsy);
-  glVertex3f (-gsize,gsize,offset);
-  glEnd();
-
-  glDisable (GL_FOG);
-}
-
-
-void dsDrawFrame (int width, int height, dsFunctions *fn, int pause)
-{
-  if (current_state < 1) dsError ("internal error");
-  current_state = 2;
-
-  // setup stuff
-  glEnable (GL_LIGHTING);
-  glEnable (GL_LIGHT0);
-  glDisable (GL_TEXTURE_2D);
-  glDisable (GL_TEXTURE_GEN_S);
-  glDisable (GL_TEXTURE_GEN_T);
-  glShadeModel (GL_FLAT);
-  glEnable (GL_DEPTH_TEST);
-  glDepthFunc (GL_LESS);
-  glEnable (GL_CULL_FACE);
-  glCullFace (GL_BACK);
-  glFrontFace (GL_CCW);
+  /// ///////////////////////////////////////////////////
 
   // setup viewport
   glViewport (0,0,width,height);
@@ -965,22 +841,21 @@ void dsDrawFrame (int width, int height, dsFunctions *fn, int pause)
   glLightfv (GL_LIGHT0, GL_AMBIENT, light_ambient);
   glLightfv (GL_LIGHT0, GL_DIFFUSE, light_diffuse);
   glLightfv (GL_LIGHT0, GL_SPECULAR, light_specular);
-  glColor3f (1.0, 1.0, 1.0);
+//  glColor3f (1.0, 1.0, 1.0);
 
   // clear the window
-  //glClearColor (0.5,0.5,0.5,0);
-  glClearColor (0.0, 0.0, 0.0, 0.0);
-  glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//  glClearColor (0.0, 0.0, 0.0, 0.0);
+//  glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // snapshot camera position
-  float view2_xyz[3];
-  float view2_hpr[3];
-  memcpy (view2_xyz,view_xyz,sizeof(float)*3);
-  memcpy (view2_hpr,view_hpr,sizeof(float)*3);
+//  float view2_xyz[3];
+//  float view2_hpr[3];
+//  memcpy (view2_xyz,view_xyz,sizeof(float)*3);
+//  memcpy (view2_hpr,view_hpr,sizeof(float)*3);
 
   // go to GL_MODELVIEW matrix mode and set the camera
-  glMatrixMode (GL_MODELVIEW);
-  glLoadIdentity();
+//  glMatrixMode (GL_MODELVIEW);
+//  glLoadIdentity();
 //  setCamera (view2_xyz[0],view2_xyz[1],view2_xyz[2],view2_hpr[0],view2_hpr[1],view2_hpr[2]);
 
   // set the light position (for some reason we have to do this in model view.
@@ -992,20 +867,149 @@ void dsDrawFrame (int width, int height, dsFunctions *fn, int pause)
   //drawGround();
 
   // leave openGL in a known state - flat shaded white, no textures
+    // setup stuff
   glEnable (GL_LIGHTING);
+  glEnable (GL_LIGHT0);
+
   glDisable (GL_TEXTURE_2D);
-  glShadeModel (GL_FLAT);
+  glDisable (GL_TEXTURE_GEN_S);
+  glDisable (GL_TEXTURE_GEN_T);
+
+  glShadeModel (GL_SMOOTH);
+
   glEnable (GL_DEPTH_TEST);
   glDepthFunc (GL_LESS);
-  glColor3f (1,1,1);
-  setColor (1,1,1,1);
+
+  glEnable (GL_CULL_FACE);
+  glCullFace (GL_BACK);
+  glFrontFace (GL_CCW);
+
+//  glColor3f (1,1,1);
+//  setColor (1,1,1,1);
 
   // draw the rest of the objects. set drawing state first.
-  color[0] = 1;
-  color[1] = 1;
-  color[2] = 1;
-  color[3] = 1;
-  tnum = 0;
+//  color[0] = 1;
+//  color[1] = 1;
+//  color[2] = 1;
+//  color[3] = 1;
+//  tnum = 0;
+  /// ///////////////////////////////////////////////////
+}
+
+// destruye las texturas
+void dsStopGraphics()
+{
+  delete sky_texture;
+  delete ground_texture;
+  delete wood_texture;
+
+  sky_texture = 0;
+  ground_texture = 0;
+  wood_texture = 0;
+}
+
+
+void drawSky (float view_xyz[3])
+{
+//  glDisable (GL_LIGHTING);
+//  if (use_textures) {
+//    glEnable (GL_TEXTURE_2D);
+//    sky_texture->bind (0);
+//  }
+//  else {
+//    glDisable (GL_TEXTURE_2D);
+//    glColor3f (0,0.5,1.0);
+//  }
+//
+//  // make sure sky depth is as far back as possible
+//  glShadeModel (GL_FLAT);
+//  glEnable (GL_DEPTH_TEST);
+//  glDepthFunc (GL_LEQUAL);
+//  glDepthRange (1,1);
+//
+//  const float ssize = 1000.0f;
+//  static float offset = 0.0f;
+//
+//  float x = ssize*sky_scale;
+//  float z = view_xyz[2] + sky_height;
+//
+//  glBegin (GL_QUADS);
+//  glNormal3f (0,0,-1);
+//  glTexCoord2f (-x+offset,-x+offset);
+//  glVertex3f (-ssize+view_xyz[0],-ssize+view_xyz[1],z);
+//  glTexCoord2f (-x+offset,x+offset);
+//  glVertex3f (-ssize+view_xyz[0],ssize+view_xyz[1],z);
+//  glTexCoord2f (x+offset,x+offset);
+//  glVertex3f (ssize+view_xyz[0],ssize+view_xyz[1],z);
+//  glTexCoord2f (x+offset,-x+offset);
+//  glVertex3f (ssize+view_xyz[0],-ssize+view_xyz[1],z);
+//  glEnd();
+//
+//  offset = offset + 0.002f;
+//  if (offset > 1) offset -= 1;
+//
+//  glDepthFunc (GL_LESS);
+//  glDepthRange (0,1);
+}
+
+
+static void drawGround()
+{
+//  glDisable (GL_LIGHTING);
+//  glShadeModel (GL_FLAT);
+//  glEnable (GL_DEPTH_TEST);
+//  glDepthFunc (GL_LESS);
+//  // glDepthRange (1,1);
+//
+//  if (use_textures) {
+//    glEnable (GL_TEXTURE_2D);
+//    ground_texture->bind (0);
+//  }
+//  else {
+//    glDisable (GL_TEXTURE_2D);
+//    glColor3f (GROUND_R,GROUND_G,GROUND_B);
+//  }
+//
+//  // ground fog seems to cause problems with TNT2 under windows
+///*
+//  GLfloat fogColor[4] = {0.5, 0.5, 0.5, 1};
+//  glEnable (GL_FOG);
+//  glFogi (GL_FOG_MODE, GL_EXP2);
+//  glFogfv (GL_FOG_COLOR, fogColor);
+//  glFogf (GL_FOG_DENSITY, 0.25f);
+//  glHint (GL_FOG_HINT, GL_NICEST); // GL_DONT_CARE);
+//  glFogf (GL_FOG_START, 1.0);
+//  glFogf (GL_FOG_END, 5.0);
+//*/
+//
+//  const float gsize = 100.0f;
+//  const float offset = 0; // -0.001f; ... polygon offsetting doesn't work well
+//
+//  glBegin (GL_QUADS);
+//  glNormal3f (0,0,1);
+//  glTexCoord2f (-gsize*ground_scale + ground_ofsx,
+//		-gsize*ground_scale + ground_ofsy);
+//  glVertex3f (-gsize,-gsize,offset);
+//  glTexCoord2f (gsize*ground_scale + ground_ofsx,
+//		-gsize*ground_scale + ground_ofsy);
+//  glVertex3f (gsize,-gsize,offset);
+//  glTexCoord2f (gsize*ground_scale + ground_ofsx,
+//		gsize*ground_scale + ground_ofsy);
+//  glVertex3f (gsize,gsize,offset);
+//  glTexCoord2f (-gsize*ground_scale + ground_ofsx,
+//		gsize*ground_scale + ground_ofsy);
+//  glVertex3f (-gsize,gsize,offset);
+//  glEnd();
+//
+//  glDisable (GL_FOG);
+}
+
+
+void dsDrawFrame (dsFunctions *fn, int pause)
+{
+  glMatrixMode (GL_MODELVIEW);
+  glLoadIdentity();
+
   if (fn->step) fn->step (pause);
 }
 
@@ -1130,12 +1134,12 @@ extern "C" void dsSetViewpoint (float xyz[3], float hpr[3])
     view_xyz[1] = xyz[1];
     view_xyz[2] = xyz[2];
   }
-  if (hpr) {
-    view_hpr[0] = hpr[0];
-    view_hpr[1] = hpr[1];
-    view_hpr[2] = hpr[2];
-    wrapCameraAngles();
-  }
+//  if (hpr) {
+//    view_hpr[0] = hpr[0];
+//    view_hpr[1] = hpr[1];
+//    view_hpr[2] = hpr[2];
+//    wrapCameraAngles();
+//  }
 }
 
 

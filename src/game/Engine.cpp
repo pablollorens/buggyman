@@ -53,13 +53,20 @@ void Engine::SimLoop (int pause)
     {
         Car::Sim();
 
+        switch(Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].num_modelo)
+        {
+            case RAMP_B: Car::MAX_SPEED = 50; break;
+            case STRAIGHT: Car::MAX_SPEED = 200; break;
+            default: if (Car::MAX_SPEED>15) Car::MAX_SPEED--; break;
+        }
+
         dSpaceCollide (Space,0,&nearCallback);
 
         dWorldStep (World,Step_Sensibility);
-        // dWorldQuickStep (world,0.05);
 
         dJointGroupEmpty (ContactGroup);
     }
+
     for(int i=0;i<X;i++)
         for(int j=0; j<Y; j++)
         {
@@ -68,24 +75,17 @@ void Engine::SimLoop (int pause)
                 dGeomDisable(Ground::Cell_Matrix[i][j].geomPista);
         }
 
-    /// DRAW ///
     Camera::Update();
+
+    /// DRAW ///
 
     GetCarCell(); // update Car_Cell_X, Car_Cell_Y
     Ground::Draw(car_Cell_X, car_Cell_Y);
 
     Car::Draw();
 
-    switch(Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].num_modelo)
-    {
-        case RAMP_B: Car::MAX_SPEED = 50; break;
-        case STRAIGHT: Car::MAX_SPEED = 200; break;
-        default: if (Car::MAX_SPEED>15) Car::MAX_SPEED--; break;
-    }
+    // importante escribir al final de los draw
     dsGLPrint(100,100,"%d",Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].num_modelo);
-
-    // importante escribir al final de los draw (¿pq?) -> porque sinoss se pintan encima? xD
-    //dsGLPrint("(%d,%d)", car_Cell_X, car_Cell_Y);
 }
 
 /// //////////////////////////////////////////////////////////////////////// ///

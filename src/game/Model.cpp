@@ -23,6 +23,11 @@
 /// //////// //////// //////// //////// //////// //////// //////// /////
 /// //////// //////// //////// //////// //////// //////// //////// /////
 
+GLfloat matrix[16];
+
+/// //////// //////// //////// //////// //////// //////// //////// /////
+/// //////// //////// //////// //////// //////// //////// //////// /////
+
 AUX_RGBImageRec *LoadBMP(const char *Filename)						// Loads A Bitmap Image
 {
 	FILE *File=NULL;												// File Handle
@@ -70,7 +75,6 @@ GLuint LoadGLTexture( const char *filename )						// Load Bitmaps And Convert To
 
 static void setTransform (const float pos[3], const float R[12])
 {
-  GLfloat matrix[16];
   matrix[0]=R[0];
   matrix[1]=R[4];
   matrix[2]=R[8];
@@ -87,8 +91,6 @@ static void setTransform (const float pos[3], const float R[12])
   matrix[13]=pos[1];
   matrix[14]=pos[2];
   matrix[15]=1;
-  glPushMatrix();
-  glMultMatrixf (matrix);
 }
 
 /// //////// //////// //////// //////// //////// //////// //////// /////
@@ -145,9 +147,13 @@ Model::~Model()
 
 void Model::draw(int id,const dVector3 posicion, const float R[12])
 {
-    if (glIsList(id)){
-        setTransform(posicion,R);
-        glCallList(id);
+    if (glIsList(id))
+    {
+        glPushMatrix();
+          setTransform(posicion,R);
+          glMultMatrixf (matrix);
+          glCallList(id);
+        glPopMatrix();
     }
     else
         ModelDrawList(id);

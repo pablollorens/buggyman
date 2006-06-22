@@ -71,7 +71,7 @@ Ground::Ground(dWorldID world, dSpaceID space)
             dSpaceAdd(space,Cell_Matrix[i][j].geomID);
         }
 
-    /// LECTURA DE PISTA
+    /// TRACK READING
 
     CFG_File config;
 
@@ -124,7 +124,8 @@ Ground::Ground(dWorldID world, dSpaceID space)
 void Ground::LoadTextures()
 {
     ground_Model->reloadTextures();
-    for(int p=0; p<K_MODEL; p++) ModelosMilky[p]->reloadTextures();
+    for(int p=0; p<K_MODEL; p++)
+        ModelosMilky[p]->reloadTextures();
 }
 
 void Ground::Draw(int cell_x, int cell_y)
