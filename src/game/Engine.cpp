@@ -24,6 +24,10 @@ dGeomID Engine::AUX2 = 0;
 
 int Engine::update = 2;
 
+Uint32 Engine::ticks_total;
+Uint32 Engine::ticks_sim;
+Uint32 Engine::ticks_draw;
+
 /// //////////////////////////////////////////////////////////////////////// ///
 /// ENGINE FUNCTIONS
 
@@ -47,6 +51,8 @@ void Engine::Start()
 
 void Engine::SimLoop (int pause)
 {
+    Uint32 ticks_start = SDL_GetTicks();
+
     /// SIM ///
 
     if (!pause)
@@ -77,6 +83,9 @@ void Engine::SimLoop (int pause)
 
     Camera::Update();
 
+    Uint32 ticks_start2 = SDL_GetTicks();
+    ticks_sim += ticks_start2 - ticks_start;
+
     /// DRAW ///
 
     GetCarCell(); // update Car_Cell_X, Car_Cell_Y
@@ -86,6 +95,11 @@ void Engine::SimLoop (int pause)
 
     // importante escribir al final de los draw
     dsGLPrint(100,100,"%d",Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].num_modelo);
+
+    /// DEBUG INFO
+    Uint32 ticks_end = SDL_GetTicks();
+    ticks_draw += ticks_end - ticks_start2;
+    ticks_total += ticks_end - ticks_start;
 }
 
 /// //////////////////////////////////////////////////////////////////////// ///

@@ -4,6 +4,7 @@
 #include <ode/ode.h>
 #include <drawstuff/drawstuff.h>
 
+#include <SDL/SDL.h>
 #include <SDL/SDL_TTF.h>
 
 #include <game/Car.h>
@@ -34,6 +35,10 @@ class Engine {
 
     Car *car;
     Ground *ground;
+
+    static Uint32 ticks_total;
+    static Uint32 ticks_sim;
+    static Uint32 ticks_draw;
 
 /// //////////////////////////////////////////////////////////////////////// ///
 

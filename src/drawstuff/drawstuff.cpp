@@ -64,17 +64,8 @@ manage openGL state changes better
 #define LIGHTX (1.0f)
 #define LIGHTY (0.4f)
 
-// ground and sky
-#define SHADOW_INTENSITY (0.65f)
-#define GROUND_R (0.0f) 	// ground color for when there's no texture
-#define GROUND_G (0.0f)
-#define GROUND_B (0.0f)
-
-const float ground_scale = 1.0f/1.0f;	// ground texture scale (1/size)
-const float ground_ofsx = 0.5;		// offset of ground texture
-const float ground_ofsy = 0.5;
-const float sky_scale = 1.0f/4.0f;	// sky texture scale (1/size)
-const float sky_height = 0.5f;		// sky height above viewpoint
+bool use_textures = true;
+GLfloat transform_matrix[16];
 
 //***************************************************************************
 // misc mathematics stuff
@@ -104,176 +95,11 @@ static void normalizeVector3 (float v[3])
   }
 }
 
-//***************************************************************************
-// PPM image object
-
-typedef unsigned char byte;
-
-
-class Image {
-  int image_width,image_height;
-  byte *image_data;
-public:
-  Image (char *filename);
-  // load from PPM file
-  ~Image();
-  int width() { return image_width; }
-  int height() { return image_height; }
-  byte *data() { return image_data; }
-};
-
-
-// skip over whitespace and comments in a stream.
-
-static void skipWhiteSpace (char *filename, FILE *f)
-{
-  int c,d;
-  for(;;) {
-    c = fgetc(f);
-    if (c==EOF) dsError ("unexpected end of file in \"%s\"",filename);
-
-    // skip comments
-    if (c == '#') {
-      do {
-	d = fgetc(f);
-	if (d==EOF) dsError ("unexpected end of file in \"%s\"",filename);
-      } while (d != '\n');
-      continue;
-    }
-
-    if (c > ' ') {
-      ungetc (c,f);
-      return;
-    }
-  }
-}
-
-
-// read a number from a stream, this return 0 if there is none (that's okay
-// because 0 is a bad value for all PPM numbers anyway).
-
-static int readNumber (char *filename, FILE *f)
-{
-  int c,n=0;
-  for(;;) {
-    c = fgetc(f);
-    if (c==EOF) dsError ("unexpected end of file in \"%s\"",filename);
-    if (c >= '0' && c <= '9') n = n*10 + (c - '0');
-    else {
-      ungetc (c,f);
-      return n;
-    }
-  }
-}
-
-
-Image::Image (char *filename)
-{
-  FILE *f = fopen (filename,"rb");
-  if (!f) dsError ("Can't open image file `%s'",filename);
-
-  // read in header
-  if (fgetc(f) != 'P' || fgetc(f) != '6')
-    dsError ("image file \"%s\" is not a binary PPM (no P6 header)",filename);
-  skipWhiteSpace (filename,f);
-
-  // read in image parameters
-  image_width = readNumber (filename,f);
-  skipWhiteSpace (filename,f);
-  image_height = readNumber (filename,f);
-  skipWhiteSpace (filename,f);
-  int max_value = readNumber (filename,f);
-
-  // check values
-  if (image_width < 1 || image_height < 1)
-    dsError ("bad image file \"%s\"",filename);
-  if (max_value != 255)
-    dsError ("image file \"%s\" must have color range of 255",filename);
-
-  // read either nothing, LF (10), or CR,LF (13,10)
-  int c = fgetc(f);
-  if (c == 10) {
-    // LF
-  }
-  else if (c == 13) {
-    // CR
-    c = fgetc(f);
-    if (c != 10) ungetc (c,f);
-  }
-  else ungetc (c,f);
-
-  // read in rest of data
-  image_data = new byte [image_width*image_height*3];
-  if (fread (image_data,image_width*image_height*3,1,f) != 1)
-    dsError ("Can not read data from image file `%s'",filename);
-  fclose (f);
-}
-
-
-Image::~Image()
-{
-  delete[] image_data;
-}
-
-//***************************************************************************
-// Texture object.
-
-class Texture {
-  Image *image;
-  GLuint name;
-public:
-  Texture (char *filename);
-  ~Texture();
-  void bind (int modulate);
-};
-
-
-Texture::Texture (char *filename)
-{
-  image = new Image (filename);
-  glGenTextures (1,&name);
-  glBindTexture (GL_TEXTURE_2D,name);
-
-  // set pixel unpacking mode
-  glPixelStorei (GL_UNPACK_SWAP_BYTES, 0);
-  glPixelStorei (GL_UNPACK_ROW_LENGTH, 0);
-  glPixelStorei (GL_UNPACK_ALIGNMENT, 1);
-  glPixelStorei (GL_UNPACK_SKIP_ROWS, 0);
-  glPixelStorei (GL_UNPACK_SKIP_PIXELS, 0);
-
-  // glTexImage2D (GL_TEXTURE_2D, 0, 3, image->width(), image->height(), 0,
-  //		   GL_RGB, GL_UNSIGNED_BYTE, image->data());
-  gluBuild2DMipmaps (GL_TEXTURE_2D, 3, image->width(), image->height(), GL_RGB, GL_UNSIGNED_BYTE, image->data());
-
-  // set texture parameters - will these also be bound to the texture???
-  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-
-  glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-}
-
-
-Texture::~Texture()
-{
-  delete image;
-  glDeleteTextures (1,&name);
-}
-
-
-void Texture::bind (int modulate)
-{
-  glBindTexture (GL_TEXTURE_2D,name);
-  glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, modulate ? GL_MODULATE : GL_DECAL);
-}
 
 //***************************************************************************
 // the current drawing state (for when the user's step function is drawing)
 
 static float color[4] = {0,0,0,0};	// current r,g,b,alpha color
-static int tnum = 0;			// current texture number
 
 //***************************************************************************
 // OpenGL utility stuff
@@ -316,41 +142,22 @@ static void setColor (float r, float g, float b, float alpha)
 
 static void setTransform (const float pos[3], const float R[12])
 {
-  GLfloat matrix[16];
-  matrix[0]=R[0];
-  matrix[1]=R[4];
-  matrix[2]=R[8];
-  matrix[3]=0;
-  matrix[4]=R[1];
-  matrix[5]=R[5];
-  matrix[6]=R[9];
-  matrix[7]=0;
-  matrix[8]=R[2];
-  matrix[9]=R[6];
-  matrix[10]=R[10];
-  matrix[11]=0;
-  matrix[12]=pos[0];
-  matrix[13]=pos[1];
-  matrix[14]=pos[2];
-  matrix[15]=1;
-  glPushMatrix();
-  glMultMatrixf (matrix);
-}
-
-
-// set shadow projection transform
-
-static void setShadowTransform()
-{
-  GLfloat matrix[16];
-  for (int i=0; i<16; i++) matrix[i] = 0;
-  matrix[0]=1;
-  matrix[5]=1;
-  matrix[8]=-LIGHTX;
-  matrix[9]=-LIGHTY;
-  matrix[15]=1;
-  glPushMatrix();
-  glMultMatrixf (matrix);
+  transform_matrix[0]=R[0];
+  transform_matrix[1]=R[4];
+  transform_matrix[2]=R[8];
+  transform_matrix[3]=0;
+  transform_matrix[4]=R[1];
+  transform_matrix[5]=R[5];
+  transform_matrix[6]=R[9];
+  transform_matrix[7]=0;
+  transform_matrix[8]=R[2];
+  transform_matrix[9]=R[6];
+  transform_matrix[10]=R[10];
+  transform_matrix[11]=0;
+  transform_matrix[12]=pos[0];
+  transform_matrix[13]=pos[1];
+  transform_matrix[14]=pos[2];
+  transform_matrix[15]=1;
 }
 
 
@@ -490,42 +297,6 @@ static void drawSphere()
     glEndList();
   }
   glCallList (listnum);
-}
-
-static void drawSphereShadow (float px, float py, float pz, float radius)
-{
-  // calculate shadow constants based on light vector
-  static int init=0;
-  static float len2,len1,scale;
-  if (!init) {
-    len2 = LIGHTX*LIGHTX + LIGHTY*LIGHTY;
-    len1 = 1.0f/(float)sqrt(len2);
-    scale = (float) sqrt(len2 + 1);
-    init = 1;
-  }
-
-  // map sphere center to ground plane based on light vector
-  px -= LIGHTX*pz;
-  py -= LIGHTY*pz;
-
-  const float kx = 0.96592582628907f;
-  const float ky = 0.25881904510252f;
-  float x=radius, y=0;
-
-  glBegin (GL_TRIANGLE_FAN);
-  for (int i=0; i<24; i++) {
-    // for all points on circle, scale to elongated rotated shadow and draw
-    float x2 = (LIGHTX*x*scale - LIGHTY*y)*len1 + px;
-    float y2 = (LIGHTY*x*scale + LIGHTX*y)*len1 + py;
-    glTexCoord2f (x2*ground_scale+ground_ofsx,y2*ground_scale+ground_ofsy);
-    glVertex3f (x2,y2,0);
-
-    // rotate [x,y] vector
-    float xtmp = kx*x - ky*y;
-    y = ky*x + kx*y;
-    x = xtmp;
-  }
-  glEnd();
 }
 
 static void drawTriangle (const float *v0, const float *v1, const float *v2, int solid)
@@ -730,21 +501,7 @@ static void drawCylinder (float l, float r, float zoffset)
 
 // current camera position and orientation
 static float view_xyz[3];	// position x,y,z
-static float view_hpr[3];	// heading, pitch, roll (degrees)
-
-// initialize the above variables
-
-static void initMotionModel()
-{
-  /*
-  view_xyz[0] = 2;
-  view_xyz[1] = 0;
-  view_xyz[2] = 1;
-  view_hpr[0] = 180;
-  view_hpr[1] = 0;
-  view_hpr[2] = 0;
-  */
-}
+static float view_hpr[3];	// position x,y,z
 
 
 static void wrapCameraAngles()
@@ -782,40 +539,9 @@ void dsMotion (int mode, int deltax, int deltay)
 //***************************************************************************
 // drawing loop stuff
 
-// the current state:
-//    0 = uninitialized
-//    1 = dsSimulationLoop() called
-//    2 = dsDrawFrame() called
-static int current_state = 0;
-
-// textures and shadows
-static int use_textures=1;		// 1 if textures to be drawn
-static int use_shadows=0;		// 1 if shadows to be drawn
-static Texture *sky_texture = 0;
-static Texture *ground_texture = 0;
-static Texture *wood_texture = 0;
-
 // inicializa las texturas
 void dsStartGraphics (int width, int height, dsFunctions *fn)
 {
-  char *prefix = DEFAULT_PATH_TO_TEXTURES;
-  if (fn->version >= 2 && fn->path_to_textures) prefix = fn->path_to_textures;
-  char *s = (char*) alloca (strlen(prefix) + 20);
-
-  strcpy (s,prefix);
-  strcat (s,"/sky.ppm");
-  sky_texture = new Texture (s);
-
-  strcpy (s,prefix);
-  strcat (s,"/ground.ppm");
-  ground_texture = new Texture (s);
-
-  strcpy (s,prefix);
-  strcat (s,"/wood.ppm");
-  wood_texture = new Texture (s);
-
-  /// ///////////////////////////////////////////////////
-
   // setup viewport
   glViewport (0,0,width,height);
   glMatrixMode (GL_PROJECTION);
@@ -862,10 +588,6 @@ void dsStartGraphics (int width, int height, dsFunctions *fn)
   static GLfloat light_position[] = { LIGHTX, LIGHTY, 1.0, 0.0 };
   glLightfv (GL_LIGHT0, GL_POSITION, light_position);
 
-  // draw the background (ground, sky etc)
-  //drawSky (view2_xyz);
-  //drawGround();
-
   // leave openGL in a known state - flat shaded white, no textures
     // setup stuff
   glEnable (GL_LIGHTING);
@@ -883,125 +605,6 @@ void dsStartGraphics (int width, int height, dsFunctions *fn)
   glEnable (GL_CULL_FACE);
   glCullFace (GL_BACK);
   glFrontFace (GL_CCW);
-
-//  glColor3f (1,1,1);
-//  setColor (1,1,1,1);
-
-  // draw the rest of the objects. set drawing state first.
-//  color[0] = 1;
-//  color[1] = 1;
-//  color[2] = 1;
-//  color[3] = 1;
-//  tnum = 0;
-  /// ///////////////////////////////////////////////////
-}
-
-// destruye las texturas
-void dsStopGraphics()
-{
-  delete sky_texture;
-  delete ground_texture;
-  delete wood_texture;
-
-  sky_texture = 0;
-  ground_texture = 0;
-  wood_texture = 0;
-}
-
-
-void drawSky (float view_xyz[3])
-{
-//  glDisable (GL_LIGHTING);
-//  if (use_textures) {
-//    glEnable (GL_TEXTURE_2D);
-//    sky_texture->bind (0);
-//  }
-//  else {
-//    glDisable (GL_TEXTURE_2D);
-//    glColor3f (0,0.5,1.0);
-//  }
-//
-//  // make sure sky depth is as far back as possible
-//  glShadeModel (GL_FLAT);
-//  glEnable (GL_DEPTH_TEST);
-//  glDepthFunc (GL_LEQUAL);
-//  glDepthRange (1,1);
-//
-//  const float ssize = 1000.0f;
-//  static float offset = 0.0f;
-//
-//  float x = ssize*sky_scale;
-//  float z = view_xyz[2] + sky_height;
-//
-//  glBegin (GL_QUADS);
-//  glNormal3f (0,0,-1);
-//  glTexCoord2f (-x+offset,-x+offset);
-//  glVertex3f (-ssize+view_xyz[0],-ssize+view_xyz[1],z);
-//  glTexCoord2f (-x+offset,x+offset);
-//  glVertex3f (-ssize+view_xyz[0],ssize+view_xyz[1],z);
-//  glTexCoord2f (x+offset,x+offset);
-//  glVertex3f (ssize+view_xyz[0],ssize+view_xyz[1],z);
-//  glTexCoord2f (x+offset,-x+offset);
-//  glVertex3f (ssize+view_xyz[0],-ssize+view_xyz[1],z);
-//  glEnd();
-//
-//  offset = offset + 0.002f;
-//  if (offset > 1) offset -= 1;
-//
-//  glDepthFunc (GL_LESS);
-//  glDepthRange (0,1);
-}
-
-
-static void drawGround()
-{
-//  glDisable (GL_LIGHTING);
-//  glShadeModel (GL_FLAT);
-//  glEnable (GL_DEPTH_TEST);
-//  glDepthFunc (GL_LESS);
-//  // glDepthRange (1,1);
-//
-//  if (use_textures) {
-//    glEnable (GL_TEXTURE_2D);
-//    ground_texture->bind (0);
-//  }
-//  else {
-//    glDisable (GL_TEXTURE_2D);
-//    glColor3f (GROUND_R,GROUND_G,GROUND_B);
-//  }
-//
-//  // ground fog seems to cause problems with TNT2 under windows
-///*
-//  GLfloat fogColor[4] = {0.5, 0.5, 0.5, 1};
-//  glEnable (GL_FOG);
-//  glFogi (GL_FOG_MODE, GL_EXP2);
-//  glFogfv (GL_FOG_COLOR, fogColor);
-//  glFogf (GL_FOG_DENSITY, 0.25f);
-//  glHint (GL_FOG_HINT, GL_NICEST); // GL_DONT_CARE);
-//  glFogf (GL_FOG_START, 1.0);
-//  glFogf (GL_FOG_END, 5.0);
-//*/
-//
-//  const float gsize = 100.0f;
-//  const float offset = 0; // -0.001f; ... polygon offsetting doesn't work well
-//
-//  glBegin (GL_QUADS);
-//  glNormal3f (0,0,1);
-//  glTexCoord2f (-gsize*ground_scale + ground_ofsx,
-//		-gsize*ground_scale + ground_ofsy);
-//  glVertex3f (-gsize,-gsize,offset);
-//  glTexCoord2f (gsize*ground_scale + ground_ofsx,
-//		-gsize*ground_scale + ground_ofsy);
-//  glVertex3f (gsize,-gsize,offset);
-//  glTexCoord2f (gsize*ground_scale + ground_ofsx,
-//		gsize*ground_scale + ground_ofsy);
-//  glVertex3f (gsize,gsize,offset);
-//  glTexCoord2f (-gsize*ground_scale + ground_ofsx,
-//		gsize*ground_scale + ground_ofsy);
-//  glVertex3f (-gsize,gsize,offset);
-//  glEnd();
-//
-//  glDisable (GL_FOG);
 }
 
 
@@ -1014,248 +617,59 @@ void dsDrawFrame (dsFunctions *fn, int pause)
 }
 
 
-int dsGetShadows()
+void dsStopGraphics()
 {
-  return use_shadows;
-}
 
-
-void dsSetShadows (int a)
-{
-  use_shadows = (a != 0);
-}
-
-
-int dsGetTextures()
-{
-  return use_textures;
-}
-
-
-void dsSetTextures (int a)
-{
-  use_textures = (a != 0);
 }
 
 //***************************************************************************
 // C interface
 
-// sets lighting and texture modes, sets current color
-static void setupDrawingMode()
-{
-  glEnable (GL_LIGHTING);
-  if (tnum) {
-    if (use_textures) {
-      glEnable (GL_TEXTURE_2D);
-      wood_texture->bind (1);
-      glEnable (GL_TEXTURE_GEN_S);
-      glEnable (GL_TEXTURE_GEN_T);
-      glTexGeni (GL_S,GL_TEXTURE_GEN_MODE,GL_OBJECT_LINEAR);
-      glTexGeni (GL_T,GL_TEXTURE_GEN_MODE,GL_OBJECT_LINEAR);
-      static GLfloat s_params[4] = {1.0f,1.0f,0.0f,1};
-      static GLfloat t_params[4] = {0.817f,-0.817f,0.817f,1};
-      glTexGenfv (GL_S,GL_OBJECT_PLANE,s_params);
-      glTexGenfv (GL_T,GL_OBJECT_PLANE,t_params);
-    }
-    else {
-      glDisable (GL_TEXTURE_2D);
-    }
-  }
-  else {
-    glDisable (GL_TEXTURE_2D);
-  }
-  setColor (color[0],color[1],color[2],color[3]);
-
-  if (color[3] < 1) {
-    glEnable (GL_BLEND);
-    glBlendFunc (GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-  }
-  else {
-    glDisable (GL_BLEND);
-  }
-}
-
-
-static void setShadowDrawingMode()
-{
-  glDisable (GL_LIGHTING);
-  if (use_textures) {
-    glEnable (GL_TEXTURE_2D);
-    ground_texture->bind (1);
-    glColor3f (SHADOW_INTENSITY,SHADOW_INTENSITY,SHADOW_INTENSITY);
-    glEnable (GL_TEXTURE_2D);
-    glEnable (GL_TEXTURE_GEN_S);
-    glEnable (GL_TEXTURE_GEN_T);
-    glTexGeni (GL_S,GL_TEXTURE_GEN_MODE,GL_EYE_LINEAR);
-    glTexGeni (GL_T,GL_TEXTURE_GEN_MODE,GL_EYE_LINEAR);
-    static GLfloat s_params[4] = {ground_scale,0,0,ground_ofsx};
-    static GLfloat t_params[4] = {0,ground_scale,0,ground_ofsy};
-    glTexGenfv (GL_S,GL_EYE_PLANE,s_params);
-    glTexGenfv (GL_T,GL_EYE_PLANE,t_params);
-  }
-  else {
-    glDisable (GL_TEXTURE_2D);
-    glColor3f (GROUND_R*SHADOW_INTENSITY,GROUND_G*SHADOW_INTENSITY,
-	       GROUND_B*SHADOW_INTENSITY);
-  }
-  glDepthRange (0,0.9999);
-}
-
-
 extern "C" void dsSimulationLoop (int argc, char **argv, int window_width, int window_height, bool fullscreen, dsFunctions *fn, dsInterfaces *in)
 {
-  if (current_state != 0) dsError ("dsSimulationLoop() called more than once");
-  current_state = 1;
-
   // look for flags that apply to us
   int initial_pause = 0;
   for (int i=1; i<argc; i++) {
     if (strcmp(argv[i],"-notex")==0) use_textures = 0;
-    if (strcmp(argv[i],"-noshadow")==0) use_shadows = 0;
-    if (strcmp(argv[i],"-noshadows")==0) use_shadows = 0;
     if (strcmp(argv[i],"-pause")==0) initial_pause = 1;
   }
 
   if (fn->version > DS_VERSION)
     dsError ("bad version number in dsFunctions structure");
 
-  initMotionModel();
   dsPlatformSimLoop (window_width,window_height,fullscreen,fn,in,initial_pause);
-
-  current_state = 0;
 }
 
 
 extern "C" void dsSetViewpoint (float xyz[3], float hpr[3])
 {
-  if (current_state < 1) dsError ("dsSetViewpoint() called before simulation started");
   if (xyz) {
     view_xyz[0] = xyz[0];
     view_xyz[1] = xyz[1];
     view_xyz[2] = xyz[2];
   }
-//  if (hpr) {
-//    view_hpr[0] = hpr[0];
-//    view_hpr[1] = hpr[1];
-//    view_hpr[2] = hpr[2];
-//    wrapCameraAngles();
-//  }
 }
 
 
 extern "C" void dsGetViewpoint (float xyz[3], float hpr[3])
 {
-  if (current_state < 1) dsError ("dsGetViewpoint() called before simulation started");
   if (xyz) {
     xyz[0] = view_xyz[0];
     xyz[1] = view_xyz[1];
     xyz[2] = view_xyz[2];
   }
-  if (hpr) {
-    hpr[0] = view_hpr[0];
-    hpr[1] = view_hpr[1];
-    hpr[2] = view_hpr[2];
-  }
 }
 
-
-void LookAt(GLfloat eyex,    GLfloat eyey,    GLfloat eyez,
-	        GLfloat centerx, GLfloat centery, GLfloat centerz,
-            GLfloat upx,     GLfloat upy,     GLfloat upz)
-{
-/*
-   GLfloat m[16];
-   GLfloat x[3], y[3], z[3];
-   float mag;
-
-   // Make rotation matrix //
-
-   // Z vector //
-   z[0] = eyex - centerx;
-   z[1] = eyey - centery;
-   z[2] = eyez - centerz;
-   mag = sqrt(z[0] * z[0] + z[1] * z[1] + z[2] * z[2]);
-   if (mag) {			// mpichler, 19950515 //
-      z[0] /= mag;
-      z[1] /= mag;
-      z[2] /= mag;
-   }
-
-   // Y vector //
-   y[0] = upx;
-   y[1] = upy;
-   y[2] = upz;
-
-   // X vector = Y cross Z //
-   x[0] = y[1] * z[2] - y[2] * z[1];
-   x[1] = -y[0] * z[2] + y[2] * z[0];
-   x[2] = y[0] * z[1] - y[1] * z[0];
-
-   // Recompute Y = Z cross X //
-   y[0] = z[1] * x[2] - z[2] * x[1];
-   y[1] = -z[0] * x[2] + z[2] * x[0];
-   y[2] = z[0] * x[1] - z[1] * x[0];
-
-   // mpichler, 19950515
-   // cross product gives area of parallelogram, which is < 1.0 for
-   // non-perpendicular unit-length vectors; so normalize x, y here
-
-   mag = sqrt(x[0] * x[0] + x[1] * x[1] + x[2] * x[2]);
-   if (mag) {
-      x[0] /= mag;
-      x[1] /= mag;
-      x[2] /= mag;
-   }
-
-   mag = sqrt(y[0] * y[0] + y[1] * y[1] + y[2] * y[2]);
-   if (mag) {
-      y[0] /= mag;
-      y[1] /= mag;
-      y[2] /= mag;
-   }
-
-#define M(row,col)  m[col*4+row]
-   M(0, 0) = x[0];
-   M(0, 1) = x[1];
-   M(0, 2) = x[2];
-   M(0, 3) = 0.0;
-   M(1, 0) = y[0];
-   M(1, 1) = y[1];
-   M(1, 2) = y[2];
-   M(1, 3) = 0.0;
-   M(2, 0) = z[0];
-   M(2, 1) = z[1];
-   M(2, 2) = z[2];
-   M(2, 3) = 0.0;
-   M(3, 0) = 0.0;
-   M(3, 1) = 0.0;
-   M(3, 2) = 0.0;
-   M(3, 3) = 1.0;
-#undef M
-   glMultMatrixf(m);
-
-   // Translate Eye to Origin //
-   glTranslatef(-eyex, -eyey, -eyez);
-*/
-}
 
 extern "C" void dsSetCameraLookAt(float eyex, float eyey, float eyez,
                                   float posx, float posy, float posz)
 {
-  //LookAt( posx,posy,posz, eyez,eyex,eyey, 0,0,1);
   gluLookAt( posx,posy,posz, eyez,eyex,eyey, 0,0,1);
-}
-
-extern "C" void dsSetTexture (int texture_number)
-{
-  if (current_state != 2) dsError ("drawing function called outside simulation loop");
-  tnum = texture_number;
 }
 
 
 extern "C" void dsSetColor (float red, float green, float blue)
 {
-  if (current_state != 2) dsError ("drawing function called outside simulation loop");
   color[0] = red;
   color[1] = green;
   color[2] = blue;
@@ -1265,7 +679,6 @@ extern "C" void dsSetColor (float red, float green, float blue)
 
 extern "C" void dsSetColorAlpha (float red, float green, float blue, float alpha)
 {
-  if (current_state != 2) dsError ("drawing function called outside simulation loop");
   color[0] = red;
   color[1] = green;
   color[2] = blue;
@@ -1275,165 +688,92 @@ extern "C" void dsSetColorAlpha (float red, float green, float blue, float alpha
 
 extern "C" void dsDrawBox (const float pos[3], const float R[12], const float sides[3])
 {
-  if (current_state != 2) dsError ("drawing function called outside simulation loop");
-  setupDrawingMode();
-  glShadeModel (GL_FLAT);
-  setTransform (pos,R);
-  drawBox (sides);
-  glPopMatrix();
-
-  if (use_shadows) {
-    setShadowDrawingMode();
-    setShadowTransform();
+  glPushMatrix();
     setTransform (pos,R);
+    glMultMatrixf (transform_matrix);
     drawBox (sides);
-    glPopMatrix();
-    glPopMatrix();
-    glDepthRange (0,1);
-  }
+  glPopMatrix();
 }
 
 
 extern "C" void dsDrawSphere (const float pos[3], const float R[12], float radius)
 {
-  if (current_state != 2) dsError ("drawing function called outside simulation loop");
-  setupDrawingMode();
   glEnable (GL_NORMALIZE);
-  glShadeModel (GL_SMOOTH);
-  setTransform (pos,R);
-  glScaled (radius,radius,radius);
-  drawSphere();
+  glPushMatrix();
+    setTransform (pos,R);
+    glMultMatrixf (transform_matrix);
+    glScaled (radius,radius,radius);
+    drawSphere();
   glPopMatrix();
   glDisable (GL_NORMALIZE);
-
-  // draw shadows
-  if (use_shadows) {
-    glDisable (GL_LIGHTING);
-    if (use_textures) {
-      ground_texture->bind (1);
-      glEnable (GL_TEXTURE_2D);
-      glDisable (GL_TEXTURE_GEN_S);
-      glDisable (GL_TEXTURE_GEN_T);
-      glColor3f (SHADOW_INTENSITY,SHADOW_INTENSITY,SHADOW_INTENSITY);
-    }
-    else {
-      glDisable (GL_TEXTURE_2D);
-      glColor3f (GROUND_R*SHADOW_INTENSITY,GROUND_G*SHADOW_INTENSITY,
-		 GROUND_B*SHADOW_INTENSITY);
-    }
-    glShadeModel (GL_FLAT);
-    glDepthRange (0,0.9999);
-    drawSphereShadow (pos[0],pos[1],pos[2],radius);
-    glDepthRange (0,1);
-  }
 }
 
 
 extern "C" void dsDrawTriangle (const float pos[3], const float R[12], const float *v0, const float *v1, const float *v2, int solid)
 {
-  if (current_state != 2) dsError ("drawing function called outside simulation loop");
-  setupDrawingMode();
-  glShadeModel (GL_FLAT);
-  setTransform (pos,R);
-  drawTriangle (v0, v1, v2, solid);
+  glPushMatrix();
+    setTransform (pos,R);
+    glMultMatrixf (transform_matrix);
+    drawTriangle (v0, v1, v2, solid);
   glPopMatrix();
 }
 
 void dsDrawCone(const float pos[3], const float R[12], float length, float radius)
 {
-
-	 if (current_state != 2) dsError ("drawing function called outside simulation loop");
-  setupDrawingMode();
-  glShadeModel (GL_SMOOTH);
-  setTransform (pos,R);
-  drawCone(length,radius,0);
-  glPopMatrix();
-
-  if (use_shadows) {
-    setShadowDrawingMode();
-    setShadowTransform();
+  glPushMatrix();
     setTransform (pos,R);
-    drawCone (length,radius,0);
-    glPopMatrix();
-    glPopMatrix();
-    glDepthRange (0,1);
-  }
+    glMultMatrixf (transform_matrix);
+    drawCone(length,radius,0);
+  glPopMatrix();
 }
 
 void dsDrawCylinder2 (const float pos[3], const float R[12], float length, float radius1,float radius2)
 {
-	 if (current_state != 2) dsError ("drawing function called outside simulation loop");
-  setupDrawingMode();
-  glShadeModel (GL_SMOOTH);
-  setTransform (pos,R);
-  drawCylinder2 (length,radius1,radius2,0);
-  glPopMatrix();
-
-  if (use_shadows) {
-    setShadowDrawingMode();
-    setShadowTransform();
+  glPushMatrix();
     setTransform (pos,R);
+    glMultMatrixf (transform_matrix);
     drawCylinder2 (length,radius1,radius2,0);
-    glPopMatrix();
-    glPopMatrix();
-    glDepthRange (0,1);
-  }
+  glPopMatrix();
 }
 
 
 extern "C" void dsDrawCylinder (const float pos[3], const float R[12], float length, float radius)
 {
-  if (current_state != 2) dsError ("drawing function called outside simulation loop");
-  setupDrawingMode();
-  glShadeModel (GL_SMOOTH);
-  setTransform (pos,R);
-  drawCylinder (length,radius,0);
-  glPopMatrix();
-
-  if (use_shadows) {
-    setShadowDrawingMode();
-    setShadowTransform();
+  glPushMatrix();
     setTransform (pos,R);
+    glMultMatrixf (transform_matrix);
     drawCylinder (length,radius,0);
-    glPopMatrix();
-    glPopMatrix();
-    glDepthRange (0,1);
-  }
+  glPopMatrix();
 }
 
 
 extern "C" void dsDrawCappedCylinder (const float pos[3], const float R[12], float length, float radius)
 {
-  if (current_state != 2) dsError ("drawing function called outside simulation loop");
-  setupDrawingMode();
-  glShadeModel (GL_SMOOTH);
-  setTransform (pos,R);
-  drawCappedCylinder (length,radius);
-  glPopMatrix();
-
-  if (use_shadows) {
-    setShadowDrawingMode();
-    setShadowTransform();
+  glPushMatrix();
     setTransform (pos,R);
+    glMultMatrixf (transform_matrix);
     drawCappedCylinder (length,radius);
-    glPopMatrix();
-    glPopMatrix();
-    glDepthRange (0,1);
-  }
+  glPopMatrix();
 }
 
 
 void dsDrawLine (const float pos1[3], const float pos2[3])
 {
-  setupDrawingMode();
-  glColor3f (color[0],color[1],color[2]);
+  bool change = glIsEnabled(GL_LIGHTING);
+  int old_shade_model;
+  glGetIntegerv(GL_SHADE_MODEL, &old_shade_model);
+
   glDisable (GL_LIGHTING);
+  glColor3f (color[0],color[1],color[2]);
   glLineWidth (2);
   glShadeModel (GL_FLAT);
   glBegin (GL_LINES);
-  glVertex3f (pos1[0],pos1[1],pos1[2]);
-  glVertex3f (pos2[0],pos2[1],pos2[2]);
+    glVertex3f (pos1[0],pos1[1],pos1[2]);
+    glVertex3f (pos2[0],pos2[1],pos2[2]);
   glEnd();
+
+  if (change) glEnable(GL_LIGHTING);
+  glShadeModel(old_shade_model);
 }
 
 

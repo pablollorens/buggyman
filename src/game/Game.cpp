@@ -28,7 +28,7 @@ SDLKey Game::Key_Action = SDLK_z;
 
 void Game::Run()
 {
-  // Init //
+  /// Init ///
   dsPrint("Initializing Game...\n");
 
   FunctionsInit();
@@ -39,12 +39,16 @@ void Game::Run()
   GroundInit();
   CarInit();
 
-  // Simulacion //
+  /// Simulacion ///
   dsPrint("Simulating...\n");
 
   dsSimulationLoop (0,0,width,height,fullScreen,&functions,&interfaces);
 
-  // End //
+  // printf debug info
+  printf("\tSim: %2.3f %c\n",100*(float)Engine::ticks_sim/Engine::ticks_total,'%');
+  printf("\tDraw: %2.3f %c\n",100*(float)Engine::ticks_draw/Engine::ticks_total,'%');
+
+  /// End ///
 
   CarDestroy();
   WorldDestroy();

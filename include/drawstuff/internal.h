@@ -40,12 +40,8 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen,
 void dsStartGraphics (int width, int height, dsFunctions *fn);
 void dsDrawFrame (dsFunctions *fn, int pause);
 void dsStopGraphics();
+
 void dsMotion (int mode, int deltax, int deltay);
 
-int dsGetShadows();
-void dsSetShadows (int a);
-
-int dsGetTextures();
-void dsSetTextures (int a);
 
 #endif

@@ -96,13 +96,13 @@ extern "C" void dsGLPrint(int x,int y,char *msg, ...)
 
     // Show the image on the screen //
     SDL_GL_Enter2DMode();
-    glBindTexture(GL_TEXTURE_2D, printf_texture);
-    glBegin(GL_TRIANGLE_STRIP);
-      glTexCoord2f(texMinX, texMinY); glVertex2i(x,   y  );
-      glTexCoord2f(texMaxX, texMinY); glVertex2i(x+w, y  );
-      glTexCoord2f(texMinX, texMaxY); glVertex2i(x,   y+h);
-      glTexCoord2f(texMaxX, texMaxY); glVertex2i(x+w, y+h);
-    glEnd();
+      glBindTexture(GL_TEXTURE_2D, printf_texture);
+      glBegin(GL_TRIANGLE_STRIP);
+        glTexCoord2f(texMinX, texMinY); glVertex2i(x,   y  );
+        glTexCoord2f(texMaxX, texMinY); glVertex2i(x+w, y  );
+        glTexCoord2f(texMinX, texMaxY); glVertex2i(x,   y+h);
+        glTexCoord2f(texMaxX, texMaxY); glVertex2i(x+w, y+h);
+      glEnd();
     SDL_GL_Leave2DMode();
 }
 
@@ -325,9 +325,15 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
 
     bool jugar = 0;
     Uint32 Starting = 5;
+    // tick's control
     Uint32 start_time = SDL_GetTicks();
     Uint32 this_time = 0;
 	int frames = 0;
+	// %events, %2D, %3D
+	Uint32 ticks_percent_ini;
+	Uint32 ticks_percent_events = 0;
+    Uint32 ticks_percent_2D = 0;
+	Uint32 ticks_percent_3D = 0;
 
     GLenum gl_error;
 	char* sdl_error;
@@ -340,25 +346,33 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
             jugar=1;
             Game::crono.Reset();
         }
-        if (jugar) Events(in);
+        if (jugar)
+        {
+            ticks_percent_ini = SDL_GetTicks();
+            Events(in);
+            ticks_percent_events += (SDL_GetTicks() - ticks_percent_ini);
+        }
 
         /// DRAW STARTS ///
 
         // clear screen 2D
         SDL_FillRect(screen, 0, SDL_MapRGB(screen->format, 0, 0, 0));
-
         // clear screen 3D
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
         // 3D
+        ticks_percent_ini = SDL_GetTicks();
         dsDrawFrame (fn, initial_pause);
+        ticks_percent_3D += SDL_GetTicks() - ticks_percent_ini;
 
         if (jugar)
             dsGLPrint(400,2,"Tiempo %2.2f ms",(float)Game::crono.getTime()/1000.0);
         else
             dsGLPrint(250,150,"%1.0f",(float)Starting-(Game::crono.getTime()/1000.0));
         // 2Do3D
-        dsGLPrint(2,2,"%2.2f FPS",((float)frames/(SDL_GetTicks()-start_time))*1000.0);
+        ticks_percent_ini = SDL_GetTicks();
+        dsGLPrint(5,5,"%2.2f FPS",((float)frames/(SDL_GetTicks()-start_time))*1000.0);
+        ticks_percent_2D += SDL_GetTicks() - ticks_percent_ini;
 
         /// DRAW ENDS ///
 
@@ -395,6 +409,10 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
 		printf("%2.2f FPS\n",
 			((float)frames/(this_time-start_time))*1000.0);
 	}
+    // Print debug info
+    printf("Events: %2.3f %c\n",100*(float)ticks_percent_events/(this_time-start_time),'%');
+    printf("  2D  : %2.3f %c\n",100*(float)ticks_percent_2D/(this_time-start_time),'%');
+    printf("  3D  : %2.3f %c\n",100*(float)ticks_percent_3D/(this_time-start_time),'%');
 
     TTF_CloseFont( font_Courier );
 
@@ -511,7 +529,7 @@ void SDL_GL_Enter2DMode()
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glEnable(GL_TEXTURE_2D);
-
+glPushAttrib(GL_SHADE_MODEL);
 	/* This allows alpha blending of 2D textures with the scene */
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
