@@ -529,7 +529,6 @@ void SDL_GL_Enter2DMode()
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glEnable(GL_TEXTURE_2D);
-glPushAttrib(GL_SHADE_MODEL);
 	/* This allows alpha blending of 2D textures with the scene */
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
