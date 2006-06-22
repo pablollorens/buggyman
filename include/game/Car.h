@@ -12,13 +12,13 @@ using namespace std;
 
 #define DENSITY (0.5)		// density of all objects
 
-#define LENGTH 1.6	// chassis length
+#define LENGTH 1.3	// chassis length
 #define WIDTH  0.5	// chassis width
-#define HEIGHT 0.5	// chassis height
-#define STARTZ 1.05	// starting height of chassis
+#define HEIGHT 0.3	// chassis height
+#define STARTZ 6.0	// starting height of chassis
 
-#define CMASS 120	// chassis mass
-#define WMASS 50     // wheel mass
+#define CMASS 20	// chassis mass
+#define WMASS 10    // wheel mass
 
 #define WHEELS 4
 #define RADIUS 0.2
@@ -26,9 +26,9 @@ using namespace std;
 
 //#define MAX_SPEED 18
 #define MIN_SPEED 10
-#define MAX_STEER 0.7
+#define MAX_STEER 0.2
 
-#define STEER_SENSIBILITY 0.05
+#define STEER_SENSIBILITY 0.03
 #define SPEED_ACCEL_SENSIBILITY 0.5
 #define SPEED_BREAK_SENSIBILITY 0.4
 
@@ -45,7 +45,7 @@ class Car {
     static void LoadTextures();
     static void Draw();
     static void Sim();
-    static void setPosCar(int x, int y);
+    static void setPosCar(int x, int y, int z);
 
     static dSpaceID Car_Space;
 

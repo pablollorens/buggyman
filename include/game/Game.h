@@ -6,6 +6,7 @@
 #include <drawstuff/drawstuff.h>
 
 #include <game/Engine.h>
+#include <game/Crono.h>
 
 #define GRAVITY -3.0
 
@@ -28,6 +29,7 @@ class Game {
     static void GroundInit();
 
     static Engine engine;
+    static Crono crono;
 
     /// CONFIGURATION
 

@@ -6,6 +6,7 @@
 
 dsFunctions Game::functions;
 dsInterfaces Game::interfaces;
+Crono Game::crono;
 
 Engine Game::engine;
 

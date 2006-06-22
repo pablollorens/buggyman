@@ -29,7 +29,7 @@ Model *Car::wheel_Model = NULL;												// Holds The Model Data
 //Model *Car::stuff2_Model = NULL;
 
 int Car::CheckpointList[1024];
-int Car::MAX_SPEED = 17;
+int Car::MAX_SPEED = 16;
 
 /// //////////////////////////////////////////////////////////////////////// ///
 /// CONSTRUCTOR
@@ -92,11 +92,10 @@ Car::Car(dWorldID world, dSpaceID space,int x1,int y1,int z1,int rotation)
   }
 
     // Para Desert apc
-    dBodySetPosition (Wheel_BodyID[0],(x1*7)+( 0.25*2.0),(y1*7)+0.35,0.81);
-    dBodySetPosition (Wheel_BodyID[1],(x1*7)+( 0.25*2.0),(y1*7)-0.35,0.81);
-    dBodySetPosition (Wheel_BodyID[2],(x1*7)+(-0.25*1.7),(y1*7)+0.35,0.81);
-    dBodySetPosition (Wheel_BodyID[3],(x1*7)+(-0.25*1.7),(y1*7)-0.35,0.81);
-
+    dBodySetPosition (Wheel_BodyID[0],(x1*7)+( 0.25*2.0),(y1*7)+0.35,STARTZ-0.2);
+    dBodySetPosition (Wheel_BodyID[1],(x1*7)+( 0.25*2.0),(y1*7)-0.35,STARTZ-0.2);
+    dBodySetPosition (Wheel_BodyID[2],(x1*7)+(-0.25*1.7),(y1*7)+0.35,STARTZ-0.2);
+    dBodySetPosition (Wheel_BodyID[3],(x1*7)+(-0.25*1.7),(y1*7)-0.35,STARTZ-0.2);
     // Para golgotha
 //    dBodySetPosition (Wheel_BodyID[0], 0.25*2.0, 0.45,0.81);
 //    dBodySetPosition (Wheel_BodyID[1], 0.25*2.0,-0.45,0.81);
@@ -175,13 +174,13 @@ Car::Car(dWorldID world, dSpaceID space,int x1,int y1,int z1,int rotation)
 
 }
 
-void Car::setPosCar(int i, int j)
+void Car::setPosCar(int i, int j, int z)
 {
     dBodySetPosition (Chassis_BodyID,i*7,j*7,STARTZ);
-    dBodySetPosition (Wheel_BodyID[0],(i*7)+( 0.25*2.0),(j*7)+0.35,0.81);
-    dBodySetPosition (Wheel_BodyID[1],(i*7)+( 0.25*2.0),(j*7)-0.35,0.81);
-    dBodySetPosition (Wheel_BodyID[2],(i*7)+(-0.25*1.7),(j*7)+0.35,0.81);
-    dBodySetPosition (Wheel_BodyID[3],(i*7)+(-0.25*1.7),(j*7)-0.35,0.81);
+    dBodySetPosition (Wheel_BodyID[0],(i*7)+( 0.25*2.0),(j*7)+0.35,z-0.2);
+    dBodySetPosition (Wheel_BodyID[1],(i*7)+( 0.25*2.0),(j*7)-0.35,z-0.2);
+    dBodySetPosition (Wheel_BodyID[2],(i*7)+(-0.25*1.7),(j*7)+0.35,z-0.2);
+    dBodySetPosition (Wheel_BodyID[3],(i*7)+(-0.25*1.7),(j*7)-0.35,z-0.2);
 }
 
 /// //////////////////////////////////////////////////////////////////////// ///
@@ -219,19 +218,19 @@ void Car::Draw()
 //    stuff2_Model->draw( dBodyGetPosition(Stuff_BodyID[3]), dBodyGetRotation(Stuff_BodyID[3]) );
 
   // transparent geoms //
-//
+
 //    dsSetColorAlpha (1,0,0,0.5);
 //    dReal sides1[3] = {0.4,0.3,0.2};
 //    dsDrawBox ( dBodyGetPosition(Stuff_BodyID[0]), dBodyGetRotation(Stuff_BodyID[0]), sides1);
 //    dsDrawBox ( dBodyGetPosition(Stuff_BodyID[1]), dBodyGetRotation(Stuff_BodyID[1]), sides1);
 //    dsDrawBox ( dBodyGetPosition(Stuff_BodyID[2]), dBodyGetRotation(Stuff_BodyID[2]), sides1);
 //    dsDrawBox ( dBodyGetPosition(Stuff_BodyID[3]), dBodyGetRotation(Stuff_BodyID[3]), sides1);
-//
-//    dsSetColorAlpha (0,1,0,0.5);
-//    dReal sides2[3] = {LENGTH,WIDTH,HEIGHT};
-//    dsDrawBox ( dBodyGetPosition(Chassis_BodyID), dBodyGetRotation(Chassis_BodyID), sides2);
-//
-//    dsSetColorAlpha (0,0,1,0.5);
+
+    dsSetColorAlpha (0,0,0,0.4);
+    dReal sides2[3] = {LENGTH,WIDTH,HEIGHT};
+    dsDrawBox ( dBodyGetPosition(Chassis_BodyID), dBodyGetRotation(Chassis_BodyID), sides2);
+
+    //dsSetColorAlpha (0,0,1,0.5);
 }
 }
 
@@ -291,7 +290,7 @@ void Car::DoAction(int action)
        dBodySetForce(Chassis_BodyID,0.0,0,10);
        break;
      case 2:
-       //Car::PreDraw();
+       setPosCar(3,3,5);
        break;
      case 3:
        speed = 0;

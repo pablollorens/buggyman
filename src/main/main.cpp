@@ -78,8 +78,7 @@ int main ( int argc, char** argv )
                     event.button.y < MENU_NEW_GAME_Y + MENU_NEW_GAME_H)
                 {
                     SDL_Quit();
-                    //Game::SetResolution(320,240);
-                    Game::SetResolution(800,600);
+                    Game::SetResolution(640,480);
                     Game::SetFullScreen(false);
                     Game::Run();
 

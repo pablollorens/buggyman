@@ -3,6 +3,7 @@
 #include <SDL/SDL_ttf.h>
 #include <ode/config.h>
 #include <GL/gl.h>
+#include <game\Game.h>
 
 #include "drawstuff/internal.h"
 
@@ -68,7 +69,7 @@ extern "C" void dsGLPrint(int x,int y,char *msg, ...)
 
 
   SDL_Color clrFg = {0,0,255,0};  // Blue ("Fg" is foreground)
-  SDL_Surface *sText = TTF_RenderText_Solid( font_Courier, text, clrFg );
+  SDL_Surface *sText = TTF_RenderText_Blended( font_Courier, text, clrFg );
   SDL_Rect rcDest = {0,0,0,250};
   SDL_BlitSurface( sText,NULL, screen,&rcDest );
 
@@ -214,6 +215,9 @@ void EventsKeys(SDL_Event event, dsInterfaces *interfaces)
     if (event.key.keysym.sym == interfaces->Action
                && event.type == SDL_KEYDOWN)
         interfaces->DoAction(1);
+    else
+    if (event.key.keysym.sym == SDLK_g)
+      interfaces->DoAction(2);
 }
 
 void EventsMouse(SDL_Event event)
@@ -299,7 +303,7 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
 
     // TTF Fonts
     TTF_Init();
-    font_Courier = TTF_OpenFont( "Fonts\\cour.ttf", 26 );
+    font_Courier = TTF_OpenFont( "Fonts\\lucida.ttf", 26 );
 
     // create a new window
     screen = SDL_SetVideoMode(window_width, window_height, 32, video_mode);
@@ -316,6 +320,11 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
 
     /// PROGRAM MAIN LOOP ///
 
+    // Inicializamos cronometro
+    Game::crono.Start();
+
+    bool jugar = 0;
+    Uint32 Starting = 5;
     Uint32 start_time = SDL_GetTicks();
     Uint32 this_time = 0;
 	int frames = 0;
@@ -325,8 +334,13 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
 
     while (!done)
     {
-        /// EVENTS ///
-        Events(in);
+        // Message events
+        if (!jugar && (Starting-(Game::crono.getTime()/1000.0)<=0))
+        {
+            jugar=1;
+            Game::crono.Reset();
+        }
+        if (jugar) Events(in);
 
         /// DRAW STARTS ///
 
@@ -339,6 +353,10 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
         // 3D
         dsDrawFrame (fn, initial_pause);
 
+        if (jugar)
+            dsGLPrint(400,2,"Tiempo %2.2f ms",(float)Game::crono.getTime()/1000.0);
+        else
+            dsGLPrint(250,150,"%1.0f",(float)Starting-(Game::crono.getTime()/1000.0));
         // 2Do3D
         dsGLPrint(2,2,"%2.2f FPS",((float)frames/(SDL_GetTicks()-start_time))*1000.0);
 
