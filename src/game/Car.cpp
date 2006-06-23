@@ -210,9 +210,11 @@ Car::Car(dWorldID world, dSpaceID space,int x1,int y1,int z1,int rotation)
   camera_box = dCreateBox (0,0.1,0.1,0.1);
   camera_view_box = dCreateBox (0,0.1,0.1,0.1);
   dGeomSetPosition(camera_box,x1*7,y1*7,dBodyGetPosition(Chassis_BodyID)[2]+0.2);
-  dGeomSetPosition(camera_view_box,(x1*7)+incrX,(y1*7)+incrY,dBodyGetPosition(Chassis_BodyID)[2]+0.2);
+//  const dReal * car_followerX = dBodyGetPosition(Wheel_BodyID[0])
+//  dReal car_followerX = dBodyGet
+//  dGeomSetPosition(camera_view_box,(x1*7)+incrX,(y1*7)+incrY,dBodyGetPosition(Chassis_BodyID)[2]+0.2);
   dSpaceAdd (Car_Space, camera_box);
-  dSpaceAdd (Car_Space, camera_view_box);
+//  dSpaceAdd (Car_Space, camera_view_box);
 }
 
 void Car::setPosCar(int i, int j, int z, int rotation)
@@ -279,7 +281,7 @@ void Car::Draw()
     wheel_Model->draw(2,dBodyGetPosition(Wheel_BodyID[3]), dBodyGetRotation(Wheel_BodyID[3]));
 
   // car stuff //
-
+{
 //    stuff1_Model->draw( dBodyGetPosition(Stuff_BodyID[0]), dBodyGetRotation(Stuff_BodyID[0]) );
 //    stuff1_Model->draw( dBodyGetPosition(Stuff_BodyID[2]), dBodyGetRotation(Stuff_BodyID[2]) );
 //    stuff2_Model->draw( dBodyGetPosition(Stuff_BodyID[1]), dBodyGetRotation(Stuff_BodyID[1]) );
@@ -294,7 +296,7 @@ void Car::Draw()
 //    dsDrawBox ( dBodyGetPosition(Stuff_BodyID[2]), dBodyGetRotation(Stuff_BodyID[2]), sides1);
 //    dsDrawBox ( dBodyGetPosition(Stuff_BodyID[3]), dBodyGetRotation(Stuff_BodyID[3]), sides1);
 
-//    dsSetColorAlpha (0, 0, 1, 0.5);
+//    dsSetColorAlpha (0,0,0,0.4);
 //    dReal sides2[3] = {LENGTH,WIDTH,HEIGHT};
 //    dsDrawBox ( dBodyGetPosition(Chassis_BodyID), dBodyGetRotation(Chassis_BodyID), sides2);
 
