@@ -1,0 +1,62 @@
+
+ ** Impresión básica **
+
+
+	void dsPrint (char *msg, ...);
+
+		// Imprime información en STDOUT.txt
+
+
+	void dsError (char *msg, ...);
+
+		// Imprime errores en STDERR.txt
+
+
+	void dsPanic (char *msg, ...);
+
+		// Imprime el error en STDERR.txt y finaliza la ejecución
+
+
+
+ ** Impresión por pantalla OpenGL **
+
+
+
+	void dsGLPrint (float x, float y, char *msg, ...);
+
+		// Imprime el mensaje por pantalla en la posicion relativa (X,Y)
+
+
+	void dsGLPrintSurface (SDL_Surface *sTexture, SDL_Surface *sMask, float percent_x, float percent_y);
+
+		// Imprime la surface "sTexture" aplicandole la mascara "sMask" en la posicion relativa (X,Y)
+		// la máscara debe ser NEGRA (el BLANCO será recortado)
+
+
+	void dsScreenPrint (SDL_Surface *sTexture, SDL_Surface *sMask, int x, int y);
+
+		// Imprime la surface "sTexture" aplicandole la mascara "sMask" en la posicion absoluta (X,Y)
+		// Utilizada internamente por "dsGLPrintSurface"
+
+
+	void dsSetGLPrintColor (int r, int g, int b);
+
+		// Cambia el color de la fuente para "dsGLPrint"
+
+
+
+   ** IMPORTANTE **
+
+
+		- Para las X e Y relativas:
+
+			// son % -> [0..1]
+			// ( 0.0, 0.0 ) => esquina superior izquierda
+
+		- Si se aplica el valor "2" en X ó Y => AUTO-CENTRADO
+
+			// ( 2, 0.4)  ->  centrado en X, coordenada Y al 40% de la pantalla
+
+			// ( 0.3, 2)  ->  X al 30% de la pantalla, Y centrada
+
+			// ( 2, 2)    ->  Centrado perfecto en pantalla

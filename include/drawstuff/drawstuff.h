@@ -55,10 +55,6 @@ extern "C" {
 #include <GL/glu.h>
 #include <GL/glut.h>
 
-/* texture numbers */
-#define DS_NONE   0	/* uses the current color instead of a texture */
-#define DS_WOOD   1
-
 typedef struct dsInterfaces {
   // car functions
   void (*SpeedIncrease)(int);
@@ -103,7 +99,12 @@ void dsSimulationLoop (int argc, char **argv,
 void dsPrint (char *msg, ...);
 void dsError (char *msg, ...);
 void dsPanic (char *msg, ...);
-void dsGLPrint (int,int,char *msg, ...);
+
+void dsGLPrint (float x, float y, char *msg, ...);
+void dsGLPrintSurface(SDL_Surface *sTexture, SDL_Surface *sMask, float percent_x, float percent_y);
+
+void dsScreenPrint(SDL_Surface *sTexture, SDL_Surface *sMask, int x, int y);
+
 void dsSetGLPrintColor(int r, int g, int b);
 
 /// FUNCTIONS FOR THE EXTERN CONTROL

@@ -7,6 +7,8 @@
 
 #include "drawstuff/internal.h"
 
+#define CENTER 2.0f   //for Print
+
 /// //////////////////////////////////////////////////////////////////////// ///
 /// GLOBAL VARIABLES
 
@@ -32,7 +34,6 @@ void Events(struct dsInterfaces *interfaces);
 void EventsKeys(SDL_Event event, struct dsInterfaces *interfaces);
 void EventsMouse(SDL_Event event);
 
-void dsScreenPrint(SDL_Surface *sTexture, SDL_Surface *sMask, int x, int y);
 GLuint SDL_GL_LoadTexture(SDL_Surface *surface, GLfloat *texcoord);
 static int power_of_two(int input);
 void SDL_GL_Enter2DMode();
@@ -64,7 +65,16 @@ extern "C" void dsPanic (char *msg, ...)
   exit (1);
 }
 
-extern "C" void dsGLPrint(int x,int y,char *msg, ...)
+
+extern "C" void dsSetGLPrintColor(int r, int g, int b)
+{
+    FontColor.r = r;
+    FontColor.g = g;
+    FontColor.b = b;
+}
+
+
+extern "C" void dsGLPrint(float x, float y, char *msg, ...)
 {
     // formatting the message string
     va_list ap;
@@ -82,7 +92,7 @@ extern "C" void dsGLPrint(int x,int y,char *msg, ...)
     SDL_Surface *sMask = TTF_RenderText_Blended( font_Courier, text, clrFgMask );
     SDL_BlitSurface( sMask, NULL, screen, &rcDest );
 
-    dsScreenPrint(sText,sMask,x,y);
+    dsGLPrintSurface(sText,sMask,x,y);
 
     // free the surfaces
     SDL_FreeSurface( sText );
@@ -90,15 +100,22 @@ extern "C" void dsGLPrint(int x,int y,char *msg, ...)
 }
 
 
-void dsSetGLPrintColor(int r, int g, int b)
+extern "C" void dsGLPrintSurface(SDL_Surface *sTexture, SDL_Surface *sMask, float percent_x, float percent_y)
 {
-    FontColor.r = r;
-    FontColor.g = g;
-    FontColor.b = b;
+    int x,y;
+    SDL_Surface *screen = SDL_GetVideoSurface();
+
+    if (percent_x != CENTER)        x = (int) (screen->w * percent_x);
+    else                            x = (int)((screen->w * 0.5) - (sTexture->w * 0.5));
+
+    if (percent_y != CENTER)        y = (int) (screen->h * percent_y);
+    else                            y = (int)((screen->h * 0.5) - (sTexture->h * 0.5));
+
+    dsScreenPrint(sTexture, sMask, x, y);
 }
 
 
-void dsScreenPrint(SDL_Surface *sTexture, SDL_Surface *sMask, int x, int y)
+extern "C" void dsScreenPrint(SDL_Surface *sTexture, SDL_Surface *sMask, int x, int y)
 {
     // Free old message textures memory
     GL_DeleteTextures();
@@ -122,6 +139,8 @@ void dsScreenPrint(SDL_Surface *sTexture, SDL_Surface *sMask, int x, int y)
 
     int w = sTexture->w;
     int h = sTexture->h;
+
+    SDL_Surface *screen = SDL_GetVideoSurface();
 
     SDL_GL_Enter2DMode();
 
@@ -216,23 +235,30 @@ void EventsKeys(SDL_Event event, dsInterfaces *interfaces)
     switch (event.key.keysym.sym)
     {
         case SDLK_ESCAPE:
+        {
             done = true;
             break;
+        }
         case SDLK_1:
+        {
             interfaces->SetView(0);
             break;
+        }
         case SDLK_2:
+        {
             interfaces->SetView(1);
             break;
+        }
         case SDLK_3:
+        {
             interfaces->SetView(2);
             break;
+        }
         case SDLK_4:
+        {
             interfaces->SetView(3);
             break;
-        case SDLK_5:
-            interfaces->SetView(4);
-            break;
+        }
     }
 
     // NON CONST
@@ -262,7 +288,7 @@ void EventsKeys(SDL_Event event, dsInterfaces *interfaces)
     // actions
 
     if (event.key.keysym.sym == interfaces->Break)
-        interfaces->DoAction(3);
+      interfaces->DoAction(3);
     else
     if (event.key.keysym.sym == interfaces->Action
                && event.type == SDL_KEYDOWN)
@@ -270,7 +296,7 @@ void EventsKeys(SDL_Event event, dsInterfaces *interfaces)
     else
     if (event.key.keysym.sym == SDLK_r
                 && event.type == SDL_KEYDOWN)
-        interfaces->DoAction(2);
+      interfaces->DoAction(2);
 }
 
 void EventsMouse(SDL_Event event)
@@ -429,24 +455,24 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
                     Game::crono.Stop();
                     cronometro = 1;
                 }
-                dsGLPrint(200,150,"HAS TERMINADO!!");
-                dsGLPrint(200,100,"Tiempo: %2.2f sg",(float)Game::crono.getFinal()/1000.0);
+                dsGLPrint(CENTER,0.4,"HAS TERMINADO!!");
+                dsGLPrint(CENTER,0.6,"Tiempo: %2.2f sg",(float)Game::crono.getFinal()/1000.0);
             }
             else{
                 record = (float)(SDL_GetTicks()-Game::crono.getInicial())/1000.0;
-                dsGLPrint(400,2,"Tiempo %2.2f sg",record);
-                if (record <= 1.0 && countdown == 0) dsGLPrint(265,100,"AHORA!!");
+                dsGLPrint(CENTER,0.45,"Tiempo %2.2f sg",record);
+                if (record <= 1.0 && countdown == 0) dsGLPrint(CENTER,0.55,"AHORA!!");
             }
         }
         else
         {   //Cuenta atras inicial
-            dsGLPrint(270,100,"%d",countdown);
+            dsGLPrint(0.5,0.5,"%d",countdown);
             acabado = 0;
         }
 
         ticks_percent_ini = SDL_GetTicks();
         dsSetGLPrintColor(0,128,255);
-        dsGLPrint(5,5,"%2.2f FPS",((float)frames/(SDL_GetTicks()-start_time))*1000.0);
+        dsGLPrint(0.001,0.001,"%2.2f FPS",((float)frames/(SDL_GetTicks()-start_time))*1000.0);
         ticks_percent_2D += SDL_GetTicks() - ticks_percent_ini;
 
         /// DRAW ENDS ///

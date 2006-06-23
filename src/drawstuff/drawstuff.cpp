@@ -238,11 +238,8 @@ static void drawPatch (float p1[3], float p2[3], float p3[3], int level)
   }
 }
 
-
 // draw a sphere of radius 1
-
 static int sphere_quality = 1;
-
 static void drawSphere()
 {
   // icosahedron data for an icosahedron of radius 1.0
@@ -314,7 +311,6 @@ static void drawTriangle (const float *v0, const float *v1, const float *v2, int
 }
 
 // draw a capped cylinder of length l and radius r, aligned along the x axis
-
 static int capped_cylinder_quality = 3;
 
 static void drawCappedCylinder (float l, float r)
@@ -406,7 +402,6 @@ static void drawCappedCylinder (float l, float r)
 }
 
 // draw a cylinder of length l and radius r, aligned along the z axis
-
 static void drawCylinder2 (float l, float radius1, float radius2,float zoffset)
 {
   int i;
@@ -480,10 +475,7 @@ static void drawCone(float l, float r, float zoffset)
 	drawCylinder2(l,0,r,zoffset);
 }
 
-
-
 // draw a cylinder of length l and radius r, aligned along the z axis
-
 static void drawCylinder (float l, float r, float zoffset)
 {
 	drawCylinder2(l,r,r,zoffset);
@@ -496,7 +488,6 @@ static void drawCylinder (float l, float r, float zoffset)
 // current camera position and orientation
 static float view_xyz[3];	// position x,y,z
 static float view_hpr[3];	// position x,y,z
-
 
 static void wrapCameraAngles()
 {
@@ -533,7 +524,6 @@ void dsMotion (int mode, int deltax, int deltay)
 //***************************************************************************
 // drawing loop stuff
 
-// inicializa las texturas
 void dsStartGraphics (int width, int height, dsFunctions *fn)
 {
   // setup viewport
