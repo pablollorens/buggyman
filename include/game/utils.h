@@ -1,3 +1,8 @@
+///INCLUDES
+
+#include <SDL/SDL.h>
+
+
 ///Defines de Ground
 
 #define X 10 // Tamaño X del terreno

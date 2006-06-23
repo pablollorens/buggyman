@@ -105,6 +105,17 @@ void dsError (char *msg, ...);
 void dsPanic (char *msg, ...);
 void dsGLPrint (int,int,char *msg, ...);
 
+/// FUNCTIONS FOR THE EXTERN CONTROL
+void setAcabado(int);
+int getAcabado();
+void setJugando(int);
+int getJugando();
+void setCronometro(int);
+int getCronometro();
+void resetTempo();
+float getRecord();
+void resetRecord();
+
 /* set and get the camera position. xyz is the cameria position (x,y,z).
  * hpr contains heading, pitch and roll numbers in degrees. heading=0
  * points along the x axis, pitch=0 is looking towards the horizon, and

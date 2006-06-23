@@ -1,5 +1,6 @@
 
 #include <game/Engine.h>
+#include <drawstuff/drawstuff.h>
 
 /// //////////////////////////////////////////////////////////////////////// ///
 /// STATICS MEMBERS DEFINITION
@@ -62,7 +63,8 @@ void Engine::SimLoop (int pause)
         switch(Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].num_modelo)
         {
             case RAMP_B: Car::MAX_SPEED = 50; break;
-            case STRAIGHT: Car::MAX_SPEED = 200; break;
+            //case STRAIGHT: Car::MAX_SPEED = 200; break;
+            case CROSS: setAcabado(1); break;
             default: if (Car::MAX_SPEED>15) Car::MAX_SPEED--; break;
         }
 
@@ -94,7 +96,7 @@ void Engine::SimLoop (int pause)
     Car::Draw();
 
     // importante escribir al final de los draw
-    dsGLPrint(100,100,"%d",Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].num_modelo);
+    //dsGLPrint(100,100,"%d",Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].num_modelo);
 
     /// DEBUG INFO
     Uint32 ticks_end = SDL_GetTicks();

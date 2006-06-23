@@ -12,6 +12,11 @@
 
 extern SDL_Surface *screen;
 TTF_Font *font_Courier;
+int acabado = 0;
+int cronometro = 0;
+int jugando = 0;
+Uint32 tempo = 0;
+float record = 0;
 
 bool done = false;          // variable global, finaliza el MAIN LOOP
 
@@ -53,7 +58,6 @@ extern "C" void dsPanic (char *msg, ...)
   vfprintf (stderr,msg,ap);
   exit (1);
 }
-
 
 extern "C" void dsGLPrint(int x,int y,char *msg, ...)
 {
@@ -105,6 +109,21 @@ extern "C" void dsGLPrint(int x,int y,char *msg, ...)
       glEnd();
     SDL_GL_Leave2DMode();
 }
+
+/// FUNCTIONS FOR THE EXTERN CONTROL
+extern "C" void setAcabado(int var){acabado = var; }
+extern "C" int getAcabado(){return( acabado ); }
+
+extern "C" void setJugando(int var){jugando = var; }
+extern "C" int getJugando(){return( jugando ); }
+
+extern "C" void setCronometro(int var){cronometro = var; }
+extern "C" int getCronometro(){return( cronometro ); }
+
+extern "C" void resetTempo(){tempo = SDL_GetTicks(); }
+
+extern "C" float getRecord(){ return( record ); }
+extern "C" void resetRecord(){ record = 0; }
 
 /// //////////////////////////////////////////////////////////////////////// ///
 /// EVENTS MANAGEMENT
@@ -216,7 +235,8 @@ void EventsKeys(SDL_Event event, dsInterfaces *interfaces)
                && event.type == SDL_KEYDOWN)
         interfaces->DoAction(1);
     else
-    if (event.key.keysym.sym == SDLK_g)
+    if (event.key.keysym.sym == SDLK_r
+                && event.type == SDL_KEYDOWN)
       interfaces->DoAction(2);
 }
 
@@ -320,11 +340,8 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
 
     /// PROGRAM MAIN LOOP ///
 
-    // Inicializamos cronometro
-    Game::crono.Start();
-
-    bool jugar = 0;
-    Uint32 Starting = 5;
+    bool terminado = 0;
+    Uint32 starting = 5;
     // tick's control
     Uint32 start_time = SDL_GetTicks();
     Uint32 this_time = 0;
@@ -337,16 +354,18 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
 
     GLenum gl_error;
 	char* sdl_error;
+	int countdown = 0;
 
     while (!done)
     {
         // Message events
-        if (!jugar && (Starting-(Game::crono.getTime()/1000.0)<=0))
+        countdown = (int)(starting-((SDL_GetTicks()-tempo)/1000.0));
+        if (!jugando && (countdown<=0))
         {
-            jugar=1;
-            Game::crono.Reset();
+            jugando=1;
+            Game::crono.Start();
         }
-        if (jugar)
+        if (jugando)
         {
             ticks_percent_ini = SDL_GetTicks();
             Events(in);
@@ -365,10 +384,32 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
         dsDrawFrame (fn, initial_pause);
         ticks_percent_3D += SDL_GetTicks() - ticks_percent_ini;
 
-        if (jugar)
-            dsGLPrint(400,2,"Tiempo %2.2f ms",(float)Game::crono.getTime()/1000.0);
+        /// CRONOMETRO Y CONTROLADOR DE CARRERA
+        //si estamos jugando
+        if (jugando)
+        {
+            if (acabado) // si hemos acabado la carrera
+            {
+                if (!cronometro) // variable para parar el cronometro (solo una vez)
+                {
+                    Game::crono.Stop();
+                    cronometro = 1;
+                }
+                dsGLPrint(200,150,"HAS TERMINADO!!");
+                dsGLPrint(200,100,"Tiempo: %2.2f sg",(float)Game::crono.getFinal()/1000.0);
+            }
+            else{
+                record = (float)(SDL_GetTicks()-Game::crono.getInicial())/1000.0;
+                dsGLPrint(400,2,"Tiempo %2.2f sg",record);
+                if (record <= 1.0 && countdown == 0) dsGLPrint(265,100,"AHORA!!");
+            }
+        }
         else
-            dsGLPrint(250,150,"%1.0f",(float)Starting-(Game::crono.getTime()/1000.0));
+        {   //Cuenta atras inicial
+            dsGLPrint(270,100,"%d",countdown);
+            acabado = 0;
+        }
+
         // 2Do3D
         ticks_percent_ini = SDL_GetTicks();
         dsGLPrint(5,5,"%2.2f FPS",((float)frames/(SDL_GetTicks()-start_time))*1000.0);

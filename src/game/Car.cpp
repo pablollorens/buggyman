@@ -10,6 +10,8 @@ dSpaceID Car::Car_Space;
 dBodyID Car::Chassis_BodyID;
 dGeomID Car::Chassis_GeomID;
 
+dGeomID Car::platform;
+
 dBodyID Car::Wheel_BodyID[WHEELS];
 dGeomID Car::Wheel_GeomID[WHEELS];
 dJointID Car::Wheel_JointID[WHEELS];
@@ -58,6 +60,11 @@ Car::Car(dWorldID world, dSpaceID space,int x1,int y1,int z1,int rotation)
     dsPanic("Couldn't load the model wheel.ms3d");
   // salimos al directorio raiz
   chdir(ruta.c_str());
+
+  /// INITIAL PLATFORM
+  platform = dCreateBox (0,6,6,1);
+  dGeomSetPosition(platform,x1*7,y1*7,STARTZ-3);
+  dSpaceAdd(space,platform);
 
   /// CHASSIS
   Chassis_BodyID = dBodyCreate (world);
@@ -172,15 +179,37 @@ Car::Car(dWorldID world, dSpaceID space,int x1,int y1,int z1,int rotation)
     //dSpaceAdd (Car_Space, Stuff_GeomID[i]);
   }
 
+  dMatrix3 R;
+  if (rotation==180) dRFromAxisAndAngle(R,0,0,1,+M_PI);
+  if (rotation==270)  dRFromAxisAndAngle(R,0,0,1,+(3*M_PI)/2);
+  if (rotation==0)  dRFromAxisAndAngle(R,0,0,1,0);
+  if (rotation==90)  dRFromAxisAndAngle(R,0,0,1,+M_PI/2);
+  dBodySetRotation(Chassis_BodyID,R);
 }
 
-void Car::setPosCar(int i, int j, int z)
+void Car::setPosCar(int i, int j, int z, int rotation)
 {
-    dBodySetPosition (Chassis_BodyID,i*7,j*7,STARTZ);
+    i=X-1-i;
+
+    // Ponemos la variable z temporalmente al valor de STARTZ
+    z = (int)STARTZ;
+    dGeomSetPosition (platform,i*7,j*7,z-3);
+
+    dBodySetPosition (Chassis_BodyID,i*7,j*7,z);
+
     dBodySetPosition (Wheel_BodyID[0],(i*7)+( 0.25*2.0),(j*7)+0.35,z-0.2);
     dBodySetPosition (Wheel_BodyID[1],(i*7)+( 0.25*2.0),(j*7)-0.35,z-0.2);
     dBodySetPosition (Wheel_BodyID[2],(i*7)+(-0.25*1.7),(j*7)+0.35,z-0.2);
     dBodySetPosition (Wheel_BodyID[3],(i*7)+(-0.25*1.7),(j*7)-0.35,z-0.2);
+
+    dMatrix3 R;
+    if (rotation==180) dRFromAxisAndAngle(R,0,0,1,+M_PI);
+    if (rotation==270)  dRFromAxisAndAngle(R,0,0,1,+(3*M_PI)/2);
+    if (rotation==0)  dRFromAxisAndAngle(R,0,0,1,0);
+    if (rotation==90)  dRFromAxisAndAngle(R,0,0,1,+M_PI/2);
+    dBodySetRotation(Chassis_BodyID,R);
+
+
 }
 
 /// //////////////////////////////////////////////////////////////////////// ///
@@ -226,9 +255,13 @@ void Car::Draw()
 //    dsDrawBox ( dBodyGetPosition(Stuff_BodyID[2]), dBodyGetRotation(Stuff_BodyID[2]), sides1);
 //    dsDrawBox ( dBodyGetPosition(Stuff_BodyID[3]), dBodyGetRotation(Stuff_BodyID[3]), sides1);
 
-    dsSetColorAlpha (0,0,0,0.4);
-    dReal sides2[3] = {LENGTH,WIDTH,HEIGHT};
-    dsDrawBox ( dBodyGetPosition(Chassis_BodyID), dBodyGetRotation(Chassis_BodyID), sides2);
+//    dsSetColorAlpha (0,0,0,0.4);
+//    dReal sides2[3] = {LENGTH,WIDTH,HEIGHT};
+//    dsDrawBox ( dBodyGetPosition(Chassis_BodyID), dBodyGetRotation(Chassis_BodyID), sides2);
+
+    dsSetColorAlpha (0,1,0,0.5);
+    dReal sides3[3] = {6,6,1};
+    dsDrawBox( dGeomGetPosition(platform),dGeomGetRotation(platform),sides3);
 
     //dsSetColorAlpha (0,0,1,0.5);
 }
@@ -290,7 +323,14 @@ void Car::DoAction(int action)
        dBodySetForce(Chassis_BodyID,0.0,0,10);
        break;
      case 2:
-       setPosCar(3,3,5);
+       // Tecla "R" = reiniciar partida
+       speed = 0;           // Paramos el coche
+       steer = 0;           // Ponemos las ruedas rectas
+       setPosCar(1,1,0,90); // Nos movemos al principio
+       setJugando(0);       // Volvemos a jugar
+       setCronometro(0);    // Pararemos el cronometro al final
+       resetTempo();        // Reseteamos la cuenta atras
+       resetRecord();       // Reseteamos el record
        break;
      case 3:
        speed = 0;

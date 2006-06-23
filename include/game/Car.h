@@ -15,7 +15,7 @@ using namespace std;
 #define LENGTH 1.3	// chassis length
 #define WIDTH  0.5	// chassis width
 #define HEIGHT 0.3	// chassis height
-#define STARTZ 6.0	// starting height of chassis
+#define STARTZ 3.0	// starting height of chassis
 
 #define CMASS 20	// chassis mass
 #define WMASS 10    // wheel mass
@@ -45,12 +45,14 @@ class Car {
     static void LoadTextures();
     static void Draw();
     static void Sim();
-    static void setPosCar(int x, int y, int z);
+    static void setPosCar(int x, int y, int z, int rotation);
 
     static dSpaceID Car_Space;
 
     static dBodyID Chassis_BodyID;
     static dGeomID Chassis_GeomID;
+
+    static dGeomID platform;
 
     static dBodyID Wheel_BodyID[WHEELS];
     static dGeomID Wheel_GeomID[WHEELS];   // wheels
