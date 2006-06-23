@@ -12,7 +12,6 @@ VISUALES Y SONOROS
 	- Estado del cronometro.
 	- (?) Numero de vueltas.
 
- - Aplicar texturas con mascara (esto es para el hito final (?)) 
  - Texturizado de pistas en general
  - Musica y efectos de sonido
  - Logo
@@ -22,13 +21,11 @@ JUGABILIDAD
   - Implementar el concepto de checkpoint y reglas.
   - Mejorar la fisica del coche -> debe parecer real.
   - Crear paredes ODE "invisibles" para que el coche no se caiga.
-  - Camara desde dentro (camara subjetiva)
 
 OPTIMIZACION
 
   - Crear diferentes niveles de detalle y sus texturas correspondientes
     (en cada momento dibujaremos un nivel dependiendo de la proximidad).
-  - Limpieza de drawstuff
   - Cambio entre pantallas (todavia con errores)
 
 EDITOR
