@@ -259,6 +259,9 @@ void EventsKeys(SDL_Event event, dsInterfaces *interfaces)
             interfaces->SetView(3);
             break;
         }
+        case SDLK_5:
+            interfaces->SetView(4);
+            break;
     }
 
     // NON CONST
@@ -466,7 +469,7 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
         }
         else
         {   //Cuenta atras inicial
-            dsGLPrint(0.5,0.5,"%d",countdown);
+            dsGLPrint(CENTER,CENTER,"%d",countdown);
             acabado = 0;
         }
 
