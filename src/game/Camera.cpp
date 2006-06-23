@@ -66,8 +66,9 @@ void Camera::Update()
     else
     {
         const dReal * pos_box = dGeomGetPosition(Car::camera_box);
-        dVector3 pos_interior = {pos_box[0],pos_box[1],pos_box[2]+0.3};
-        dsSetViewpoint(pos_interior,NULL);
+        const dReal * pos_prey = dGeomGetPosition(Car::camera_view_box);
+        dsSetCameraLookAt(pos_prey[1],pos_prey[2],pos_prey[0],
+                          pos_box[0],pos_box[1],pos_box[2]);
     }
 }
 

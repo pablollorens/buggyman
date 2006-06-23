@@ -18,6 +18,11 @@ dBodyID Car::Wheel_BodyID[WHEELS];
 dGeomID Car::Wheel_GeomID[WHEELS];
 dJointID Car::Wheel_JointID[WHEELS];
 
+
+const dReal * Car::car_wheel_right;
+const dReal * Car::car_wheel_left;
+dVector3 Car::car_prey;
+
 //dBodyID Car::Stuff_BodyID[4];
 //dGeomID Car::Stuff_GeomID[4];
 //dJointID Car::Stuff_joint[WHEELS];
@@ -183,38 +188,28 @@ Car::Car(dWorldID world, dSpaceID space,int x1,int y1,int z1,int rotation)
 
 
   dMatrix3 R;
-  float incrX,incrY;
-  if (rotation==180){
-        dRFromAxisAndAngle(R,0,0,1,+M_PI);
-        incrX = 0.0;
-        incrY = 0.5;
-  }
-  if (rotation==270){
-        dRFromAxisAndAngle(R,0,0,1,+(3*M_PI)/2);
-        incrX = -0.5;
-        incrY = 0.0;
-  }
-  if (rotation==0){
-        dRFromAxisAndAngle(R,0,0,1,0);
-        incrX = 0.0;
-        incrY = -0.5;
-  }
-  if (rotation==90){
-        dRFromAxisAndAngle(R,0,0,1,+M_PI/2);
-        incrX = 0.5;
-        incrY = 0.0;
-  }
+  if (rotation==180) dRFromAxisAndAngle(R,0,0,1,+M_PI);
+  if (rotation==270) dRFromAxisAndAngle(R,0,0,1,+(3*M_PI)/2);
+  if (rotation==0)   dRFromAxisAndAngle(R,0,0,1,0);
+  if (rotation==90)  dRFromAxisAndAngle(R,0,0,1,+M_PI/2);
   dBodySetRotation(Chassis_BodyID,R);
 
   /// CAMERA BOX
   camera_box = dCreateBox (0,0.1,0.1,0.1);
   camera_view_box = dCreateBox (0,0.1,0.1,0.1);
-  dGeomSetPosition(camera_box,x1*7,y1*7,dBodyGetPosition(Chassis_BodyID)[2]+0.2);
-//  const dReal * car_followerX = dBodyGetPosition(Wheel_BodyID[0])
-//  dReal car_followerX = dBodyGet
-//  dGeomSetPosition(camera_view_box,(x1*7)+incrX,(y1*7)+incrY,dBodyGetPosition(Chassis_BodyID)[2]+0.2);
+
+  dGeomSetPosition(camera_box,x1*7,y1*7,dBodyGetPosition(Chassis_BodyID)[2]+0.4);
+
+  car_wheel_right = dBodyGetPosition(Wheel_BodyID[0]);
+  car_wheel_left  = dBodyGetPosition(Wheel_BodyID[1]);
+
+  for(int coord=0; coord < 3; coord++)
+    car_prey[coord] = (car_wheel_right[coord]+car_wheel_left[coord])/2.0;
+  dGeomSetPosition(camera_view_box,car_prey[0],car_prey[1],car_prey[2]+0.4);
+
+  // Añadimos camaras al espacio de colisiones del coche
   dSpaceAdd (Car_Space, camera_box);
-//  dSpaceAdd (Car_Space, camera_view_box);
+  dSpaceAdd (Car_Space, camera_view_box);
 }
 
 void Car::setPosCar(int i, int j, int z, int rotation)
@@ -251,6 +246,15 @@ void Car::Update_Camera_Box()
     const dReal * rotation =  dBodyGetRotation(Chassis_BodyID);
     dGeomSetRotation(camera_box,rotation);
 
+
+    car_wheel_right = dBodyGetPosition(Wheel_BodyID[0]);
+    car_wheel_left  = dBodyGetPosition(Wheel_BodyID[1]);
+
+    for(int coord=0; coord < 3; coord++)
+    car_prey[coord] = (car_wheel_right[coord]+car_wheel_left[coord])/2.0;
+    dGeomSetPosition(camera_view_box,car_prey[0],car_prey[1],car_prey[2]+0.4);
+    dGeomSetRotation(camera_view_box,rotation);
+
 }
 
 /// //////////////////////////////////////////////////////////////////////// ///
@@ -281,7 +285,7 @@ void Car::Draw()
     wheel_Model->draw(2,dBodyGetPosition(Wheel_BodyID[3]), dBodyGetRotation(Wheel_BodyID[3]));
 
   // car stuff //
-{
+
 //    stuff1_Model->draw( dBodyGetPosition(Stuff_BodyID[0]), dBodyGetRotation(Stuff_BodyID[0]) );
 //    stuff1_Model->draw( dBodyGetPosition(Stuff_BodyID[2]), dBodyGetRotation(Stuff_BodyID[2]) );
 //    stuff2_Model->draw( dBodyGetPosition(Stuff_BodyID[1]), dBodyGetRotation(Stuff_BodyID[1]) );
@@ -306,9 +310,7 @@ void Car::Draw()
 
 //    dReal sides_camera_box[3] = {0.4,0.4,0.4};
 //    dsDrawBox( dGeomGetPosition(camera_box),dGeomGetRotation(camera_box),sides_camera_box);
-
-    //dsSetColorAlpha (0,0,1,0.5);
-}
+//    dsDrawBox( dGeomGetPosition(camera_view_box),dGeomGetRotation(camera_view_box),sides_camera_box);
 }
 
 /// //////////////////////////////////////////////////////////////////////// ///

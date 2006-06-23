@@ -87,6 +87,10 @@ class Car {
 
     static Model *car_Model;												// Holds The Model Data
     static Model *wheel_Model;
+
+    static const dReal * car_wheel_right;
+    static const dReal * car_wheel_left;
+    static dVector3 car_prey;
 //    static Model *stuff1_Model;
 //    static Model *stuff2_Model;
 };

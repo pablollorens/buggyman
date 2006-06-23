@@ -122,7 +122,7 @@ void dsScreenPrint(SDL_Surface *sTexture, SDL_Surface *sMask, int x, int y)
 
     int w = sTexture->w;
     int h = sTexture->h;
-                                        //http://usuarios.lycos.es/andromeda_studios/paginas/tutoriales/tutgl008.htm
+
     SDL_GL_Enter2DMode();
 
       // MASK
@@ -414,7 +414,7 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
         ticks_percent_ini = SDL_GetTicks();
         dsDrawFrame (fn, initial_pause);
         ticks_percent_3D += SDL_GetTicks() - ticks_percent_ini;
-        
+
         /// 2D over 3D
 
         /// CRONOMETRO Y CONTROLADOR DE CARRERA
