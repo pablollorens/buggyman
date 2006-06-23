@@ -460,7 +460,7 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
             }
             else{
                 record = (float)(SDL_GetTicks()-Game::crono.getInicial())/1000.0;
-                dsGLPrint(CENTER,0.45,"Tiempo %2.2f sg",record);
+                dsGLPrint(0.6,0.001,"Tiempo %2.2f sg",record);
                 if (record <= 1.0 && countdown == 0) dsGLPrint(CENTER,0.55,"AHORA!!");
             }
         }
