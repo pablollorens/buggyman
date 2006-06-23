@@ -46,6 +46,7 @@ class Car {
     static void Draw();
     static void Sim();
     static void setPosCar(int x, int y, int z, int rotation);
+    static void Update_Camera_Box();
 
     static dSpaceID Car_Space;
 
@@ -53,6 +54,9 @@ class Car {
     static dGeomID Chassis_GeomID;
 
     static dGeomID platform;
+
+    static dGeomID camera_box;
+    static dGeomID camera_view_box;
 
     static dBodyID Wheel_BodyID[WHEELS];
     static dGeomID Wheel_GeomID[WHEELS];   // wheels

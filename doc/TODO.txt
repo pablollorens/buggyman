@@ -1,29 +1,40 @@
 Lista de tareas pendientes
 ----------------------------------------------------------------------------
 
-VISUALES
+	o Marcar con "X" cuando este hecho.
+	o Marcar con "-" cuando este por hacer.
 
- - Implementar con cajas ODE la salida y la meta.
- - Crear una camara OpenGL, y olvidarnos del sistema actual.
+VISUALES Y SONOROS
+
+ - Diseño de pistas de SALIDA y LLEGADA.
+
  - Crear un menu de juego donde se muestre:
 	- Estado del cronometro.
 	- (?) Numero de vueltas.
- - Mostrar mensajes por pantalla. ("A correr!") ("Has terminado!")
+
  - Aplicar texturas con mascara (esto es para el hito final (?)) 
+ - Texturizado de pistas en general
+ - Musica y efectos de sonido
+ - Logo
 
 JUGABILIDAD
 
-  - Implementar el inicio del juego y la deteccion de "colision" con la meta,
-    activando un cronometro o algo parecido.
   - Implementar el concepto de checkpoint y reglas.
   - Mejorar la fisica del coche -> debe parecer real.
   - Crear paredes ODE "invisibles" para que el coche no se caiga.
-  - Crear una tecla de reinicio: cronometro a cero y coche a la salida.
+  - Camara desde dentro (camara subjetiva)
 
 OPTIMIZACION
 
-  - Investigar el tema de desactivar objetos Geom en ODE, siguiento
-    el patrón de dibujado de casillas adyacentes.
   - Crear diferentes niveles de detalle y sus texturas correspondientes
     (en cada momento dibujaremos un nivel dependiendo de la proximidad).
-  - La función dsGLPrint tiene fugas de memoria.
+  - Limpieza de drawstuff
+  - Cambio entre pantallas (todavia con errores)
+
+EDITOR
+
+  - Minimapa
+  - Diseño
+  - Reglas de construccion
+  - Lectura de tramos desde HD.
+  - Funcionalidad (cargar / guardar)

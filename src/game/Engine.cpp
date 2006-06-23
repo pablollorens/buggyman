@@ -83,6 +83,8 @@ void Engine::SimLoop (int pause)
                 dGeomDisable(Ground::Cell_Matrix[i][j].geomPista);
         }
 
+    Car::Update_Camera_Box();
+
     Camera::Update();
 
     Uint32 ticks_start2 = SDL_GetTicks();

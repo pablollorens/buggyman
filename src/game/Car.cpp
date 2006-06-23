@@ -11,6 +11,8 @@ dBodyID Car::Chassis_BodyID;
 dGeomID Car::Chassis_GeomID;
 
 dGeomID Car::platform;
+dGeomID Car::camera_box;
+dGeomID Car::camera_view_box;
 
 dBodyID Car::Wheel_BodyID[WHEELS];
 dGeomID Car::Wheel_GeomID[WHEELS];
@@ -179,12 +181,38 @@ Car::Car(dWorldID world, dSpaceID space,int x1,int y1,int z1,int rotation)
     //dSpaceAdd (Car_Space, Stuff_GeomID[i]);
   }
 
+
   dMatrix3 R;
-  if (rotation==180) dRFromAxisAndAngle(R,0,0,1,+M_PI);
-  if (rotation==270)  dRFromAxisAndAngle(R,0,0,1,+(3*M_PI)/2);
-  if (rotation==0)  dRFromAxisAndAngle(R,0,0,1,0);
-  if (rotation==90)  dRFromAxisAndAngle(R,0,0,1,+M_PI/2);
+  float incrX,incrY;
+  if (rotation==180){
+        dRFromAxisAndAngle(R,0,0,1,+M_PI);
+        incrX = 0.0;
+        incrY = 0.5;
+  }
+  if (rotation==270){
+        dRFromAxisAndAngle(R,0,0,1,+(3*M_PI)/2);
+        incrX = -0.5;
+        incrY = 0.0;
+  }
+  if (rotation==0){
+        dRFromAxisAndAngle(R,0,0,1,0);
+        incrX = 0.0;
+        incrY = -0.5;
+  }
+  if (rotation==90){
+        dRFromAxisAndAngle(R,0,0,1,+M_PI/2);
+        incrX = 0.5;
+        incrY = 0.0;
+  }
   dBodySetRotation(Chassis_BodyID,R);
+
+  /// CAMERA BOX
+  camera_box = dCreateBox (0,0.1,0.1,0.1);
+  camera_view_box = dCreateBox (0,0.1,0.1,0.1);
+  dGeomSetPosition(camera_box,x1*7,y1*7,dBodyGetPosition(Chassis_BodyID)[2]+0.2);
+  dGeomSetPosition(camera_view_box,(x1*7)+incrX,(y1*7)+incrY,dBodyGetPosition(Chassis_BodyID)[2]+0.2);
+  dSpaceAdd (Car_Space, camera_box);
+  dSpaceAdd (Car_Space, camera_view_box);
 }
 
 void Car::setPosCar(int i, int j, int z, int rotation)
@@ -209,6 +237,17 @@ void Car::setPosCar(int i, int j, int z, int rotation)
     if (rotation==90)  dRFromAxisAndAngle(R,0,0,1,+M_PI/2);
     dBodySetRotation(Chassis_BodyID,R);
 
+
+}
+
+void Car::Update_Camera_Box()
+{
+    dGeomSetPosition(camera_box,
+                        dBodyGetPosition(Chassis_BodyID)[0],
+                        dBodyGetPosition(Chassis_BodyID)[1],
+                        dBodyGetPosition(Chassis_BodyID)[2]+0.3);
+    const dReal * rotation =  dBodyGetRotation(Chassis_BodyID);
+    dGeomSetRotation(camera_box,rotation);
 
 }
 
@@ -262,6 +301,12 @@ void Car::Draw()
     dsSetColorAlpha (0,1,0,0.5);
     dReal sides3[3] = {6,6,1};
     dsDrawBox( dGeomGetPosition(platform),dGeomGetRotation(platform),sides3);
+
+//    dReal sides_camera_box[3] = {0.4,0.4,0.4};
+//    dsDrawBox( dGeomGetPosition(camera_box),dGeomGetRotation(camera_box),sides_camera_box);
+
+    //dsSetColorAlpha (0,0,1,0.5);
+}
 }
 
 /// //////////////////////////////////////////////////////////////////////// ///

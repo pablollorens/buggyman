@@ -15,11 +15,11 @@ class Camera
 
     static dReal seguir[3];
     static bool move;
+    static bool interior;
 
   private:
 
     static float camera_height;
-
     static float distance_actual;
     static float distance_view;
 

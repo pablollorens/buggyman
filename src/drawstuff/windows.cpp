@@ -216,30 +216,23 @@ void EventsKeys(SDL_Event event, dsInterfaces *interfaces)
     switch (event.key.keysym.sym)
     {
         case SDLK_ESCAPE:
-        {
             done = true;
             break;
-        }
         case SDLK_1:
-        {
             interfaces->SetView(0);
             break;
-        }
         case SDLK_2:
-        {
             interfaces->SetView(1);
             break;
-        }
         case SDLK_3:
-        {
             interfaces->SetView(2);
             break;
-        }
         case SDLK_4:
-        {
             interfaces->SetView(3);
             break;
-        }
+        case SDLK_5:
+            interfaces->SetView(4);
+            break;
     }
 
     // NON CONST
@@ -269,7 +262,7 @@ void EventsKeys(SDL_Event event, dsInterfaces *interfaces)
     // actions
 
     if (event.key.keysym.sym == interfaces->Break)
-      interfaces->DoAction(3);
+        interfaces->DoAction(3);
     else
     if (event.key.keysym.sym == interfaces->Action
                && event.type == SDL_KEYDOWN)
@@ -277,7 +270,7 @@ void EventsKeys(SDL_Event event, dsInterfaces *interfaces)
     else
     if (event.key.keysym.sym == SDLK_r
                 && event.type == SDL_KEYDOWN)
-      interfaces->DoAction(2);
+        interfaces->DoAction(2);
 }
 
 void EventsMouse(SDL_Event event)
