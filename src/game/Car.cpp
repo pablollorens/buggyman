@@ -240,7 +240,7 @@ void Car::Draw()
     wheel_Model->draw(2,dBodyGetPosition(Wheel_BodyID[3]), dBodyGetRotation(Wheel_BodyID[3]));
 
   // car stuff //
-{
+
 //    stuff1_Model->draw( dBodyGetPosition(Stuff_BodyID[0]), dBodyGetRotation(Stuff_BodyID[0]) );
 //    stuff1_Model->draw( dBodyGetPosition(Stuff_BodyID[2]), dBodyGetRotation(Stuff_BodyID[2]) );
 //    stuff2_Model->draw( dBodyGetPosition(Stuff_BodyID[1]), dBodyGetRotation(Stuff_BodyID[1]) );
@@ -255,16 +255,13 @@ void Car::Draw()
 //    dsDrawBox ( dBodyGetPosition(Stuff_BodyID[2]), dBodyGetRotation(Stuff_BodyID[2]), sides1);
 //    dsDrawBox ( dBodyGetPosition(Stuff_BodyID[3]), dBodyGetRotation(Stuff_BodyID[3]), sides1);
 
-//    dsSetColorAlpha (0,0,0,0.4);
+//    dsSetColorAlpha (0, 0, 1, 0.5);
 //    dReal sides2[3] = {LENGTH,WIDTH,HEIGHT};
 //    dsDrawBox ( dBodyGetPosition(Chassis_BodyID), dBodyGetRotation(Chassis_BodyID), sides2);
 
     dsSetColorAlpha (0,1,0,0.5);
     dReal sides3[3] = {6,6,1};
     dsDrawBox( dGeomGetPosition(platform),dGeomGetRotation(platform),sides3);
-
-    //dsSetColorAlpha (0,0,1,0.5);
-}
 }
 
 /// //////////////////////////////////////////////////////////////////////// ///

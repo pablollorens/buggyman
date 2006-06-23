@@ -104,6 +104,7 @@ void dsPrint (char *msg, ...);
 void dsError (char *msg, ...);
 void dsPanic (char *msg, ...);
 void dsGLPrint (int,int,char *msg, ...);
+void dsSetGLPrintColor(int r, int g, int b);
 
 /// FUNCTIONS FOR THE EXTERN CONTROL
 void setAcabado(int);

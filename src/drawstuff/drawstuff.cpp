@@ -45,16 +45,6 @@ manage openGL state changes better
 
 /// //////////////////////////////////////////////////////////////////////// ///
 
-#ifdef WIN32
-#define DEFAULT_PATH_TO_TEXTURES "..\\textures\\"
-#else
-#define DEFAULT_PATH_TO_TEXTURES "../textures/"
-#endif
-
-#ifndef M_PI
-#define M_PI (3.14159265358979323846)
-#endif
-
 // constants to convert degrees to radians and the reverse
 #define RAD_TO_DEG (180.0/M_PI)
 #define DEG_TO_RAD (M_PI/180.0)
@@ -118,21 +108,25 @@ static void setCamera (float x, float y, float z, float h, float p, float r)
 
 // sets the material color, not the light color
 
-static void setColor (float r, float g, float b, float alpha)
+static void setMaterialColor (float r, float g, float b, float alpha)
 {
   GLfloat light_ambient[4],light_diffuse[4],light_specular[4];
+
   light_ambient[0] = r*0.3f;
   light_ambient[1] = g*0.3f;
   light_ambient[2] = b*0.3f;
   light_ambient[3] = alpha;
+
   light_diffuse[0] = r*0.7f;
   light_diffuse[1] = g*0.7f;
   light_diffuse[2] = b*0.7f;
   light_diffuse[3] = alpha;
+
   light_specular[0] = r*0.2f;
   light_specular[1] = g*0.2f;
   light_specular[2] = b*0.2f;
   light_specular[3] = alpha;
+
   glMaterialfv (GL_FRONT_AND_BACK, GL_AMBIENT, light_ambient);
   glMaterialfv (GL_FRONT_AND_BACK, GL_DIFFUSE, light_diffuse);
   glMaterialfv (GL_FRONT_AND_BACK, GL_SPECULAR, light_specular);
@@ -447,11 +441,11 @@ static void drawCylinder2 (float l, float radius1, float radius2,float zoffset)
   glVertex3d (0,0,l+zoffset);
   for (i=0; i<=n; i++) {
     if (i==1 || i==n/2+1)
-      setColor (color[0]*0.75f,color[1]*0.75f,color[2]*0.75f,color[3]);
+      setMaterialColor (color[0]*0.75f,color[1]*0.75f,color[2]*0.75f,color[3]);
     glNormal3d (0,0,1);
     glVertex3d (ny*radius1,nz*radius1,l+zoffset);
     if (i==1 || i==n/2+1)
-      setColor (color[0],color[1],color[2],color[3]);
+      setMaterialColor (color[0],color[1],color[2],color[3]);
 
     // rotate ny,nz
     tmp = ca*ny - sa*nz;
@@ -467,11 +461,11 @@ static void drawCylinder2 (float l, float radius1, float radius2,float zoffset)
   glVertex3d (0,0,-l+zoffset);
   for (i=0; i<=n; i++) {
     if (i==1 || i==n/2+1)
-      setColor (color[0]*0.75f,color[1]*0.75f,color[2]*0.75f,color[3]);
+      setMaterialColor (color[0]*0.75f,color[1]*0.75f,color[2]*0.75f,color[3]);
     glNormal3d (0,0,-1);
     glVertex3d (ny*radius2,nz*radius2,-l+zoffset);
     if (i==1 || i==n/2+1)
-      setColor (color[0],color[1],color[2],color[3]);
+      setMaterialColor (color[0],color[1],color[2],color[3]);
 
     // rotate ny,nz
     tmp = ca*ny + sa*nz;
@@ -674,6 +668,8 @@ extern "C" void dsSetColor (float red, float green, float blue)
   color[1] = green;
   color[2] = blue;
   color[3] = 1;
+
+  glColor4f(color[0],color[1],color[2],color[3]);
 }
 
 
@@ -683,16 +679,24 @@ extern "C" void dsSetColorAlpha (float red, float green, float blue, float alpha
   color[1] = green;
   color[2] = blue;
   color[3] = alpha;
+
+  glColor4f(color[0],color[1],color[2],color[3]);
 }
 
 
 extern "C" void dsDrawBox (const float pos[3], const float R[12], const float sides[3])
 {
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_COLOR,GL_SRC_ALPHA);
+  setMaterialColor (color[0],color[1],color[2],color[3]);
+
   glPushMatrix();
     setTransform (pos,R);
     glMultMatrixf (transform_matrix);
     drawBox (sides);
   glPopMatrix();
+
+  glDisable(GL_BLEND);
 }
 
 

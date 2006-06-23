@@ -20,7 +20,10 @@ float record = 0;
 
 bool done = false;          // variable global, finaliza el MAIN LOOP
 
-GLuint HUD_GLTexture;
+GLuint glHUDTexture;
+GLuint glHUDMask;
+
+SDL_Color FontColor = {0,128,255,0};  // foreground color
 
 /// //////////////////////////////////////////////////////////////////////// ///
 /// PROTOTYPES
@@ -29,10 +32,12 @@ void Events(struct dsInterfaces *interfaces);
 void EventsKeys(SDL_Event event, struct dsInterfaces *interfaces);
 void EventsMouse(SDL_Event event);
 
+void dsScreenPrint(SDL_Surface *sTexture, SDL_Surface *sMask, int x, int y);
 GLuint SDL_GL_LoadTexture(SDL_Surface *surface, GLfloat *texcoord);
 static int power_of_two(int input);
 void SDL_GL_Enter2DMode();
 void SDL_GL_Leave2DMode();
+void GL_DeleteTextures();
 
 /// //////////////////////////////////////////////////////////////////////// ///
 ///
@@ -61,30 +66,51 @@ extern "C" void dsPanic (char *msg, ...)
 
 extern "C" void dsGLPrint(int x,int y,char *msg, ...)
 {
-    if ( HUD_GLTexture ) {
-      glDeleteTextures( 1, &HUD_GLTexture );
-      HUD_GLTexture = 0;
-    }
+    // formatting the message string
+    va_list ap;
+    va_start (ap,msg);
+    char text[1024];
+    vsprintf (text,msg,ap);
 
-  va_list ap;
-  va_start (ap,msg);
-  char text[1024];
-  vsprintf (text,msg,ap);
+    // printing the message
+    SDL_Surface *sText = TTF_RenderText_Blended( font_Courier, text, FontColor );
+    SDL_Rect rcDest = {0,0,0,255};
+    SDL_BlitSurface( sText, NULL, screen, &rcDest );
+
+    // printinf the mask (message in black)
+    SDL_Color clrFgMask = {0,0,0,0};  // Black
+    SDL_Surface *sMask = TTF_RenderText_Blended( font_Courier, text, clrFgMask );
+    SDL_BlitSurface( sMask, NULL, screen, &rcDest );
+
+    dsScreenPrint(sText,sMask,x,y);
+
+    // free the surfaces
+    SDL_FreeSurface( sText );
+    SDL_FreeSurface( sMask );
+}
 
 
-  SDL_Color clrFg = {0,0,255,0};  // Blue ("Fg" is foreground)
-  SDL_Surface *sText = TTF_RenderText_Blended( font_Courier, text, clrFg );
-  SDL_Rect rcDest = {0,0,0,250};
-  SDL_BlitSurface( sText,NULL, screen,&rcDest );
+void dsSetGLPrintColor(int r, int g, int b)
+{
+    FontColor.r = r;
+    FontColor.g = g;
+    FontColor.b = b;
+}
 
-    GLuint printf_texture = 0;
-    GLfloat texcoord[4];
 
-    int w = 20 * strlen(msg);
-    int h = 40;
+void dsScreenPrint(SDL_Surface *sTexture, SDL_Surface *sMask, int x, int y)
+{
+    // Free old message textures memory
+    GL_DeleteTextures();
 
     // Convert the image into an OpenGL texture //
-    printf_texture = SDL_GL_LoadTexture(sText, texcoord);
+    GLfloat texcoord[4];
+    glHUDTexture = SDL_GL_LoadTexture(sTexture, texcoord);
+    glHUDMask = SDL_GL_LoadTexture(sMask, texcoord);
+
+    // Make sure that the texture conversion is okay //
+    if ( !glHUDTexture ) { return; }
+    if ( !glHUDMask ) { return; }
 
     // Make texture coordinates easy to understand //
     GLfloat texMinX = texcoord[0];
@@ -92,21 +118,35 @@ extern "C" void dsGLPrint(int x,int y,char *msg, ...)
     GLfloat texMaxX = texcoord[2];
     GLfloat texMaxY = texcoord[3];
 
-    // We don't need the original image anymore //
-    SDL_FreeSurface( sText );
-
-    // Make sure that the texture conversion is okay //
-    if ( ! printf_texture ) { return; }
-
     // Show the image on the screen //
+
+    int w = sTexture->w;
+    int h = sTexture->h;
+                                        //http://usuarios.lycos.es/andromeda_studios/paginas/tutoriales/tutgl008.htm
     SDL_GL_Enter2DMode();
-      glBindTexture(GL_TEXTURE_2D, printf_texture);
+
+      // MASK
+      dsSetColor(1.0f, 1.0f, 1.0f);  // White BG
+      glBlendFunc(GL_DST_COLOR,GL_ZERO);
+      glBindTexture(GL_TEXTURE_2D, glHUDMask);
       glBegin(GL_TRIANGLE_STRIP);
         glTexCoord2f(texMinX, texMinY); glVertex2i(x,   y  );
         glTexCoord2f(texMaxX, texMinY); glVertex2i(x+w, y  );
         glTexCoord2f(texMinX, texMaxY); glVertex2i(x,   y+h);
         glTexCoord2f(texMaxX, texMaxY); glVertex2i(x+w, y+h);
       glEnd();
+
+      // TEXTURE
+      dsSetColor(0.0f, 0.0f, 0.0f);  // Black BG
+      glBlendFunc(GL_ONE,GL_ONE);
+      glBindTexture(GL_TEXTURE_2D, glHUDTexture);
+      glBegin(GL_TRIANGLE_STRIP);
+        glTexCoord2f(texMinX, texMinY); glVertex2i(x,   y  );
+        glTexCoord2f(texMaxX, texMinY); glVertex2i(x+w, y  );
+        glTexCoord2f(texMinX, texMaxY); glVertex2i(x,   y+h);
+        glTexCoord2f(texMaxX, texMaxY); glVertex2i(x+w, y+h);
+      glEnd();
+
     SDL_GL_Leave2DMode();
 }
 
@@ -352,8 +392,6 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
     Uint32 ticks_percent_2D = 0;
 	Uint32 ticks_percent_3D = 0;
 
-    GLenum gl_error;
-	char* sdl_error;
 	int countdown = 0;
 
     while (!done)
@@ -379,13 +417,16 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
         // clear screen 3D
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
-        // 3D
+        /// 3D
         ticks_percent_ini = SDL_GetTicks();
         dsDrawFrame (fn, initial_pause);
         ticks_percent_3D += SDL_GetTicks() - ticks_percent_ini;
+        
+        /// 2D over 3D
 
         /// CRONOMETRO Y CONTROLADOR DE CARRERA
         //si estamos jugando
+        dsSetGLPrintColor(255,0,0);
         if (jugando)
         {
             if (acabado) // si hemos acabado la carrera
@@ -410,8 +451,8 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
             acabado = 0;
         }
 
-        // 2Do3D
         ticks_percent_ini = SDL_GetTicks();
+        dsSetGLPrintColor(0,128,255);
         dsGLPrint(5,5,"%2.2f FPS",((float)frames/(SDL_GetTicks()-start_time))*1000.0);
         ticks_percent_2D += SDL_GetTicks() - ticks_percent_ini;
 
@@ -419,12 +460,12 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
 
 		// Check for error conditions. //
 
-		gl_error = glGetError( );
+		GLenum gl_error = glGetError( );
 		if( gl_error != GL_NO_ERROR ) {
 			dsError("OpenGL error: %d\n", gl_error );
 		}
 
-		sdl_error = SDL_GetError( );
+		char* sdl_error = SDL_GetError( );
 		if( sdl_error[0] != '\0' ) {
 			dsError("SDL error: '%s'\n", sdl_error);
 			SDL_ClearError();
@@ -457,10 +498,8 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
 
     TTF_CloseFont( font_Courier );
 
-     if ( HUD_GLTexture ) {
-      glDeleteTextures( 1, &HUD_GLTexture );
-      HUD_GLTexture = 0;
-    }
+    // free texture memory
+    GL_DeleteTextures();
 
     if (fn->stop) fn->stop();
     dsStopGraphics();
@@ -471,9 +510,10 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
     SDL_Quit();
 }
 
+// load the texture into "*texture" param
 GLuint SDL_GL_LoadTexture(SDL_Surface *surface, GLfloat *texcoord)
 {
-//	GLuint texture;
+	GLuint texture;
 	int w, h;
 	SDL_Surface *image;
 	SDL_Rect area;
@@ -505,16 +545,13 @@ GLuint SDL_GL_LoadTexture(SDL_Surface *surface, GLfloat *texcoord)
 #endif
 		       );
 
-	if ( image == NULL ) {
-		return 0;
-	}
+	if ( image == NULL ) {  return 0;  }
 
 	// Save the alpha blending attributes //
 	saved_flags = surface->flags&(SDL_SRCALPHA|SDL_RLEACCELOK);
 	saved_alpha = surface->format->alpha;
-	if ( (saved_flags & SDL_SRCALPHA) == SDL_SRCALPHA ) {
+	if ( (saved_flags & SDL_SRCALPHA) == SDL_SRCALPHA )
 		SDL_SetAlpha(surface, 0, 0);
-	}
 
 	// Copy the surface into the GL texture image //
 	area.x = 0;
@@ -529,9 +566,9 @@ GLuint SDL_GL_LoadTexture(SDL_Surface *surface, GLfloat *texcoord)
 	}
 
 	// Create an OpenGL texture for the image //
-	glGenTextures(1, &HUD_GLTexture);
+	glGenTextures(1, &texture);
 
-	glBindTexture(GL_TEXTURE_2D, HUD_GLTexture);
+	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D,
@@ -545,7 +582,7 @@ GLuint SDL_GL_LoadTexture(SDL_Surface *surface, GLfloat *texcoord)
 
 	SDL_FreeSurface(image); // No longer needed //
 
-	return HUD_GLTexture;
+	return texture;
 }
 
 /* Quick utility function for texture creation */
@@ -563,18 +600,26 @@ void SDL_GL_Enter2DMode()
 {
 	SDL_Surface *screen = SDL_GetVideoSurface();
 
-	/* Note, there may be other things you need to change,
-	   depending on how you have your OpenGL state set up.
-	*/
+	glPushAttrib(GL_LIGHTING);
+	glDisable(GL_LIGHTING);
+
 	glPushAttrib(GL_ENABLE_BIT);
+
+	glPushAttrib(GL_DEPTH_TEST);
 	glDisable(GL_DEPTH_TEST);
+
+	glPushAttrib(GL_CULL_FACE);
 	glDisable(GL_CULL_FACE);
+
+	glPushAttrib(GL_TEXTURE_2D);
 	glEnable(GL_TEXTURE_2D);
-	/* This allows alpha blending of 2D textures with the scene */
+
+    glPushAttrib(GL_BLEND);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glViewport(0, 0, screen->w, screen->h);
+
+	glPushAttrib(GL_MATRIX_MODE);
 
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
@@ -594,8 +639,27 @@ void SDL_GL_Leave2DMode()
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
 
-	glMatrixMode(GL_PROJECTION);
+    glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 
-	glPopAttrib();
+    glPopAttrib();  // GL_MATRIX_MODE
+	glPopAttrib();  // GL_BLEND
+	glPopAttrib();  // GL_TEXTURE_2D
+	glPopAttrib();  // GL_CULL_FACE
+	glPopAttrib();  // GL_DEPTH_TEST
+	glPopAttrib();  // GL_ENABLE_BIT
+	glPopAttrib();  // GL_LIGHTING
+}
+
+void GL_DeleteTextures()
+{
+    // free HUD texture memory
+    if ( glHUDTexture ) {
+      glDeleteTextures( 1, &glHUDTexture );
+      glHUDTexture = 0;
+    }
+    if ( glHUDMask ) {
+      glDeleteTextures( 1, &glHUDMask );
+      glHUDMask = 0;
+    }
 }

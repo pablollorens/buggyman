@@ -96,6 +96,7 @@ void Engine::SimLoop (int pause)
     Car::Draw();
 
     // importante escribir al final de los draw
+    //dsSetGLPrintColor(0,255,0);
     //dsGLPrint(100,100,"%d",Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].num_modelo);
 
     /// DEBUG INFO
