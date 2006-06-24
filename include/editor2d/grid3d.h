@@ -35,8 +35,8 @@ class Grid3D
         Grid3D & operator=(Grid3D & some);
 
         //Comparation methods
-        bool operator==(Grid3D & some);
-        bool operator!=(Grid3D & some);
+        bool operator==(const Grid3D & some);
+        bool operator!=(const Grid3D & some);
 
         //Name manipulation methods
         inline string Get_Name() {return name;}
@@ -73,13 +73,13 @@ class Grid3D
         inline void Decr_Offset_Y() { Point3D<int> aux(0,1,0); Set_Offset(offset - aux);}
         inline void Decr_Offset_Z() { Point3D<int> aux(0,0,1); Set_Offset(offset - aux);}
         inline void Decr_Offset(int x, int y, int z) { Point3D<int> aux(x,y,z); Set_Offset(offset - aux);}
-        inline Point3D<int> Get_Offset() { return offset; }
+        inline Point3D<int> & Get_Offset() { return offset; }
 
         //Render 2D methods
         void Draw(SDL_Surface* screen);
 
         //Dimension access methods
-        inline Point3D<int> Get_Dims() { return dim; }
+        inline Point3D<int> & Get_Dims() { return dim; }
         inline int Get_DimX() { return (int)dim.x; }
         inline int Get_DimY() { return (int)dim.y; }
         inline int Get_DimZ() { return (int)dim.z; }

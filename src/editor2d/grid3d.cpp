@@ -81,13 +81,13 @@ Grid3D::operator=(Grid3D & some)
 }
 
 bool
-Grid3D::operator==(Grid3D & some)
+Grid3D::operator==(const Grid3D & some)
 {
     return(name == some.name && dim == some.dim);
 }
 
 bool
-Grid3D::operator!=(Grid3D & some)
+Grid3D::operator!=(const Grid3D & some)
 {
     return(name != some.name || dim != some.dim);
 }
