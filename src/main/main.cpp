@@ -55,7 +55,7 @@ int Run_Editor(void* data)
 
 int Quit_Game(void* data)
 {
-    data = (bool*)true;
+    *((bool*)data) = true;
     return 0;
 }
 
@@ -69,6 +69,7 @@ struct func_p
 int main ( int argc, char** argv )
 {
     bool update_required = 1;
+    bool done = false;
 
     // //////////////////////////////////////// //
     // Posible codigo para botones y su gestion
@@ -95,7 +96,7 @@ int main ( int argc, char** argv )
 
     func_p* quit_game = new func_p;
     quit_game->func = Quit_Game;
-    quit_game->data = (bool*)true;
+    quit_game->data = (bool*)&done;
     quit_game->pos.Set_values(362,437,77,39);
 
     //insercion en la tabla hash
@@ -164,7 +165,6 @@ int main ( int argc, char** argv )
     position.Set_values(0,0,0,0);
 
     // program main loop
-    bool done = false;
     while (!done)
     {
         // message processing loop
