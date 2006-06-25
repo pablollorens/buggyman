@@ -21,7 +21,10 @@ dJointID Car::Wheel_JointID[WHEELS];
 
 const dReal * Car::car_wheel_right;
 const dReal * Car::car_wheel_left;
+const dReal * Car::car_wheel_right2;
+const dReal * Car::car_wheel_left2;
 dVector3 Car::car_prey;
+float Car::factor_equilibrio;
 
 //dBodyID Car::Stuff_BodyID[4];
 //dGeomID Car::Stuff_GeomID[4];
@@ -239,20 +242,30 @@ void Car::setPosCar(int i, int j, int z, int rotation)
 
 void Car::Update_Camera_Box()
 {
+    car_wheel_right = dBodyGetPosition(Wheel_BodyID[0]);
+    car_wheel_left  = dBodyGetPosition(Wheel_BodyID[1]);
+    car_wheel_right2 = dBodyGetPosition(Wheel_BodyID[2]);
+    car_wheel_left2  = dBodyGetPosition(Wheel_BodyID[3]);
+
+    factor_equilibrio = dBodyGetPosition(Chassis_BodyID)[2]-car_wheel_right[2];
+
+
+    ///Calcularemos la posicion de la camara
+    // Hallamos las posiciones de la camara trasera multiplicando por -1 la orientación
+    float posX = (car_wheel_right[0]-car_wheel_right2[0])*-1;
+    float posY = (car_wheel_right[1]-car_wheel_right2[1])*-1;
+
     dGeomSetPosition(camera_box,
-                        dBodyGetPosition(Chassis_BodyID)[0],
-                        dBodyGetPosition(Chassis_BodyID)[1],
-                        dBodyGetPosition(Chassis_BodyID)[2]+0.3);
+                        dBodyGetPosition(Chassis_BodyID)[0]+posX*3,
+                        dBodyGetPosition(Chassis_BodyID)[1]+posY*3,
+                        dBodyGetPosition(Chassis_BodyID)[2]+(5.5*factor_equilibrio));
     const dReal * rotation =  dBodyGetRotation(Chassis_BodyID);
     dGeomSetRotation(camera_box,rotation);
 
 
-    car_wheel_right = dBodyGetPosition(Wheel_BodyID[0]);
-    car_wheel_left  = dBodyGetPosition(Wheel_BodyID[1]);
-
     for(int coord=0; coord < 3; coord++)
     car_prey[coord] = (car_wheel_right[coord]+car_wheel_left[coord])/2.0;
-    dGeomSetPosition(camera_view_box,car_prey[0],car_prey[1],car_prey[2]+0.4);
+    dGeomSetPosition(camera_view_box,car_prey[0],car_prey[1],car_prey[2]+(2.5*factor_equilibrio));
     dGeomSetRotation(camera_view_box,rotation);
 
 }
@@ -308,9 +321,9 @@ void Car::Draw()
     dReal sides3[3] = {6,6,1};
     dsDrawBox( dGeomGetPosition(platform),dGeomGetRotation(platform),sides3);
 
-//    dReal sides_camera_box[3] = {0.4,0.4,0.4};
-//    dsDrawBox( dGeomGetPosition(camera_box),dGeomGetRotation(camera_box),sides_camera_box);
-//    dsDrawBox( dGeomGetPosition(camera_view_box),dGeomGetRotation(camera_view_box),sides_camera_box);
+    dReal sides_camera_box[3] = {0.4,0.4,0.4};
+    dsDrawBox( dGeomGetPosition(camera_box),dGeomGetRotation(camera_box),sides_camera_box);
+    dsDrawBox( dGeomGetPosition(camera_view_box),dGeomGetRotation(camera_view_box),sides_camera_box);
 }
 
 /// //////////////////////////////////////////////////////////////////////// ///

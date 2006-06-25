@@ -90,7 +90,11 @@ class Car {
 
     static const dReal * car_wheel_right;
     static const dReal * car_wheel_left;
+    static const dReal * car_wheel_right2;
+    static const dReal * car_wheel_left2;
     static dVector3 car_prey;
+
+    static float factor_equilibrio;
 //    static Model *stuff1_Model;
 //    static Model *stuff2_Model;
 };

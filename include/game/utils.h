@@ -5,8 +5,8 @@
 
 ///Defines de Ground
 
-#define X 10 // Tamaño X del terreno
-#define Y 10 // Tamaño Y del terreno
+#define X 15 // Tamaño X del terreno
+#define Y 15 // Tamaño Y del terreno
 #define K_MODEL 13
 
 #define BANK_A  0
