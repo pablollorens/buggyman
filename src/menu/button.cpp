@@ -1,82 +1,117 @@
-#include "../include/button.h"
+#include "button.h"
 
 Button::Button()
 {
     name = "";
-    x = 0;
-    y = 0;
-    w = 0;
-    h = 0;
-    Calculate_Attributes(x, y, w, h);
-    image_normal = "";
-    image_pressed = "";
-    imageButton = "";
-    imageButton_position = NONE_BUTTON_POSITION;
-    textButton = "";
-    textButton_position = NONE_BUTTON_POSITION;
+    position=0;
+    i_default  = NULL;
+    i_pressed  = NULL;
+    i_over     = NULL;
+    i_disabled = NULL;
+    i_actual   = NULL;
+    status = BUTTON_STATUS_DEFAULT;
+    click = NULL;
+    click_data = NULL;
 }
 
-Button::Button(string some_name, int some_x, int some_y, int some_w, int some_h, string some_image_normal, string some_image_pressed, string some_imageButton, int some_imageButton_position, string some_textButton, int some_textButton_position)
+Button::Button( char* some_name, SDL_Rect & some_position,
+                char* image_default, char* image_pressed,
+                char* image_over, char* image_disabled,
+                int (*func)(void* data), void* some_data,
+                int some_status)
 {
     name = some_name;
-    x = some_x;
-    y = some_y;
-    w = some_w;
-    h = some_h;
-    image_normal = some_image_normal;
-    image_pressed = some_image_pressed;
-    Calculate_Attributes(some_x, some_y, some_w, some_y);
-    imageButton = some_imageButton;
-    imageButton_position = some_imageButton_position;
-    textButton = some_textButton;
-    textButton_position = some_textButton_position;
+    i_default  = image_collection(image_default);
+    i_pressed  = image_collection(image_pressed);
+    i_over     = image_collection(image_over);
+    i_disabled = image_collection(image_disabled);
+    i_actual = i_default;
+    position.Set_values(some_position.x, some_position.y, i_default->w, i_default->h);
+    Set_Status(some_status);
+    click = func;
+    click_data = some_data;
+}
+
+Button::Button( char* some_name, int x, int y,
+                char* image_default, char* image_pressed,
+                char* image_over, char* image_disabled,
+                int (*func)(void* data), void* some_data,
+                int some_status)
+{
+    name = some_name;
+    i_default  = image_collection(image_default);
+    i_pressed  = image_collection(image_pressed);
+    i_over     = image_collection(image_over);
+    i_disabled = image_collection(image_disabled);
+    i_actual = i_default;
+    position.Set_values(x, y, i_default->w, i_default->h);
+    Set_Status(some_status);
+    click = func;
+    click_data = some_data;
+}
+
+Button::Button(Button & some)
+{
+    (*this)=some;
+}
+
+Button &
+Button::operator=(Button & some)
+{
+	if(this == &some) return(*this);
+
+    name = some.name;
+    position = some.position;
+    i_default  = some.i_default;
+    i_pressed  = some.i_pressed;
+    i_over     = some.i_over;
+    i_disabled = some.i_disabled;
+    Set_Status(some.status);
+    click = some.click;
+    click_data = some.click_data;
+    return(*this);
 }
 
 Button::~Button()
 {
     name = "";
-    int x = 0;
-    int y = 0;
-    int w = 0;
-    int h = 0;
-    Calculate_Attributes(x, y, w, h);
-    image_normal = "";
-    image_pressed = "";
-    string imageButton = "";
-    int imageButton_position = NONE_BUTTON_POSITION;
-    string textButton = "";
-    int textButton_position = NONE_BUTTON_POSITION;
+    position = 0;
+    i_default  = NULL;
+    i_pressed  = NULL;
+    i_over     = NULL;
+    i_disabled = NULL;
+    i_actual   = NULL;
+    status = BUTTON_STATUS_DEFAULT;
+    click = NULL;
+    click_data = NULL;
 }
 
 void
-Button::Calculate_Attributes (int some_x, int some_y, int some_w, int some_h)
+Button::Set_Status(int some_status)
 {
-    x = some_x;
-    y = some_y;
-    w = some_w;
-    h = some_h;
-    posx_ini = x;
-    posy_ini = y;
-    posx_fin = x + w;
-    posy_fin = y + h;
-}
-
-bool
-Button::Is_Over (int coord_x, int coord_y)
-{
-    if (coord_x >= posx_ini && coord_x <= posx_fin)
-        if (coord_y >= posy_ini && coord_y <= posy_fin)
-            return true;
-    return false;
+    if(status == BUTTON_STATUS_DISABLED) return;
+    switch(some_status)
+    {
+        case BUTTON_STATUS_DEFAULT:
+            i_actual =i_default;
+            break;
+        case BUTTON_STATUS_PRESSED:
+            i_actual =i_pressed;
+            break;
+        case BUTTON_STATUS_OVER:
+            i_actual =i_over;
+            break;
+        case BUTTON_STATUS_DISABLED:
+            i_actual =i_disabled;
+            break;
+        default:
+            return;
+    };
+    status = some_status;
 }
 
 void
-Button::Load(SDL_Surface* screen)
+Button::Draw(SDL_Surface* screen)
 {
-    SDL_Surface* button = SDL_LoadBMP("editor/boton_normal.bmp");
-    SDL_Rect dstrect_button;
-    dstrect_button.x = x;
-    dstrect_button.y = y;
-    SDL_BlitSurface(button, 0, screen, &dstrect_button);
-
+    SDL_BlitSurface(i_actual, 0, screen, &position);
 }

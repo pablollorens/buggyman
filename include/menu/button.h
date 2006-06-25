@@ -1,73 +1,85 @@
 #ifndef BUTTON_H
 #define BUTTON_H
 
-
-#define NONE_BUTTON_POSITION 0
-#define LEFT_BUTTON_POSITION 1
-#define CENTER_BUTTON_POSITION 2
-#define RIGHT_BUTTON_POSITION 3
-#define TOP_BUTTON_POSITION 4
-#define BOTTOM_BUTTON_POSITION 5
-
-using namespace std;
+#define BUTTON_STATUS_DEFAULT   0
+#define BUTTON_STATUS_OVER      1
+#define BUTTON_STATUS_PRESSED   2
+#define BUTTON_STATUS_DISABLED  3
 
 #include <string>
-#include <vector>
+//#include <vector>
 #include "rect2d.h"
 #include "defines.h"
+
+#include <img_collection.h>
+extern IMG_Collection image_collection;
+
+using namespace std;
 
 class Button
 {
     public:
         Button();
-        Button(string some_name, int some_x, int some_y, int some_w, int some_h, string some_image_normal, string some_image_pressed, string imageButton, int imageButton_position, string textButton, int textButton_position);
+        Button( char* some_name, int x, int y,
+                char* image_default, char* image_pressed,
+                char* image_over, char* image_disabled,
+                int (*func)(void* data), void* some_data,
+                int some_status = 0);
+        Button( char* some_name, SDL_Rect & some_position,
+                char* image_default, char* image_pressed,
+                char* image_over, char* image_disabled,
+                int (*func)(void* data), void* some_data,
+                int some_status = 0);
         Button(Button & some);
+        Button & operator=(Button & some);
         ~Button();
 
-        inline void Set_Name(string some_name) { name = some_name;}
-        inline string Get_Name() {return name;}
+        inline void Set_Name(char* some_name) { name = some_name;}
+        inline char* Get_Name() {return (char*)name.c_str();}
+        inline void Set_Position(SDL_Rect & some_pos) { position = some_pos; position.w = i_default->w; position.h = i_default->h;}
+        inline void Set_Position(int x, int y) { position.x = x; position.y = y; position.w = i_default->w; position.h = i_default->h;}
+        inline SDL_Rect & Get_Position() {return position;}
 
-        inline void Set_X(int some_x) { Calculate_Attributes(some_x, y, w, h);}
-        inline int Get_X() {return x;}
-        inline void Set_Y(int some_y) { Calculate_Attributes(x, some_y, w, h);}
-        inline int Get_Y() {return y;}
-        inline void Set_Width(int some_w) { Calculate_Attributes(x, y, some_w, h);}
-        inline int Get_Width() {return w;}
-        inline void Set_Height(int some_h) { Calculate_Attributes(x, y, w, some_h);}
-        inline int Get_Height() {return h;}
+        inline void Set_Image_Default  (char* image)        { i_default  = image_collection(image);}
+        inline void Set_Image_Default  (SDL_Surface* image) { i_default  = image;}
+        inline void Set_Image_Pressed  (char* image)        { i_pressed = image_collection(image);}
+        inline void Set_Image_Pressed  (SDL_Surface* image) { i_pressed = image;}
+        inline void Set_Image_Over     (char* image)        { i_over    = image_collection(image);}
+        inline void Set_Image_Over     (SDL_Surface* image) { i_over    = image;}
+        inline void Set_Image_Disabled (char* image)        { i_disabled  = image_collection(image);}
+        inline void Set_Image_Disabled (SDL_Surface* image) { i_disabled = image;}
+        inline SDL_Surface* Get_Image_Default()  { return i_default;}
+        inline SDL_Surface* Get_Image_Pressed()  { return i_pressed;}
+        inline SDL_Surface* Get_Image_Over()     { return i_over;}
+        inline SDL_Surface* Get_Image_Disabled() { return i_disabled;}
+        inline SDL_Surface* Get_Image_Actual()   { return i_actual;}
+        inline void Set_Default(int value)  { i_actual = i_default; }
+        inline void Set_Pressed(int value)  { i_actual = i_pressed; }
+        inline void Set_Over(int value)     { i_actual = i_over; }
+        inline void Set_Disabled(int value) { i_actual = i_disabled; }
+        void Set_Status(int some_status);
+        inline int Get_Status()  { return status;}
+        inline void Enable() { status = 0; Set_Status(BUTTON_STATUS_DEFAULT); }
+        inline void Disable() { Set_Status(BUTTON_STATUS_DISABLED); }
 
-        inline void Set_ImageButton_Position(int some_position) { imageButton_position = some_position;}
-        inline void Set_TextButton_Position(int some_position) { textButton_position = some_position;}
+        inline void  Set_Click_Function(int (*func)(void* data)) {click = func;}
+        inline void  Set_Click_Data(void* some_data) {click_data = some_data;}
+        inline void* Get_Click_Data() { return click_data;}
+        inline void  Click() {if(click) click(click_data);}
 
-        inline void Set_ImageNormal (string some_image) { image_normal = some_image;}
-        inline void Set_ImagePressed (string some_image) { image_pressed = some_image;}
-        inline void Set_ImageButton (string some_image) { imageButton = some_image;}
-        inline void Set_TextButton (string some_text) {textButton = some_text;}
+        void Draw(SDL_Surface* screen);
 
-        bool Is_Over (int coord_x, int coord_y);
-        void Load (SDL_Surface* screen);
-
-    protected:
     private:
         string name;
-        int x;
-        int y;
-        int w;
-        int h;
-        int posx_ini;
-        int posy_ini;
-        int posx_fin;
-        int posy_fin;
-        string image_normal;
-        string image_pressed;
-        string imageButton;
-        int imageButton_position;
-        string textButton;
-        int textButton_position;
-
-        //private methods
-        void Calculate_Attributes(int some_x, int some_y, int some_w, int some_h);
-
+        Rect2D position;
+        SDL_Surface* i_default;
+        SDL_Surface* i_pressed;
+        SDL_Surface* i_over;
+        SDL_Surface* i_disabled;
+        SDL_Surface* i_actual;
+        int (*click)(void* data);
+        void* click_data;
+        int status;
 };
 
 #endif // BUTTON_H

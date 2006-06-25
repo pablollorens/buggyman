@@ -15,6 +15,9 @@ class Rect2D : public SDL_Rect
         Rect2D(int x, int y, unsigned int w=0, unsigned int h=0);
         Rect2D& operator=(const SDL_Rect& some_rect);
         Rect2D& operator=(SDL_Surface* some_surface);
+        Rect2D& operator=(int value);
+        Rect2D& operator+(int value);
+        Rect2D& operator-(int value);
         bool operator==(const SDL_Rect& rect);
         bool operator<(const SDL_Rect& rect);
         void Set_XY(int nx, int ny);

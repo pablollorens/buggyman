@@ -40,6 +40,27 @@ Rect2D::operator=(SDL_Surface* some_surface)
     return *this;
 }
 
+Rect2D&
+Rect2D::operator=(int value)
+{
+    x = y = w = h = 0;
+    return *this;
+}
+
+Rect2D&
+Rect2D::operator+(int value)
+{
+    Rect2D* aux = new Rect2D(x+value,y+value,w,h);
+    return *aux;
+}
+
+Rect2D&
+Rect2D::operator-(int value)
+{
+    Rect2D* aux = new Rect2D(x-value,y-value,w,h);
+    return *aux;
+}
+
 bool
 Rect2D::operator==(const SDL_Rect& some_rect)
 {
