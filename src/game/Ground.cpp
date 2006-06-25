@@ -150,4 +150,7 @@ void Ground::Draw(int cell_x, int cell_y)
       }
       dGeomEnable(Cell_Matrix[i][j].geomID);
     }
+
+    dsDrawSkyDome(dGeomGetPosition(Cell_Matrix[0][0].geomID), dGeomGetRotation(Cell_Matrix[0][0].geomID),0,1000);
+    dsDrawFakeGround();
 }

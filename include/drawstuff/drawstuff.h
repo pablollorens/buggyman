@@ -55,6 +55,8 @@ extern "C" {
 #include <GL/glu.h>
 #include <GL/glut.h>
 
+#include <GL/glaux.h>												    // Our Local Copy Of The Header File
+
 typedef struct dsInterfaces {
   // car functions
   void (*SpeedIncrease)(int);
@@ -167,6 +169,12 @@ void dsDrawLine (const float pos1[3], const float pos2[3]);
  */
 void dsSetSphereQuality (int n);		/* default = 1 */
 void dsSetCappedCylinderQuality (int n);	/* default = 3 */
+
+
+void dsDrawSkyDome (const float pos[3], const float R[12], const float legth, const float radius);
+void dsDrawFakeGround();
+
+GLuint dsLoadGLTexture( const char *filename );
 
 /* closing bracket for extern "C" */
 #ifdef __cplusplus

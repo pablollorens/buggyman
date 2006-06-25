@@ -459,11 +459,11 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
                     cronometro = 1;
                 }
                 dsGLPrint(CENTER,0.4,"HAS TERMINADO!!");
-                dsGLPrint(CENTER,0.6,"Tiempo: %2.2f sg",(float)Game::crono.getFinal()/1000.0);
+                dsGLPrint(CENTER,0.6,"Tiempo: %2.f sg",(float)Game::crono.getFinal()/1000.0);
             }
             else{
                 record = (float)(SDL_GetTicks()-Game::crono.getInicial())/1000.0;
-                dsGLPrint(0.6,0.001,"Tiempo %2.2f sg",record);
+                dsGLPrint(0.6,0.001,"Tiempo %2.f sg",record);
                 if (record <= 1.0 && countdown == 0) dsGLPrint(CENTER,0.55,"AHORA!!");
             }
         }
@@ -475,7 +475,7 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
 
         ticks_percent_ini = SDL_GetTicks();
         dsSetGLPrintColor(0,128,255);
-        dsGLPrint(0.001,0.001,"%2.2f FPS",((float)frames/(SDL_GetTicks()-start_time))*1000.0);
+        dsGLPrint(0.001,0.001,"%2.f FPS",((float)frames/(SDL_GetTicks()-start_time))*1000.0);
         ticks_percent_2D += SDL_GetTicks() - ticks_percent_ini;
 
         /// DRAW ENDS ///

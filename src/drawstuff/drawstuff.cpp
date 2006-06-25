@@ -57,6 +57,9 @@ manage openGL state changes better
 bool use_textures = true;
 GLfloat transform_matrix[16];
 
+GLuint Texture_Ground;
+GLuint Texture_Sky;
+
 //***************************************************************************
 // misc mathematics stuff
 
@@ -279,10 +282,7 @@ static void drawSphere()
     glNewList (listnum,GL_COMPILE);
     glBegin (GL_TRIANGLES);
     for (int i=0; i<20; i++) {
-      drawPatch (&idata[index[i][2]][0],
-		  &idata[index[i][1]][0],
-		 &idata[index[i][0]][0],
-		 sphere_quality);
+      drawPatch (&idata[index[i][2]][0], &idata[index[i][1]][0], &idata[index[i][0]][0], sphere_quality);
     }
     glEnd();
     glEndList();
@@ -479,7 +479,6 @@ static void drawCone(float l, float r, float zoffset)
 static void drawCylinder (float l, float r, float zoffset)
 {
 	drawCylinder2(l,r,r,zoffset);
-
 }
 
 //***************************************************************************
@@ -526,12 +525,15 @@ void dsMotion (int mode, int deltax, int deltay)
 
 void dsStartGraphics (int width, int height, dsFunctions *fn)
 {
+    Texture_Ground = dsLoadGLTexture( "./textures/ground.bmp" );
+    Texture_Sky = dsLoadGLTexture( "./textures/sky.bmp" );
+
   // setup viewport
   glViewport (0,0,width,height);
   glMatrixMode (GL_PROJECTION);
   glLoadIdentity();
   const float vnear = 0.1f;
-  const float vfar = 100.0f;
+  const float vfar = 10000.0f;
   const float k = 0.8f;     // view scale, 1 = +/- 45 degrees
   if (width >= height) {
     float k2 = float(height)/float(width);
@@ -781,3 +783,215 @@ void dsSetCappedCylinderQuality (int n)
 {
   capped_cylinder_quality = n;
 }
+
+void drawCap(float l, float r)
+{
+  const int n = capped_cylinder_quality*4;
+
+  l *= 0.5;
+  float a = float(M_PI*2.0)/float(n);
+  float sa = (float) sin(a);
+  float ca = (float) cos(a);
+
+  float start_nx = 0;
+  float start_ny = 1;
+  for (int j=0; j<(n/4); j++)
+  {
+    // get start_n2 = rotated start_n
+    float start_nx2 =  ca*start_nx + sa*start_ny;
+    float start_ny2 = -sa*start_nx + ca*start_ny;
+    // get n=start_n and n2=start_n2
+    float nx = start_nx;
+    float ny = start_ny;
+    float nz = 0;
+    float nx2 = start_nx2, ny2 = start_ny2, nz2 = 0;
+    glBegin (GL_TRIANGLE_STRIP);
+        for (int i=0; i<=n; i++)
+        {
+          glNormal3d (ny2,nz2,nx2);
+          glTexCoord2f (1,1);
+          glVertex3d   (ny2*r,nz2*r,l+nx2*r);
+          glNormal3d (ny,nz,nx);
+          glTexCoord2f (1,1);
+          glVertex3d   (ny*r,nz*r,l+nx*r);
+          // rotate n,n2
+          float tmp = ca*ny - sa*nz;
+          nz = sa*ny + ca*nz;
+          ny = tmp;
+          tmp = ca*ny2- sa*nz2;
+          nz2 = sa*ny2 + ca*nz2;
+          ny2 = tmp;
+        }
+    glEnd();
+    start_nx = start_nx2;
+    start_ny = start_ny2;
+  }
+}
+
+extern "C" void dsDrawSkyDome (const float pos[3], const float R[12], const float length, const float radius)
+{
+  dsSetColor (0.0, 0.5, 1.0);
+
+  glDisable (GL_LIGHTING);
+  glCullFace (GL_FRONT);
+
+  glEnable(GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D, Texture_Sky);
+
+      glEnable (GL_TEXTURE_GEN_S);
+      glTexGeni (GL_S,GL_TEXTURE_GEN_MODE,GL_SPHERE_MAP);
+      static GLfloat s_params[4] = {1.0f,1.0f,1.0f,1};
+      glTexGenfv (GL_S,GL_OBJECT_PLANE,s_params);
+
+      glEnable (GL_TEXTURE_GEN_T);
+      glTexGeni (GL_T,GL_TEXTURE_GEN_MODE,GL_SPHERE_MAP);
+      static GLfloat t_params[4] = {0.817f,-0.817f,0.817f,1};
+      glTexGenfv (GL_T,GL_OBJECT_PLANE,t_params);
+
+  glPushMatrix();
+    setTransform (pos,R);
+    glMultMatrixf (transform_matrix);
+    drawCap(length,radius);
+  glPopMatrix();
+
+  glCullFace (GL_BACK);
+  glEnable (GL_LIGHTING);
+
+      glDisable (GL_TEXTURE_GEN_S);
+      glDisable (GL_TEXTURE_GEN_T);
+  glDisable(GL_TEXTURE_2D);
+}
+
+extern "C" void dsDrawFakeGround()
+{
+  dsSetColor(0.0, 1.0, 0.0);
+
+  glDisable (GL_LIGHTING);
+
+  const float gsize = 10000.0f;
+  const float offset = 0; // -0.001f; ... polygon offsetting doesn't work well
+
+  const float ground_scale = 1.0f/10.0f;	// ground texture scale (1/size)
+  const float ground_ofsx = 10.5;		// offset of ground texture
+  const float ground_ofsy = 0.5;
+
+  glEnable( GL_TEXTURE_2D );
+  glBindTexture( GL_TEXTURE_2D, Texture_Ground );
+
+  glBegin (GL_QUADS);
+      glNormal3f (0,0,1);
+      glTexCoord2f (-gsize*ground_scale + ground_ofsx,-gsize*ground_scale + ground_ofsy);
+      glVertex3f (-gsize,-gsize,offset);
+      glTexCoord2f (gsize*ground_scale + ground_ofsx,-gsize*ground_scale + ground_ofsy);
+      glVertex3f (gsize,-gsize,offset);
+      glTexCoord2f (gsize*ground_scale + ground_ofsx,gsize*ground_scale + ground_ofsy);
+      glVertex3f (gsize,gsize,offset);
+      glTexCoord2f (-gsize*ground_scale + ground_ofsx,gsize*ground_scale + ground_ofsy);
+      glVertex3f (-gsize,gsize,offset);
+  glEnd();
+
+  glDisable( GL_TEXTURE_2D );
+  glEnable (GL_LIGHTING);
+}
+
+AUX_RGBImageRec *dsLoadBMP(const char *Filename)						// Loads A Bitmap Image
+{
+	FILE *File=NULL;												// File Handle
+
+	if (!Filename)													// Make Sure A Filename Was Given
+	{
+		return NULL;												// If Not Return NULL
+	}
+
+	File=fopen(Filename,"r");										// Check To See If The File Exists
+
+	if (File)														// Does The File Exist?
+	{
+		fclose(File);												// Close The Handle
+		return auxDIBImageLoad(Filename);							// Load The Bitmap And Return A Pointer
+	}
+
+	return NULL;													// If Load Failed Return NULL
+}
+
+GLuint dsLoadGLTexture( const char *filename )						// Load Bitmaps And Convert To Textures
+{
+	AUX_RGBImageRec *pImage;										// Create Storage Space For The Texture
+	GLuint texture = 0;												// Texture ID
+
+	pImage = dsLoadBMP( filename );									// Loads The Bitmap Specified By filename
+
+	// Load The Bitmap, Check For Errors, If Bitmap's Not Found Quit
+	if ( pImage != NULL && pImage->data != NULL )					// If Texture Image Exists
+	{
+		glGenTextures(1, &texture);									// Create The Texture
+
+		// Typical Texture Generation Using Data From The Bitmap
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glTexImage2D(GL_TEXTURE_2D, 0, 3, pImage->sizeX, pImage->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, pImage->data);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+
+		free(pImage->data);											// Free The Texture Image Memory
+		free(pImage);												// Free The Image Structure
+	}
+
+	return texture;													// Return The Status
+}
+
+/*
+//***************************************************************************
+// Texture object.
+
+class Texture {
+  Image *image;
+  GLuint name;
+public:
+  Texture (char *filename);
+  ~Texture();
+  void bind (int modulate);
+};
+
+
+Texture::Texture (char *filename)
+{
+  image = new Image (filename);
+  glGenTextures (1,&name);
+  glBindTexture (GL_TEXTURE_2D,name);
+
+  // set pixel unpacking mode
+  glPixelStorei (GL_UNPACK_SWAP_BYTES, 0);
+  glPixelStorei (GL_UNPACK_ROW_LENGTH, 0);
+  glPixelStorei (GL_UNPACK_ALIGNMENT, 1);
+  glPixelStorei (GL_UNPACK_SKIP_ROWS, 0);
+  glPixelStorei (GL_UNPACK_SKIP_PIXELS, 0);
+
+  // glTexImage2D (GL_TEXTURE_2D, 0, 3, image->width(), image->height(), 0,
+  //		   GL_RGB, GL_UNSIGNED_BYTE, image->data());
+  gluBuild2DMipmaps (GL_TEXTURE_2D, 3, image->width(), image->height(), GL_RGB, GL_UNSIGNED_BYTE, image->data());
+
+  // set texture parameters - will these also be bound to the texture???
+  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+  glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+}
+
+
+Texture::~Texture()
+{
+  delete image;
+  glDeleteTextures (1,&name);
+}
+
+
+void Texture::bind (int modulate)
+{
+  glBindTexture (GL_TEXTURE_2D,name);
+  glTexEnvi (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, modulate ? GL_MODULATE : GL_DECAL);
+}
+
+*/
