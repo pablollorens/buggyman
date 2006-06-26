@@ -29,28 +29,31 @@ SDLKey Game::Key_Action = SDLK_z;
 void Game::Run()
 {
   /// Init ///
-  dsPrint("Initializing Game...\n");
 
+  dsPrint("\tInitializing Functions & Interfaces...\n");
   FunctionsInit();
   InterfacesInit();
 
+  dsPrint("\tCreating the World, Ground & Car...\n");
   WorldInit();
   WorldConfig();
   GroundInit();
   CarInit();
 
   /// Simulacion ///
-  dsPrint("Simulating...\n");
 
+  dsPrint("\tStart Simulation...\n");
   dsSimulationLoop (0,0,width,height,fullScreen,&functions,&interfaces);
 
   // printf debug info
-  printf("\tSim: %2.3f %c\n",100*(float)Engine::ticks_sim/Engine::ticks_total,'%');
-  printf("\tDraw: %2.3f %c\n",100*(float)Engine::ticks_draw/Engine::ticks_total,'%');
+  printf("\t# Sim: %2.3f %c\n",100*(float)Engine::ticks_sim/Engine::ticks_total,'%');
+  printf("\t# Draw: %2.3f %c\n",100*(float)Engine::ticks_draw/Engine::ticks_total,'%');
 
   /// End ///
 
+  dsPrint("\tDestroying the Car, Ground & World...\n");
   CarDestroy();
+  GroundDestroy();
   WorldDestroy();
 
   dCloseODE();
@@ -66,7 +69,6 @@ void Game::FunctionsInit()
   functions.step = &Engine::SimLoop;
   functions.command = 0;
   functions.stop = 0;
-  functions.path_to_textures = "./textures";
 }
 
 /// //////////////////////////////////////////////////////////////////////// ///
@@ -125,6 +127,11 @@ void Game::GroundInit()
   engine.ground = new Ground(engine.World, engine.Space);
 }
 
+void Game::GroundDestroy()
+{
+//    free( engine.ground );
+}
+
 
 /// //////////////////////////////////////////////////////////////////////// ///
 /// CAR
@@ -139,4 +146,6 @@ void Game::CarDestroy()
   dGeomDestroy (Car::Chassis_GeomID);
   for(int i=0; i<WHEELS; i++)
     dGeomDestroy (Car::Wheel_GeomID[i]);
+
+//  free( engine.car );
 }

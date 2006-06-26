@@ -8,8 +8,10 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_thread.h>
 #include <game/Game.h>
+#include <drawstuff/drawstuff.h>
 
 #include <img_collection.h>
+
 IMG_Collection image_collection;
 
 using namespace std;
@@ -26,18 +28,50 @@ void Insert_into_map(map< pair<int,int> , Button* > & buttons, Button & button)
         }
 }
 
+void Init_Menu()
+{
+    if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
+    {
+        dsError( "Unable to init SDL: %s\n", SDL_GetError() );
+        exit( 100 );
+    }
+
+    screen = SDL_SetVideoMode( 800, 600, 32, SDL_HWSURFACE|SDL_DOUBLEBUF);
+    if ( !screen )
+    {
+        dsError("Unable to set video: %s\n", SDL_GetError());
+        exit( 101 );
+    }
+    SDL_ShowCursor(SDL_DISABLE);
+}
+
+void Quit_Menu()
+{
+    SDL_Quit();
+}
+
 int Run_Game(void* data)
 {
+    dsPrint("\t### RUN GAME ###\n");
+
     Game::SetResolution(((int*)data)[0],((int*)data)[1]);
     Game::SetFullScreen(false);
     Game::Run();
+
+    dsPrint("\t### END GAME ###\n");
+
     return 0;
 }
 
 int Run_Editor(void* data)
 {
+    dsPrint("\t### RUN EDITOR ###\n");
+
     Editor ed;
     ed.Run(screen, "terreno.cfg");
+
+    dsPrint("\t### END EDITOR ###\n");
+
     return 0;
 }
 
@@ -49,22 +83,12 @@ int Quit_Game(void* data)
 
 int main ( int argc, char** argv )
 {
+    dsPrint("### MAIN ###\n");
+
     bool update_required = 1;
     bool done = false;
 
-    if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
-    {
-        printf( "Unable to init SDL: %s\n", SDL_GetError() );
-        return 1;
-    }
-    //atexit(SDL_Quit);
-
-    // create a new window
-    /*SDL_Surface* */screen = SDL_SetVideoMode(
-        800, 600, 32,
-        SDL_HWSURFACE|SDL_DOUBLEBUF);
-    if ( !screen ) { printf("Unable to set video: %s\n", SDL_GetError()); return 1; }
-    SDL_ShowCursor(SDL_DISABLE);
+    Init_Menu();
 
     Rect2D position;
     map< pair<int,int> , Button* > buttons;
@@ -111,7 +135,8 @@ int main ( int argc, char** argv )
     position = 0;
     Button* actual_button =NULL;
 
-    // program main loop
+    /// program main loop
+
     while (!done)
     {
         // message processing loop
@@ -171,12 +196,10 @@ int main ( int argc, char** argv )
                 Button* boton = buttons[coord];
                 if(boton)
                 {
+                    Quit_Menu();
                     (*boton).Set_Status(BUTTON_STATUS_OVER);
                     (*boton).Click();
-                    screen = SDL_SetVideoMode(
-                        800, 600, 32,
-                        SDL_HWSURFACE|SDL_DOUBLEBUF);
-                    if ( !screen ) { printf("Unable to set video: %s\n", SDL_GetError()); return 1; }
+                    Init_Menu();
                 }
                 update_required = 1;
                 break;
@@ -205,6 +228,6 @@ int main ( int argc, char** argv )
 
     SDL_Quit();
     // all is well ;)
-    printf("Exited cleanly\n");
+    dsPrint("### THE END ###\n");
     return 0;
 }

@@ -100,7 +100,7 @@ void dsSimulationLoop (int argc, char **argv,
  */
 void dsPrint (char *msg, ...);
 void dsError (char *msg, ...);
-void dsPanic (char *msg, ...);
+void dsPanic (int error, char *msg, ...);
 
 void dsGLPrint (float x, float y, char *msg, ...);
 void dsGLPrintSurface(SDL_Surface *sTexture, SDL_Surface *sMask, float percent_x, float percent_y);

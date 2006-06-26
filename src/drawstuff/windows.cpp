@@ -57,12 +57,12 @@ extern "C" void dsError (char *msg, ...)
   vfprintf (stderr,msg,ap);
 }
 
-extern "C" void dsPanic (char *msg, ...)
+extern "C" void dsPanic (int error, char *msg, ...)
 {
   va_list ap;
   va_start (ap,msg);
   vfprintf (stderr,msg,ap);
-  exit (1);
+  exit (error);
 }
 
 
@@ -376,12 +376,13 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
     if (fullscreen) video_mode |= SDL_FULLSCREEN;
 
 
-    dsPrint("# Initializing SDL Video ... ");
+    dsPrint("\t\tInitializing SDL Video ... ");
 
     // initialize SDL video
 
     if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
-        dsPanic( "Unable to init SDL: %s\n", SDL_GetError() );
+        dsPanic( 200, "Unable to init SDL: %s\n", SDL_GetError() );
+    SDL_ShowCursor(SDL_DISABLE);
 
     // TTF Fonts
     TTF_Init();
@@ -390,7 +391,7 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
     // create a new window
     screen = SDL_SetVideoMode(window_width, window_height, 32, video_mode);
     if ( !screen )
-        dsPanic("Unable to set %dx%d video: %s\n", window_width, window_height, SDL_GetError());
+        dsPanic( 201, "Unable to set %dx%d video: %s\n", window_width, window_height, SDL_GetError());
     dsPrint("OK\n");
 
     // Setup OpenGL
@@ -398,7 +399,7 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
     // Load Textures
     if (fn->start) fn->start();
 
-    dsPrint(".. Main Loop\n");
+    dsPrint("\t\t.. Main Loop\n");
 
     /// PROGRAM MAIN LOOP ///
 
@@ -458,13 +459,13 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
                     Game::crono.Stop();
                     cronometro = 1;
                 }
-                dsGLPrint(CENTER,0.4,"HAS TERMINADO!!");
+                dsGLPrint(CENTER,0.4,"¡¡HAS TERMINADO!!");
                 dsGLPrint(CENTER,0.6,"Tiempo: %2.f sg",(float)Game::crono.getFinal()/1000.0);
             }
             else{
                 record = (float)(SDL_GetTicks()-Game::crono.getInicial())/1000.0;
                 dsGLPrint(0.6,0.001,"Tiempo %2.f sg",record);
-                if (record <= 1.0 && countdown == 0) dsGLPrint(CENTER,0.55,"AHORA!!");
+                if (record <= 1.0 && countdown == 0) dsGLPrint(CENTER,0.55,"¡¡AHORA!!");
             }
         }
         else
@@ -505,18 +506,18 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
 
     /// END ///
 
-    dsPrint(".. End\n");
+    dsPrint("\t\t.. End\n");
 
 	// Print out the frames per second //
 	this_time = SDL_GetTicks();
 	if ( this_time != start_time ) {
-		printf("%2.2f FPS\n",
+		dsPrint("\t\t# %2.2f FPS\n",
 			((float)frames/(this_time-start_time))*1000.0);
 	}
     // Print debug info
-    printf("Events: %2.3f %c\n",100*(float)ticks_percent_events/(this_time-start_time),'%');
-    printf("  2D  : %2.3f %c\n",100*(float)ticks_percent_2D/(this_time-start_time),'%');
-    printf("  3D  : %2.3f %c\n",100*(float)ticks_percent_3D/(this_time-start_time),'%');
+    dsPrint("\t\t# Events: %2.3f %c\n",100*(float)ticks_percent_events/(this_time-start_time),'%');
+    dsPrint("\t\t#   2D  : %2.3f %c\n",100*(float)ticks_percent_2D/(this_time-start_time),'%');
+    dsPrint("\t\t#   3D  : %2.3f %c\n",100*(float)ticks_percent_3D/(this_time-start_time),'%');
 
     TTF_CloseFont( font_Courier );
 
@@ -622,36 +623,27 @@ void SDL_GL_Enter2DMode()
 {
 	SDL_Surface *screen = SDL_GetVideoSurface();
 
-	glPushAttrib(GL_LIGHTING);
-	glDisable(GL_LIGHTING);
+    glPushAttrib(GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glPushAttrib(GL_ENABLE_BIT);
-
-	glPushAttrib(GL_DEPTH_TEST);
-	glDisable(GL_DEPTH_TEST);
-
-	glPushAttrib(GL_CULL_FACE);
-	glDisable(GL_CULL_FACE);
-
-	glPushAttrib(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_LIGHTING);
 	glEnable(GL_TEXTURE_2D);
 
-    glPushAttrib(GL_BLEND);
-	glEnable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
 
 	glViewport(0, 0, screen->w, screen->h);
 
-	glPushAttrib(GL_MATRIX_MODE);
+	glPushAttrib ( GL_TRANSFORM_BIT );
 
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
-	glLoadIdentity();
-
-	glOrtho(0.0, (GLdouble)screen->w, (GLdouble)screen->h, 0.0, 0.0, 1.0);
+        glLoadIdentity();
+        glOrtho(0.0, (GLdouble)screen->w, (GLdouble)screen->h, 0.0, 0.0, 1.0);
 
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-	glLoadIdentity();
+        glLoadIdentity();
 
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 }
@@ -664,13 +656,8 @@ void SDL_GL_Leave2DMode()
     glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 
-    glPopAttrib();  // GL_MATRIX_MODE
-	glPopAttrib();  // GL_BLEND
-	glPopAttrib();  // GL_TEXTURE_2D
-	glPopAttrib();  // GL_CULL_FACE
-	glPopAttrib();  // GL_DEPTH_TEST
-	glPopAttrib();  // GL_ENABLE_BIT
-	glPopAttrib();  // GL_LIGHTING
+    glPopAttrib();  // GL_TRANSFORM_BIT
+    glPopAttrib();  // GL_ENABLE_BIT
 }
 
 void GL_DeleteTextures()

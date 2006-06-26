@@ -65,9 +65,9 @@ Car::Car(dWorldID world, dSpaceID space,int x1,int y1,int z1,int rotation)
   ruta_nueva += DIR_VEHICLES;
   chdir(ruta_nueva.c_str());
   if ( car_Model->loadModelData( "car.ms3d" ) == false )		// Loads The Model And Checks For Errors
-    dsPanic("Couldn't load the model car.ms3d");
+    dsPanic( 300,"Couldn't load the model car.ms3d");
   if ( wheel_Model->loadModelData( "wheel.ms3d" ) == false )
-    dsPanic("Couldn't load the model wheel.ms3d");
+    dsPanic( 301,"Couldn't load the model wheel.ms3d");
   // salimos al directorio raiz
   chdir(ruta.c_str());
 

@@ -24,9 +24,10 @@ class Game {
     static void WorldInit();
     static void WorldConfig();
     static void WorldDestroy();
+    static void GroundInit();
+    static void GroundDestroy();
     static void CarInit();
     static void CarDestroy();
-    static void GroundInit();
 
     static Engine engine;
     static Crono crono;

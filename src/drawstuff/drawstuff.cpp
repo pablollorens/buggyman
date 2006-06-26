@@ -397,8 +397,6 @@ static void drawCappedCylinder (float l, float r)
     start_nx = start_nx2;
     start_ny = start_ny2;
   }
-
-  glPopMatrix();
 }
 
 // draw a cylinder of length l and radius r, aligned along the z axis
@@ -865,6 +863,7 @@ extern "C" void dsDrawSkyDome (const float pos[3], const float R[12], const floa
 extern "C" void dsDrawFakeGround()
 {
   dsSetColor(0.0, 1.0, 0.0);
+  glPushAttrib( GL_ENABLE_BIT );
 
   glDisable (GL_LIGHTING);
 
@@ -890,8 +889,7 @@ extern "C" void dsDrawFakeGround()
       glVertex3f (-gsize,gsize,offset);
   glEnd();
 
-  glDisable( GL_TEXTURE_2D );
-  glEnable (GL_LIGHTING);
+  glPopAttrib();
 }
 
 AUX_RGBImageRec *dsLoadBMP(const char *Filename)						// Loads A Bitmap Image

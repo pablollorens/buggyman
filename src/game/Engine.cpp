@@ -38,12 +38,12 @@ void Engine::Start()
 {
   dsSetViewpoint (xyz,hpr);
 
-  dsPrint (".. Loading Textures\n");
+  dsPrint ("\t\t.. Loading Textures\n");
 
   Car::LoadTextures();
   Ground::LoadTextures();
 
-  dsPrint ("# Initializing ODE\n");
+  dsPrint ("\t\tInitializing ODE\n");
 }
 
 /// //////////////////////////////////////////////////////////////////////// ///
@@ -112,7 +112,6 @@ void Engine::SimLoop (int pause)
 // this is called by dSpaceCollide when two objects in space are potentially colliding.
 void Engine::nearCallback (void *data, dGeomID o1, dGeomID o2)
 {
-
   dContact contact[MAX_CONTACTS];   // up to MAX_CONTACTS contacts per box-box
   int n = dCollide (o1,o2,MAX_CONTACTS,&contact[0].geom,sizeof(dContact));
 

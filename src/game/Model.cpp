@@ -217,8 +217,8 @@ void Model::ModelDrawList(int id)
                 }
             }
             glEnd();
+            glPopMatrix();
         }
-        glPopMatrix();
 
         if ( texEnabled )
             glEnable( GL_TEXTURE_2D );

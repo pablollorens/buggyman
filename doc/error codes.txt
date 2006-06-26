@@ -1,0 +1,16 @@
+ERROR CODES
+
+main.cpp
+
+	100	SDL_Init()
+	101	SDL_SetVideoMode()
+
+Windows.cpp
+
+	200	SDL_Init()
+	201	SDL_SetVideoMode()
+
+car.cpp
+
+	300	Couldn't load the model car.ms3d
+	301	Couldn't load the model wheel.ms3d

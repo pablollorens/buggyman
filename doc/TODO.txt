@@ -27,6 +27,7 @@ OPTIMIZACION
   - Crear diferentes niveles de detalle y sus texturas correspondientes
     (en cada momento dibujaremos un nivel dependiendo de la proximidad).
   - Cambio entre pantallas (todavia con errores)
+  - OpenGL error: 1283 (Statk Overflow) -> Push/Pop
 
 EDITOR
 

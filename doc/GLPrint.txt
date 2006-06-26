@@ -12,9 +12,9 @@
 		// Imprime errores en STDERR.txt
 
 
-	void dsPanic (char *msg, ...);
+	void dsPanic (int error, char *msg, ...);
 
-		// Imprime el error en STDERR.txt y finaliza la ejecución
+		// Imprime el error en STDERR.txt y finaliza la ejecución con el valor de error indicado
 
 
 
