@@ -289,9 +289,6 @@
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
 		</Unit>
-		<Unit filename="src\game\main.cpp">
-			<Option compilerVar="CPP"/>
-		</Unit>
 		<Unit filename="src\main\main.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
