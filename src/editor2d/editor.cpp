@@ -176,7 +176,8 @@ Editor::Run(SDL_Surface* screen, char* path_to_save_circuit)
     printf("ok\n");
 
     Add_Tracks(tools);
-
+    fprintf(stderr,"Pistas anyadidas a Tools\n");
+    fprintf(stderr,"------------------------\n");
     // ///////////////////////////////////////////////////////////////////////
 
     printf("Creatring circuit grid... \0");
@@ -280,9 +281,15 @@ Editor::Run(SDL_Surface* screen, char* path_to_save_circuit)
                             }
                             else
                             {
-                                delete floating;
-                                floating = NULL;
-                                status = EDITOR_STATUS_NONE;
+//                                if(!( event.button.x >= EDITOR_TRACKS_WINDOW_X &&
+//                                    event.button.x< EDITOR_TRACKS_WINDOW_X + EDITOR_TRACKS_WINDOW_W &&
+//                                    event.button.y >= EDITOR_TRACKS_WINDOW_Y &&
+//                                    event.button.y< EDITOR_TRACKS_WINDOW_Y + EDITOR_TRACKS_WINDOW_H))
+                                {
+                                    delete floating;
+                                    floating = NULL;
+                                    status = EDITOR_STATUS_NONE;
+                                }
                             }
                         }
                         else
@@ -326,28 +333,34 @@ Editor::Run(SDL_Surface* screen, char* path_to_save_circuit)
                     // Implementation of drawn by mouse displacement
                     if (floating)
                     {
-                        world.Activate_Tracks_Under(event.button.x,event.button.y,floating);
-                        if (mode_displacement_on &&
-                            *floating != *world.Get_Track(event.button.x,event.button.y) &&
-                            !(*floating == *world.Get_Track(event.button.x+((*floating).Get_DimX()-1)*CELL_X+1,event.button.y) ||
-                              *floating == *world.Get_Track(event.button.x,event.button.y+((*floating).Get_DimY()-1)*CELL_Y+1)))
+                        if(!( event.button.x >= EDITOR_TRACKS_WINDOW_X &&
+                            event.button.x< EDITOR_TRACKS_WINDOW_X + EDITOR_TRACKS_WINDOW_W &&
+                            event.button.y >= EDITOR_TRACKS_WINDOW_Y &&
+                            event.button.y< EDITOR_TRACKS_WINDOW_Y + EDITOR_TRACKS_WINDOW_H))
                         {
-                            if(world.Set_Track(event.button.x,event.button.y,*floating))
+                            world.Activate_Tracks_Under(event.button.x,event.button.y,floating);
+                            if (mode_displacement_on &&
+                                *floating != *world.Get_Track(event.button.x,event.button.y) &&
+                                !(*floating == *world.Get_Track(event.button.x+((*floating).Get_DimX()-1)*CELL_X+1,event.button.y) ||
+                                  *floating == *world.Get_Track(event.button.x,event.button.y+((*floating).Get_DimY()-1)*CELL_Y+1)))
                             {
-                                if      (status == EDITOR_STATUS_ADD)
+                                if(world.Set_Track(event.button.x,event.button.y,*floating))
                                 {
+                                    if      (status == EDITOR_STATUS_ADD)
+                                    {
+                                    }
+                                    else if (status == EDITOR_STATUS_MOVE)
+                                    {
+                                        delete floating;
+                                        floating = NULL;
+                                    }
                                 }
-                                else if (status == EDITOR_STATUS_MOVE)
+                                else
                                 {
                                     delete floating;
                                     floating = NULL;
+                                    status = EDITOR_STATUS_NONE;
                                 }
-                            }
-                            else
-                            {
-                                delete floating;
-                                floating = NULL;
-                                status = EDITOR_STATUS_NONE;
                             }
                         }
                     }
