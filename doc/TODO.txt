@@ -27,7 +27,14 @@ OPTIMIZACION
   - Crear diferentes niveles de detalle y sus texturas correspondientes
     (en cada momento dibujaremos un nivel dependiendo de la proximidad).
   - Cambio entre pantallas (todavia con errores)
-  - OpenGL error: 1283 (Statk Overflow) -> Push/Pop
+  - Reiniciar el juego cada vez q se salga de él
+	Idea:	al salir del juego, este sigue en ejecución (no se reinicia)
+		y el usuario desde el menu tiene la opción de:
+			- Continuar (lo q habría ahora mismo más o menos)
+			- Partida Nueva (invicar el reinicio de las variables del juego)
+  - Al finalizar el juego no se libera toda la memoria
+	(si se ejecuta varias veces, la memoria va en aumento)
+
 
 EDITOR
 

@@ -417,6 +417,8 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
 
 	int countdown = 0;
 
+	done = false;
+
     while (!done)
     {
         // Message events
@@ -533,6 +535,8 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
     SDL_Quit();
 }
 
+/// //////////////////////////////////////////////////////////////////////// ///
+/// 2D over 3D
 // load the texture into "*texture" param
 GLuint SDL_GL_LoadTexture(SDL_Surface *surface, GLfloat *texcoord)
 {

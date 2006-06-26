@@ -113,8 +113,8 @@ Ground::Ground(dWorldID world, dSpaceID space)
         Cell_Matrix[X-1-i][j].geomPista = dCreateTriMesh(space,MeshesData[model],0,0,0);
 
         if (rotation==180) dRFromAxisAndAngle(R,0,0,1,0);
-        if (rotation==270)  dRFromAxisAndAngle(R,0,0,1,+M_PI/2);
-        if (rotation==0)  dRFromAxisAndAngle(R,0,0,1,+M_PI);
+        if (rotation==270) dRFromAxisAndAngle(R,0,0,1,+M_PI/2);
+        if (rotation==0)   dRFromAxisAndAngle(R,0,0,1,+M_PI);
         if (rotation==90)  dRFromAxisAndAngle(R,0,0,1,+(3*M_PI)/2);
         dGeomSetRotation(Cell_Matrix[X-1-i][j].geomPista,R);
         dGeomSetPosition (Cell_Matrix[X-1-i][j].geomPista,(X-i-1)*7,j*7,0.1);
@@ -130,7 +130,7 @@ void Ground::LoadTextures()
 
 void Ground::Draw(int cell_x, int cell_y)
 {
-  int R = 12; //pinta 2R+1*2R+1 casillas
+  int R = 5; //pinta 2R+1*2R+1 casillas
   int min_x = cell_x <  R  ? 0 : cell_x-R;
   int max_x = cell_x >= X-R ? X-1 : cell_x+R;
   int min_y = cell_y <  R  ? 0 : cell_y-R;
@@ -150,6 +150,8 @@ void Ground::Draw(int cell_x, int cell_y)
       }
       dGeomEnable(Cell_Matrix[i][j].geomID);
     }
+
+    /// Back Ground
 
     dsDrawSkyDome(dGeomGetPosition(Cell_Matrix[0][0].geomID), dGeomGetRotation(Cell_Matrix[0][0].geomID),0,1000);
     dsDrawFakeGround();
