@@ -67,7 +67,8 @@ typedef struct CarInfo {
   // wheels position
   float posX_front;
   float posX_back;
-  float posY;
+  float posY_front;
+  float posY_back;
 } CarInfo;
 
 typedef struct dsInterfaces {
