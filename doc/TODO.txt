@@ -43,3 +43,9 @@ EDITOR
   - Reglas de construccion
   - Lectura de tramos desde HD.
   - Funcionalidad (cargar / guardar)
+
+  - Clase Menu. De esta clase, que provee metodos basicos para la gestion de botones
+    y eventos, heredan otras clases como editor, menu principal, menu de seleccion
+    de pistas, etc
+  - Clase Cursor, usada por Menu y demas.
+  - Modificar la clase editor y lo que hay en el main para que hereden de Menu.
