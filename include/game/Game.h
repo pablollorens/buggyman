@@ -9,7 +9,7 @@
 #include <game/Crono.h>
 #include <game/utils.h>
 
-#define GRAVITY -3.0
+#define GRAVITY -10.0
 
 /// //////////////////////////////////////////////////////////////////////// ///
 

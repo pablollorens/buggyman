@@ -14,19 +14,19 @@ using namespace std;
 
 #define STARTZ 3.0	// starting height of chassis
 
-#define CMASS 20	// chassis mass
-#define WMASS 10    // wheel mass
+#define CMASS 1	// chassis mass
+#define WMASS 0.2    // wheel mass
 
 #define WHEELS 4
 #define WHEEL_WIDTH 0.1f
 
 //#define MAX_SPEED 18
 #define MIN_SPEED 10
-#define MAX_STEER 0.2
+#define MAX_STEER 0.7
 
-#define STEER_SENSIBILITY 0.03
+#define STEER_SENSIBILITY 0.05
 #define SPEED_ACCEL_SENSIBILITY 0.5
-#define SPEED_BREAK_SENSIBILITY 0.4
+#define SPEED_BREAK_SENSIBILITY 0.1
 
 /// //////////////////////////////////////////////////////////////////////// ///
 

@@ -109,10 +109,10 @@ Car::Car(dWorldID world, dSpaceID space,CarInfo car_info,int x1,int y1,int z1,in
   }
 
     // Para Desert apc
-    dBodySetPosition (Wheel_BodyID[0],(x1*7)+car_info.posX_front,(y1*7)+car_info.posY,STARTZ-0.2);
-    dBodySetPosition (Wheel_BodyID[1],(x1*7)+car_info.posX_front,(y1*7)-car_info.posY,STARTZ-0.2);
-    dBodySetPosition (Wheel_BodyID[2],(x1*7)-car_info.posX_back,(y1*7)+car_info.posY,STARTZ-0.2);
-    dBodySetPosition (Wheel_BodyID[3],(x1*7)-car_info.posX_back,(y1*7)-car_info.posY,STARTZ-0.2);
+    dBodySetPosition (Wheel_BodyID[0],(x1*7)+car_info.posX_front,(y1*7)+car_info.posY_front,STARTZ-0.2);
+    dBodySetPosition (Wheel_BodyID[1],(x1*7)+car_info.posX_front,(y1*7)-car_info.posY_front,STARTZ-0.2);
+    dBodySetPosition (Wheel_BodyID[2],(x1*7)-car_info.posX_back,(y1*7)+car_info.posY_back,STARTZ-0.2);
+    dBodySetPosition (Wheel_BodyID[3],(x1*7)-car_info.posX_back,(y1*7)-car_info.posY_back,STARTZ-0.2);
     // Para golgotha
 //    dBodySetPosition (Wheel_BodyID[0], 0.25*2.0, 0.45,0.81);
 //    dBodySetPosition (Wheel_BodyID[1], 0.25*2.0,-0.45,0.81);
