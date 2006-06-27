@@ -380,7 +380,7 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
 
     // initialize SDL video
 
-    if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
+    if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )   // | SDL_INIT_NOPARACHUTE )
         dsPanic( 200, "Unable to init SDL: %s\n", SDL_GetError() );
     SDL_ShowCursor(SDL_DISABLE);
 
@@ -421,6 +421,9 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
 
     while (!done)
     {
+        // FrameRate
+        //SDL_Delay(5);
+
         // Message events
         countdown = (int)(starting-((SDL_GetTicks()-tempo)/1000.0));
         if (!jugando && (countdown<=0))

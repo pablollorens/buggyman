@@ -188,6 +188,7 @@ void dsDrawSkyDome (const float pos[3], const float R[12], const float legth, co
 void dsDrawFakeGround();
 
 GLuint dsLoadGLTexture( const char *filename );
+GLuint dsLoadGLMipMap( const char *filename );
 
 /* closing bracket for extern "C" */
 #ifdef __cplusplus

@@ -94,8 +94,8 @@ static void normalizeVector3 (float v[3])
 
 static float color[4] = {0,0,0,0};	// current r,g,b,alpha color
 
-//***************************************************************************
-// OpenGL utility stuff
+///***************************************************************************
+/// OpenGL utility stuff
 
 static void setCamera (float x, float y, float z, float h, float p, float r)
 {
@@ -479,8 +479,8 @@ static void drawCylinder (float l, float r, float zoffset)
 	drawCylinder2(l,r,r,zoffset);
 }
 
-//***************************************************************************
-// motion model
+///***************************************************************************
+/// motion model
 
 // current camera position and orientation
 static float view_xyz[3];	// position x,y,z
@@ -518,12 +518,12 @@ void dsMotion (int mode, int deltax, int deltay)
   wrapCameraAngles();
 }
 
-//***************************************************************************
-// drawing loop stuff
+/// //////////////////////////////////////////////////////////////////////// ///
+/// drawing loop stuff
 
 void dsStartGraphics (int width, int height, dsFunctions *fn)
 {
-    Texture_Ground = dsLoadGLTexture( "./textures/ground.bmp" );
+    Texture_Ground = dsLoadGLMipMap( "./textures/ground.bmp" );
     Texture_Sky = dsLoadGLTexture( "./textures/sky.bmp" );
 
   // setup viewport
@@ -603,11 +603,18 @@ void dsDrawFrame (dsFunctions *fn, int pause)
 
 void dsStopGraphics()
 {
-
+    if ( Texture_Ground ) {
+      glDeleteTextures( 1, &Texture_Ground );
+      Texture_Ground = 0;
+    }
+    if ( Texture_Sky ) {
+      glDeleteTextures( 1, &Texture_Sky );
+      Texture_Sky = 0;
+    }
 }
 
-//***************************************************************************
-// C interface
+///***************************************************************************
+/// C interface
 
 extern "C" void dsSimulationLoop (int argc, char **argv, int window_width, int window_height, bool fullscreen, dsFunctions *fn, dsInterfaces *in)
 {
@@ -862,9 +869,7 @@ extern "C" void dsDrawSkyDome (const float pos[3], const float R[12], const floa
 
 extern "C" void dsDrawFakeGround()
 {
-  dsSetColor(0.0, 1.0, 0.0);
   glPushAttrib( GL_ENABLE_BIT );
-
   glDisable (GL_LIGHTING);
 
   const float gsize = 10000.0f;
@@ -933,6 +938,36 @@ GLuint dsLoadGLTexture( const char *filename )						// Load Bitmaps And Convert 
 		free(pImage->data);											// Free The Texture Image Memory
 		free(pImage);												// Free The Image Structure
 	}
+	else
+        dsPanic(400,"Error loading BMP image '%s'.",filename);
+
+	return texture;													// Return The Status
+}
+
+GLuint dsLoadGLMipMap( const char *filename )						// Load Bitmaps And Convert To Textures
+{
+	AUX_RGBImageRec *pImage;										// Create Storage Space For The Texture
+	GLuint texture = 0;												// Texture ID
+
+	pImage = dsLoadBMP( filename );									// Loads The Bitmap Specified By filename
+
+	// Load The Bitmap, Check For Errors, If Bitmap's Not Found Quit
+	if ( pImage != NULL && pImage->data != NULL )					// If Texture Image Exists
+	{
+		glGenTextures(1, &texture);									// Create The Texture
+
+		// Typical Texture Generation Using Data From The Bitmap
+		glBindTexture(GL_TEXTURE_2D, texture);
+		//glTexImage2D(GL_TEXTURE_2D, 0, 3, pImage->sizeX, pImage->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, pImage->data);
+		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, pImage->sizeX, pImage->sizeY, GL_RGB, GL_UNSIGNED_BYTE, pImage->data);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR_MIPMAP_LINEAR);
+
+		free(pImage->data);											// Free The Texture Image Memory
+		free(pImage);												// Free The Image Structure
+	}
+	else
+        dsPanic(400,"Error loading BMP image '%s'.",filename);
 
 	return texture;													// Return The Status
 }

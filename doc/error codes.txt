@@ -14,3 +14,7 @@ car.cpp
 
 	300	Couldn't load the model car.ms3d
 	301	Couldn't load the model wheel.ms3d
+
+drawstuff.cpp
+
+	400	Error loading BMP image 'image.bmp'.
