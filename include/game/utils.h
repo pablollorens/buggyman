@@ -7,6 +7,9 @@
 
 #define X 30 // Tamaño X del terreno
 #define Y 30 // Tamaño Y del terreno
+#define CELL_TAM 7
+#define WALL_TAM 1
+#define WALL_HEIGHT 2
 #define K_MODEL 13
 
 #define BANK_A  0

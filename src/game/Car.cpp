@@ -10,7 +10,6 @@ dSpaceID Car::Car_Space;
 dBodyID Car::Chassis_BodyID;
 dGeomID Car::Chassis_GeomID;
 
-dGeomID Car::platform;
 dGeomID Car::camera_box;
 dGeomID Car::camera_view_box;
 
@@ -71,11 +70,6 @@ Car::Car(dWorldID world, dSpaceID space,CarInfo car_info,int x1,int y1,int z1,in
   // salimos al directorio raiz
   chdir(ruta.c_str());
 
-  /// INITIAL PLATFORM
-  platform = dCreateBox (0,6,6,1);
-  dGeomSetPosition(platform,x1*7,y1*7,STARTZ-3);
-  dSpaceAdd(space,platform);
-
   /// CHASSIS
   Chassis_BodyID = dBodyCreate (world);
   dBodySetPosition (Chassis_BodyID,x1*7,y1*7,STARTZ);
@@ -108,17 +102,10 @@ Car::Car(dWorldID world, dSpaceID space,CarInfo car_info,int x1,int y1,int z1,in
     dBodySetMass (Wheel_BodyID[i],&m);
   }
 
-    // Para Desert apc
     dBodySetPosition (Wheel_BodyID[0],(x1*7)+car_info.posX_front,(y1*7)+car_info.posY_front,STARTZ-0.2);
     dBodySetPosition (Wheel_BodyID[1],(x1*7)+car_info.posX_front,(y1*7)-car_info.posY_front,STARTZ-0.2);
     dBodySetPosition (Wheel_BodyID[2],(x1*7)-car_info.posX_back,(y1*7)+car_info.posY_back,STARTZ-0.2);
     dBodySetPosition (Wheel_BodyID[3],(x1*7)-car_info.posX_back,(y1*7)-car_info.posY_back,STARTZ-0.2);
-    // Para golgotha
-//    dBodySetPosition (Wheel_BodyID[0], 0.25*2.0, 0.45,0.81);
-//    dBodySetPosition (Wheel_BodyID[1], 0.25*2.0,-0.45,0.81);
-//    dBodySetPosition (Wheel_BodyID[2],-0.25*1.7, 0.45,0.81);
-//    dBodySetPosition (Wheel_BodyID[3],-0.25*1.7,-0.45,0.81);
-
 
   // front and back wheel hinges
   for (int i=0; i<WHEELS; i++) {
@@ -221,7 +208,6 @@ void Car::setPosCar(int i, int j, int z, int rotation)
 
     // Ponemos la variable z temporalmente al valor de STARTZ
     z = (int)STARTZ;
-    dGeomSetPosition (platform,i*7,j*7,z-3);
 
     dBodySetPosition (Chassis_BodyID,i*7,j*7,z);
 
@@ -317,13 +303,12 @@ void Car::Draw()
 //    dReal sides2[3] = {LENGTH,WIDTH,HEIGHT};
 //    dsDrawBox ( dBodyGetPosition(Chassis_BodyID), dBodyGetRotation(Chassis_BodyID), sides2);
 
-    dsSetColorAlpha (0,1,0,0.5);
-    dReal sides3[3] = {6,6,1};
-    dsDrawBox( dGeomGetPosition(platform),dGeomGetRotation(platform),sides3);
-
-    dReal sides_camera_box[3] = {0.4,0.4,0.4};
-    dsDrawBox( dGeomGetPosition(camera_box),dGeomGetRotation(camera_box),sides_camera_box);
-    dsDrawBox( dGeomGetPosition(camera_view_box),dGeomGetRotation(camera_view_box),sides_camera_box);
+      /// DIBUJAMOS LOS CUADROS DE LA CAMARA
+//    dsSetColorAlpha (0,1,0,0.5);
+//
+//    dReal sides_camera_box[3] = {0.4,0.4,0.4};
+//    dsDrawBox( dGeomGetPosition(camera_box),dGeomGetRotation(camera_box),sides_camera_box);
+//    dsDrawBox( dGeomGetPosition(camera_view_box),dGeomGetRotation(camera_view_box),sides_camera_box);
 }
 
 /// //////////////////////////////////////////////////////////////////////// ///

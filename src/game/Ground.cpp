@@ -8,6 +8,7 @@ Ground_Cell Ground::Cell_Matrix[X][Y];
 Model *Ground::ground_Model;
 Model *Ground::ModelosMilky[K_MODEL];
 dTriMeshDataID Ground::MeshesData[K_MODEL];
+dGeomID Ground::walls[4];
 
 /// //////////////////////////////////////////////////////////////////////// ///
 /// CONSTRUCTOR
@@ -60,6 +61,7 @@ Ground::Ground(dWorldID world, dSpaceID space)
                                                    ModelosMilky[p]->getIndexCount());
     }
 
+    // Inicializamos todas las casillas
     for(i=0; i<X ; i++)
         for(j=0; j<Y; j++){
             Cell_Matrix[i][j].arbol = 0;
@@ -70,6 +72,20 @@ Ground::Ground(dWorldID world, dSpaceID space)
             dGeomSetPosition(Cell_Matrix[i][j].geomID,i*7,j*7,0);
             dSpaceAdd(space,Cell_Matrix[i][j].geomID);
         }
+
+    // Creamos muros invisibles
+    walls[0] = dCreateBox(0,X*CELL_TAM+CELL_TAM,WALL_TAM,WALL_HEIGHT);
+    walls[1] = dCreateBox(0,WALL_TAM,X*CELL_TAM+CELL_TAM,WALL_HEIGHT);
+    walls[2] = dCreateBox(0,WALL_TAM,X*CELL_TAM+CELL_TAM,WALL_HEIGHT);
+    walls[3] = dCreateBox(0,X*CELL_TAM+CELL_TAM,WALL_TAM,WALL_HEIGHT);
+    dGeomSetPosition(walls[0],(float)((X*CELL_TAM/2)-(CELL_TAM/2)),-(CELL_TAM/2)-WALL_TAM,WALL_HEIGHT/2);
+    dGeomSetPosition(walls[1],(float)((X*CELL_TAM)-(CELL_TAM/2)),(float)((X*CELL_TAM/2)-(CELL_TAM/2)),WALL_HEIGHT/2);
+    dGeomSetPosition(walls[2],(float)(-(CELL_TAM/2)-WALL_TAM),(float)((X*CELL_TAM/2)-(CELL_TAM/2)),WALL_HEIGHT/2);
+    dGeomSetPosition(walls[3],(float)((X*CELL_TAM/2)-(CELL_TAM/2)),(X*CELL_TAM)-(CELL_TAM/2),WALL_HEIGHT/2);
+    dSpaceAdd(space,walls[0]);
+    dSpaceAdd(space,walls[1]);
+    dSpaceAdd(space,walls[2]);
+    dSpaceAdd(space,walls[3]);
 
     /// TRACK READING
 
@@ -151,9 +167,16 @@ void Ground::Draw(int cell_x, int cell_y)
       }
       dGeomEnable(Cell_Matrix[i][j].geomID);
     }
+    /// Draw the wall!
+    dsSetColorAlpha (0,1,0,0.5);
+    dReal sides0[3] = {X*CELL_TAM+CELL_TAM,WALL_TAM,WALL_HEIGHT};
+    dReal sides1[3] = {WALL_TAM,X*CELL_TAM+CELL_TAM,WALL_HEIGHT};
+    dsDrawBox(dGeomGetPosition(walls[0]),dGeomGetRotation(walls[0]),sides0);
+    dsDrawBox(dGeomGetPosition(walls[1]),dGeomGetRotation(walls[1]),sides1);
+    dsDrawBox(dGeomGetPosition(walls[2]),dGeomGetRotation(walls[2]),sides1);
+    dsDrawBox(dGeomGetPosition(walls[3]),dGeomGetRotation(walls[3]),sides0);
 
     /// Back Ground
-
     dsDrawSkyDome(dGeomGetPosition(Cell_Matrix[0][0].geomID), dGeomGetRotation(Cell_Matrix[0][0].geomID),0,1000);
     dsDrawFakeGround();
 }

@@ -34,6 +34,7 @@ class Ground {
     static Model * ModelosMilky[K_MODEL];
     static dTriMeshDataID MeshesData[K_MODEL];
     static Model * ground_Model;
+    static dGeomID walls[4];
 
 /// //////////////////////////////////////////////////////////////////////// ///
 

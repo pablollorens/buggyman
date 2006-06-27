@@ -1,8 +1,7 @@
 Lista de tareas pendientes
 ----------------------------------------------------------------------------
 
-	o Marcar con "X" cuando este hecho.
-	o Marcar con "-" cuando este por hacer.
+	o Borrar los que se consigan.
 
 VISUALES Y SONOROS
 
@@ -19,13 +18,12 @@ VISUALES Y SONOROS
 JUGABILIDAD
 
   - Implementar el concepto de checkpoint y reglas.
-  - Mejorar la fisica del coche -> debe parecer real.
-  - Crear paredes ODE "invisibles" para que el coche no se caiga.
+  - Mejorar la fisica del coche -> debe parecer real, se gira solo!!! ggrr!!!
+    creo que es tiempo de creación de hecho algunas veces cuando pulsas "r" para volver
+    a empezar ya no lo hace...
 
 OPTIMIZACION
 
-  - Crear diferentes niveles de detalle y sus texturas correspondientes
-    (en cada momento dibujaremos un nivel dependiendo de la proximidad).
   - Cambio entre pantallas (todavia con errores)
   - Reiniciar el juego cada vez q se salga de él
 	Idea:	al salir del juego, este sigue en ejecución (no se reinicia)

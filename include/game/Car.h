@@ -12,10 +12,10 @@ using namespace std;
 
 #define DENSITY (0.5)		// density of all objects
 
-#define STARTZ 3.0	// starting height of chassis
+#define STARTZ 2.0	// starting height of chassis
 
-#define CMASS 1	// chassis mass
-#define WMASS 0.2    // wheel mass
+#define CMASS 20	// chassis mass
+#define WMASS 10    // wheel mass
 
 #define WHEELS 4
 #define WHEEL_WIDTH 0.1f
@@ -46,8 +46,6 @@ class Car {
 
     static dBodyID Chassis_BodyID;
     static dGeomID Chassis_GeomID;
-
-    static dGeomID platform;
 
     static dGeomID camera_box;
     static dGeomID camera_view_box;
