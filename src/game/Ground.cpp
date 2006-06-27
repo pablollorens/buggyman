@@ -130,17 +130,18 @@ void Ground::LoadTextures()
 
 void Ground::Draw(int cell_x, int cell_y)
 {
-  int R = 5; //pinta 2R+1*2R+1 casillas
-  int min_x = cell_x <  R  ? 0 : cell_x-R;
-  int max_x = cell_x >= X-R ? X-1 : cell_x+R;
-  int min_y = cell_y <  R  ? 0 : cell_y-R;
-  int max_y = cell_y >= Y-R ? Y-1 : cell_y+R;
+    int R = 12; //pinta 2R+1*2R+1 casillas
+    int min_x = cell_x <  R  ? 0 : cell_x-R;
+    int max_x = cell_x >= X-R ? X-1 : cell_x+R;
+    int min_y = cell_y <  R  ? 0 : cell_y-R;
+    int max_y = cell_y >= Y-R ? Y-1 : cell_y+R;
 
-  for(int i=min_x; i<=max_x; i++)
-    for(int j=min_y; j<=max_y; j++)
+    for(int i = min_x; i <= max_x; i++)
+    for(int j = min_y; j <= max_y; j++)
     {
-      ground_Model->draw(3,dGeomGetPosition(Cell_Matrix[i][j].geomID),
-                           dGeomGetRotation(Cell_Matrix[i][j].geomID));
+      /// No es necesario dibujar cada sector, ground cubre esta necesidad
+      //ground_Model->draw(3,dGeomGetPosition(Cell_Matrix[i][j].geomID),
+      //                     dGeomGetRotation(Cell_Matrix[i][j].geomID));
       if (Cell_Matrix[i][j].modelo)
       {
           Cell_Matrix[i][j].modelo->draw(Cell_Matrix[i][j].num_modelo+10,

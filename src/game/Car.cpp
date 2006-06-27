@@ -46,7 +46,7 @@ int Car::MAX_SPEED = 16;
 /// //////////////////////////////////////////////////////////////////////// ///
 /// CONSTRUCTOR
 
-Car::Car(dWorldID world, dSpaceID space,int x1,int y1,int z1,int rotation)
+Car::Car(dWorldID world, dSpaceID space,CarInfo car_info,int x1,int y1,int z1,int rotation)
 {
   x1=X-1-x1;
 
@@ -64,10 +64,10 @@ Car::Car(dWorldID world, dSpaceID space,int x1,int y1,int z1,int rotation)
   string ruta_nueva = ruta + "\\";
   ruta_nueva += DIR_VEHICLES;
   chdir(ruta_nueva.c_str());
-  if ( car_Model->loadModelData( "car.ms3d" ) == false )		// Loads The Model And Checks For Errors
-    dsPanic( 300,"Couldn't load the model car.ms3d");
-  if ( wheel_Model->loadModelData( "wheel.ms3d" ) == false )
-    dsPanic( 301,"Couldn't load the model wheel.ms3d");
+  if ( car_Model->loadModelData( car_info.carfile ) == false )		// Loads The Model And Checks For Errors
+    dsPanic(1,"Couldn't load the model car.ms3d");
+  if ( wheel_Model->loadModelData( car_info.wheelfile ) == false )
+    dsPanic(1,"Couldn't load the model wheel.ms3d");
   // salimos al directorio raiz
   chdir(ruta.c_str());
 
@@ -81,11 +81,11 @@ Car::Car(dWorldID world, dSpaceID space,int x1,int y1,int z1,int rotation)
   dBodySetPosition (Chassis_BodyID,x1*7,y1*7,STARTZ);
 
   // geom
-  Chassis_GeomID = dCreateBox (0, LENGTH, WIDTH, HEIGHT);
+  Chassis_GeomID = dCreateBox (0, car_info.length, car_info.width, car_info.height);
   dGeomSetBody (Chassis_GeomID, Chassis_BodyID);
   // mass
   dMass m;
-  dMassSetBox (&m, DENSITY, LENGTH, WIDTH, HEIGHT);
+  dMassSetBox (&m, DENSITY, car_info.length, car_info.width, car_info.height);
   //dMassAdjust (&m,CMASS);
   dBodySetMass (Chassis_BodyID, &m);
 
@@ -99,20 +99,20 @@ Car::Car(dWorldID world, dSpaceID space,int x1,int y1,int z1,int rotation)
     dBodySetQuaternion (Wheel_BodyID[i],q);
 
       // geom
-    Wheel_GeomID[i] = dCreateSphere (0,RADIUS);
+    Wheel_GeomID[i] = dCreateSphere (0,car_info.radius);
     dGeomSetBody (Wheel_GeomID[i],Wheel_BodyID[i]);
 
       // mass
-    dMassSetSphere (&m,DENSITY,RADIUS);
+    dMassSetSphere (&m,DENSITY,car_info.radius);
     //dMassAdjust (&m,WMASS);
     dBodySetMass (Wheel_BodyID[i],&m);
   }
 
     // Para Desert apc
-    dBodySetPosition (Wheel_BodyID[0],(x1*7)+( 0.25*2.0),(y1*7)+0.35,STARTZ-0.2);
-    dBodySetPosition (Wheel_BodyID[1],(x1*7)+( 0.25*2.0),(y1*7)-0.35,STARTZ-0.2);
-    dBodySetPosition (Wheel_BodyID[2],(x1*7)+(-0.25*1.7),(y1*7)+0.35,STARTZ-0.2);
-    dBodySetPosition (Wheel_BodyID[3],(x1*7)+(-0.25*1.7),(y1*7)-0.35,STARTZ-0.2);
+    dBodySetPosition (Wheel_BodyID[0],(x1*7)+car_info.posX_front,(y1*7)+car_info.posY,STARTZ-0.2);
+    dBodySetPosition (Wheel_BodyID[1],(x1*7)+car_info.posX_front,(y1*7)-car_info.posY,STARTZ-0.2);
+    dBodySetPosition (Wheel_BodyID[2],(x1*7)-car_info.posX_back,(y1*7)+car_info.posY,STARTZ-0.2);
+    dBodySetPosition (Wheel_BodyID[3],(x1*7)-car_info.posX_back,(y1*7)-car_info.posY,STARTZ-0.2);
     // Para golgotha
 //    dBodySetPosition (Wheel_BodyID[0], 0.25*2.0, 0.45,0.81);
 //    dBodySetPosition (Wheel_BodyID[1], 0.25*2.0,-0.45,0.81);

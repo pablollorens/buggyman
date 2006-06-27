@@ -22,3 +22,5 @@
 #define RAMP_B  10
 #define LOOP    11
 #define TREE    12
+
+#define DIR_VEHICLES "vehicles"

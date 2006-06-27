@@ -12,16 +12,12 @@ using namespace std;
 
 #define DENSITY (0.5)		// density of all objects
 
-#define LENGTH 1.3	// chassis length
-#define WIDTH  0.5	// chassis width
-#define HEIGHT 0.3	// chassis height
 #define STARTZ 3.0	// starting height of chassis
 
 #define CMASS 20	// chassis mass
 #define WMASS 10    // wheel mass
 
 #define WHEELS 4
-#define RADIUS 0.2
 #define WHEEL_WIDTH 0.1f
 
 //#define MAX_SPEED 18
@@ -32,15 +28,13 @@ using namespace std;
 #define SPEED_ACCEL_SENSIBILITY 0.5
 #define SPEED_BREAK_SENSIBILITY 0.4
 
-#define DIR_VEHICLES "vehicles"
-
 /// //////////////////////////////////////////////////////////////////////// ///
 
 class Car {
 
   public:
 
-    Car(dWorldID world, dSpaceID space,int x,int y,int z,int rotation);
+    Car(dWorldID world, dSpaceID space,CarInfo car_info,int x,int y,int z,int rotation);
 
     static void LoadTextures();
     static void Draw();

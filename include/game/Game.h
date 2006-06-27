@@ -7,6 +7,7 @@
 
 #include <game/Engine.h>
 #include <game/Crono.h>
+#include <game/utils.h>
 
 #define GRAVITY -3.0
 
@@ -52,6 +53,7 @@ class Game {
 
     static dsFunctions functions;
     static dsInterfaces interfaces;
+    static CarInfo car_info;
 
     static int width;
     static int height;

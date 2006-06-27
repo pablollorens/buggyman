@@ -6,6 +6,7 @@
 
 dsFunctions Game::functions;
 dsInterfaces Game::interfaces;
+CarInfo Game::car_info;
 Crono Game::crono;
 
 Engine Game::engine;
@@ -29,7 +30,6 @@ SDLKey Game::Key_Action = SDLK_z;
 void Game::Run()
 {
   /// Init ///
-
   dsPrint("\tInitializing Functions & Interfaces...\n");
   FunctionsInit();
   InterfacesInit();
@@ -138,7 +138,37 @@ void Game::GroundDestroy()
 
 void Game::CarInit()
 {
-  engine.car = new Car(engine.World, engine.Space,1,1,0,90);
+  // entramos dentro del directorio de los coches
+  char fcadena[300];
+  string ruta = getcwd(fcadena,300);
+  string ruta_nueva = ruta + "\\";
+  ruta_nueva += DIR_VEHICLES;
+  chdir(ruta_nueva.c_str());
+  CFG_File config;
+
+  /// We can use "golgotha.car" too
+  int result = CFG_OpenFile("golgotha.car", &config );
+
+  if ( result == CFG_ERROR || result == CFG_CRITICAL_ERROR )
+  {
+    dsPrint("Unable to load file: %s\n", SDL_GetError());
+    exit(1);
+  }
+
+  car_info.name = CFG_ReadText("NAME","DESERT AP");
+  car_info.carfile = CFG_ReadText("CARFILE","car.ms3d");
+  car_info.wheelfile = CFG_ReadText("WHEELFILE","wheel.ms3d");
+  car_info.length = CFG_ReadFloat("LENGTH",1.3);
+  car_info.width = CFG_ReadFloat("WIDTH",0.5);
+  car_info.height = CFG_ReadFloat("HEIGHT",0.3);
+  car_info.radius = CFG_ReadFloat("RADIUS",0.2);
+  car_info.posX_front = CFG_ReadFloat("POSX_FRONT",0.5);
+  car_info.posX_back = CFG_ReadFloat("POSX_BACK",0.425);
+  car_info.posY = CFG_ReadFloat("POSY",0.35);
+
+  chdir(ruta.c_str());
+
+  engine.car = new Car(engine.World, engine.Space,car_info,1,1,0,90);
 }
 
 void Game::CarDestroy()
@@ -146,6 +176,5 @@ void Game::CarDestroy()
   dGeomDestroy (Car::Chassis_GeomID);
   for(int i=0; i<WHEELS; i++)
     dGeomDestroy (Car::Wheel_GeomID[i]);
-
-//  free( engine.car );
+//free( engine.car );
 }

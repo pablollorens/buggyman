@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE CodeBlocks_layout_file>
+<CodeBlocks_layout_file>
+	<File name="include\drawstuff\drawstuff.h" open="1" top="0">
+		<Cursor position="1601" topLine="0"/>
+	</File>
+	<File name="include\game\Car.h" open="1" top="1">
+		<Cursor position="1992" topLine="63"/>
+	</File>
+	<File name="include\game\Game.h" open="1" top="0">
+		<Cursor position="1697" topLine="40"/>
+	</File>
+	<File name="include\game\utils.h" open="1" top="0">
+		<Cursor position="490" topLine="0"/>
+	</File>
+	<File name="src\drawstuff\windows.cpp" open="1" top="0">
+		<Cursor position="13268" topLine="567"/>
+	</File>
+	<File name="src\game\Car.cpp" open="1" top="0">
+		<Cursor position="2019" topLine="52"/>
+	</File>
+	<File name="src\game\Game.cpp" open="1" top="0">
+		<Cursor position="4825" topLine="123"/>
+	</File>
+	<File name="src\game\Ground.cpp" open="1" top="0">
+		<Cursor position="5871" topLine="121"/>
+	</File>
+	<File name="src\main\main.cpp" open="1" top="0">
+		<Cursor position="1772" topLine="86"/>
+	</File>
+</CodeBlocks_layout_file>

@@ -55,7 +55,20 @@ extern "C" {
 #include <GL/glu.h>
 #include <GL/glut.h>
 
-#include <GL/glaux.h>												    // Our Local Copy Of The Header File
+#include <GL/glaux.h>
+												    // Our Local Copy Of The Header File
+typedef struct CarInfo {
+  // car name and file
+  const char * name;
+  const char * carfile;
+  const char * wheelfile;
+  // atributes
+  float length,width,height,radius;
+  // wheels position
+  float posX_front;
+  float posX_back;
+  float posY;
+} CarInfo;
 
 typedef struct dsInterfaces {
   // car functions
