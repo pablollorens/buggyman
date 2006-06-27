@@ -181,7 +181,7 @@ Editor::Run(SDL_Surface* screen, char* path_to_save_circuit)
     // ///////////////////////////////////////////////////////////////////////
 
     printf("Creatring circuit grid... \0");
-    Grid3D world("Mundo",30,30,2,
+    Grid3D world("Mundo",GRID_X,GRID_Y,2,//GRID_Z,
         EDITOR_CIRCUIT_WINDOW_X, EDITOR_CIRCUIT_WINDOW_Y,
         EDITOR_CIRCUIT_WINDOW_W, EDITOR_CIRCUIT_WINDOW_H);
     printf("ok\n");

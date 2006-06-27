@@ -159,7 +159,7 @@ Track::operator=(const Track & some)
     name = some.name;
     icon = some.icon;
     selected = some.selected;
-    active_trans = some.active_trans;
+    active_trans = 0;//some.active_trans;
     icon3D = some.icon3D;
     description = some.description;
 

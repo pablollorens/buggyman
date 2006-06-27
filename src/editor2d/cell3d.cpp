@@ -76,15 +76,3 @@ Cell3D::Connectors_Rotation()
     connectors[1] = connectors[0];
     connectors[0] = aux;
 }
-
-void
-Cell3D::Clean_Sisters_and_yourself(vector< vector< vector< Cell3D > > >& grid,unsigned int x,unsigned int y,unsigned int z, Track* old_track, Track* new_track)
-{
-    if(track != old_track) return;
-
-    track = new_track; //for to avoid excessive or infinite recursive calls
-    for(        int i=(x>0? x-1 : x), nx =(x<grid.size()      -1? x+1 : x); i<nx; i++)
-        for(    int j=(y>0? y-1 : y), ny =(y<grid[i].size()   -1? y+1 : y); j<ny; j++)
-            for(int k=(z>0? z-1 : z), nz =(z<grid[i][j].size()-1? z+1 : z); k<nz; k++)
-                grid[i][j][k].Clean_Sisters_and_yourself(grid,i,j,k,old_track,new_track);
-}

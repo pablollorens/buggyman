@@ -53,7 +53,6 @@ class Cell3D
         bool Is_totally_none();
         int Validate_Connector(int some_conn);
         void Connectors_Rotation();
-        void Clean_Sisters_and_yourself(vector< vector< vector< Cell3D > > >& grid,unsigned int x,unsigned int y,unsigned int z, Track* old_track, Track* new_track);
 
     private:
         vector<int> connectors;

@@ -1,9 +1,11 @@
 #ifndef __GRID3D_H__
 #define __GRID3D_H__
 
+extern int world_frame;
+
 //World size in cells
-#define GRID_X 32
-#define GRID_Y 32
+#define GRID_X 30
+#define GRID_Y 30
 #define GRID_Z 5
 
 #include<iostream>
@@ -28,6 +30,7 @@ class Grid3D
     friend ostream & operator<<(ostream &, Grid3D &);
     public:
         //Basic methods
+        Grid3D();
         Grid3D( char* some_name, Uint16 dx, Uint16 dy, Uint16 dz, int wx, int wy, Uint16 ww, Uint16 wh);
         Grid3D( char* some_name, Point3D<int> & some_dim, Rect2D & some_window);
         Grid3D(Grid3D & some);
@@ -52,6 +55,7 @@ class Grid3D
         int Activate_Tracks_Under(Uint16 x,Uint16 y,Uint16 z, Track* some_track);
         int Activate_Tracks_Under(Uint16 x,Uint16 y, Track* some_track);
         void Deactivate_All_Tracks();
+        void Clear_Cell_Sisters(Uint16 x,Uint16 y,Uint16 z, Track* track);
 
         //Window management
         inline SDL_Rect Get_Window() { return window; }
@@ -87,6 +91,7 @@ class Grid3D
         //Circuit Load & Save methods
         int Save(char* path);
         int Load(char* path);
+        void Debug_Print_Grid(char* fich, int sufix, char* ext, char* remmark);
 
     private:
         string name;
@@ -98,9 +103,9 @@ class Grid3D
 
         Point3D<int> dim;
         Point3D<int> offset;
-        vector< vector< vector< Cell3D > > > grid;
-        map< Track* , Track* > tracks;
-        Track null_track;
+        vector< vector< vector< Track* > > > grid;
+        //map< Track* , Track* > tracks;
+        //Track null_track;
 
         //Private methods
         Point3D<int>& Normalize_Offset(Point3D<int>& some_offset);

@@ -11,16 +11,20 @@ Grid3D::Grid3D( char* some_name,
     dim.Set_Values(dx,dy,dz);
     dim = dim.Get_Lower_Limited_to(1);
 
-    Cell3D aux(&null_track);
-    vector< Cell3D > vz(dim.z,aux);
-    vector< vector< Cell3D > > vy(dim.y,vz);
+    Track* aux = NULL;
+    vector< Track* > vz(dim.z,aux);
+    vector< vector< Track* > > vy(dim.y,vz);
     grid.resize(dim.x,vy);
-    tracks[&null_track]= &null_track;
+    for(int i = 0, n = dim.x; i<n; i++)
+        for(int j = 0, m = dim.y; j<m; j++)
+            for(int k = 0, l = dim.z; k<l; k++)
+                grid[i][j][k] = new Track;
 
     window_surface = NULL;
     window_background = NULL;
     offset = 0;
     Set_Window(wx, wy, ww, wh);
+
 }
 
 Grid3D::Grid3D( char* some_name, Point3D<int> & some_dim, Rect2D & some_window)
@@ -29,11 +33,14 @@ Grid3D::Grid3D( char* some_name, Point3D<int> & some_dim, Rect2D & some_window)
 
     dim = some_dim.Get_Lower_Limited_to(1);
 
-    Cell3D aux(&null_track);
-    vector< Cell3D > vz(dim.z,aux);
-    vector< vector< Cell3D > > vy(dim.y,vz);
+    Track* aux = NULL;
+    vector< Track* > vz(dim.z,aux);
+    vector< vector< Track* > > vy(dim.y,vz);
     grid.resize(dim.x,vy);
-    tracks[&null_track]= &null_track;
+    for(int i = 0, n = dim.x; i<n; i++)
+        for(int j = 0, m = dim.y; j<m; j++)
+            for(int k = 0, l = dim.z; k<l; k++)
+                grid[i][j][k] = new Track;
 
     window_surface = NULL;
     window_background = NULL;
@@ -69,7 +76,7 @@ Grid3D::operator=(Grid3D & some)
 
     dim = some.dim;
     grid = some.grid;
-    tracks = some.tracks;
+    //tracks = some.tracks;
 
     window = some.window;
     window_surface = zoomSurface(some.window_surface,1,1,0);
@@ -132,23 +139,22 @@ Grid3D::Draw(SDL_Surface* screen)
     Point3D<int> limit( window.w / CELL_X +1, window.h / CELL_Y +1,1);
     Point3D<int> cell_offset( offset.x / CELL_X, offset.y / CELL_Y,offset.z);
 
-    map< Track* , Track* > drown;
-    drown[&null_track]=&null_track;
+    map< Track* , Track* > painted;
     Track *auxt=NULL;
-    Point3D<int> *top_left=NULL;
+    Point3D<int> top_left;
 
     for(int i=0; i<=limit.x && i+cell_offset.x<dim.x; i++)
         for(int j=0; j<=limit.y && j+cell_offset.y<dim.y; j++)
         {
-            auxt = grid[i+cell_offset.x][j+cell_offset.y][cell_offset.z].Get_Track();
-            if(!drown[auxt] && tracks[auxt] && auxt!= &null_track)
+            auxt = grid[i+cell_offset.x][j+cell_offset.y][cell_offset.z];
+            if(!painted[auxt])
             {
-                top_left = Get_Top_Left_Syster(i+cell_offset.x, j+cell_offset.y);
+                top_left = *Get_Top_Left_Syster(i+cell_offset.x, j+cell_offset.y);
                 (*auxt).Set_Window(
-                                (*top_left).x * CELL_X + window.x - offset.x,
-                                (*top_left).y * CELL_Y + window.y - offset.y);
+                                top_left.x * CELL_X + window.x - offset.x,
+                                top_left.y * CELL_Y + window.y - offset.y);
                 (*auxt).Draw(screen);//window_surface);
-                drown[auxt]=auxt;
+                painted[auxt]=auxt;
             }
         }
     //SDL_BlitSurface(window_surface, 0, screen, &window);
@@ -184,9 +190,8 @@ Grid3D::Get_Track(Uint16 x, Uint16 y, Uint16 z)
     Point3D<int> p(x,y,z);
     p = p.Get_Limited_to(0,0,0,dim.x-1,dim.y-1,dim.z-1);
 
-    Track* track=grid[p.x][p.y][p.z].Get_Track();
-    if(track!= &null_track && tracks[track]) track = new Track(*track);
-    else track=NULL;
+    Track* track= grid[p.x][p.y][p.z];
+    track = new Track(*track);
     return track;
 }
 
@@ -221,20 +226,21 @@ Grid3D::Set_Track(Uint16 x, Uint16 y, Uint16 z, Track& some_track)
 
     //new copy of received track
     Track* newtrack = new Track(some_track);
-    tracks[newtrack]=newtrack;
+//    Track* voidtrack = new Track();
+    //tracks[newtrack]=newtrack;
+
 
     for(int i=0; i<nx; i++)
         for(int j=0; j<ny; j++)
             for(int k=0; k<nz; k++)
             {
-                Track* aux = grid[p.x+i][p.y+j][p.z+k].Get_Track();
-                if(aux != &null_track && tracks[aux])
+                Track* aux = grid[p.x+i][p.y+j][p.z+k];
+                if((*aux).Get_Name() != "none")
                 {
+                    Clear_Cell_Sisters(p.x+i,p.y+j,p.z+k,aux);
                     delete aux;
-                    grid[p.x+i][p.y+j][p.z+k].Clean_Sisters_and_yourself(grid,p.x+i,p.y+j,p.z+k,aux,&null_track);
-                    tracks[aux]=NULL;
                 }
-                grid[p.x+i][p.y+j][p.z+k] = *((*newtrack).Get_Cell(i,j,k));
+                grid[p.x+i][p.y+j][p.z+k] = newtrack;
             }
 
     //esto hay que cambiarlo:
@@ -264,19 +270,16 @@ Grid3D::Delete_Track(Uint16 x, Uint16 y, Uint16 z)
     Point3D<int> p(x,y,z);
     p = p.Get_Limited_to(0,0,0,dim.x-1,dim.y-1,dim.z-1);
 
-    Track* aux = grid[p.x][p.y][p.z].Get_Track();
-    if(aux != &null_track && tracks[aux])
+    Track* aux = grid[p.x][p.y][p.z];
+    //Track *voidtrack = new Track;
+    if((*aux).Get_Name() != "none")
     {
+        Clear_Cell_Sisters(p.x,p.y,p.z,aux);
         delete aux;
-        grid[p.x][p.y][p.z].Clean_Sisters_and_yourself(grid,p.x,p.y,p.z,aux,&null_track);
-        tracks[aux]=NULL;
         window_changed = true;
         return true;
     }
 
-    // ////////////////////////////////// //
-    // Codigo para actualisar las surface //
-    // ////////////////////////////////// //
     return false;
 }
 
@@ -312,17 +315,15 @@ Grid3D::Activate_Tracks_Under(Uint16 x,Uint16 y,Uint16 z, Track* some_track)
     for(int i=0; i<dim.x; i++)
         for(int j=0; j<dim.y; j++)
             for(int k=0; k<dim.z; k++)
-                if(tracks[grid[i][j][k].Get_Track()])
-                    (*grid[i][j][k].Get_Track()).UnSelect();
+                (*grid[i][j][k]).UnSelect();
 
     Track* aux = NULL;
     for(int i=0; i<nx; i++)
         for(int j=0; j<ny; j++)
             for(int k=0; k<nz; k++)
             {
-                aux = grid[p.x+i][p.y+j][p.z+k].Get_Track();
-                if(tracks[aux])
-                    (*aux).Select();
+                aux = grid[p.x+i][p.y+j][p.z+k];
+                (*aux).Select();
             }
 
     // /////////////////////////////
@@ -351,14 +352,27 @@ Grid3D::Deactivate_All_Tracks()
     for(int i=0; i<dim.x; i++)
         for(int j=0; j<dim.y; j++)
             for(int k=0; k<dim.z; k++)
-                if(tracks[grid[i][j][k].Get_Track()])
-                    (*grid[i][j][k].Get_Track()).UnSelect();
+                (*grid[i][j][k]).UnSelect();
 
     // /////////////////////////////
     // Codigo para actualisar las surface
     // /////////////////////////////
     window_changed = true;
 }
+
+void
+Grid3D::Clear_Cell_Sisters(Uint16 x,Uint16 y,Uint16 z, Track* track)
+{
+    if(grid[x][y][z] != track) return;
+    if((*grid[x][y][z]).Get_Name() == "none") return;
+
+    grid[x][y][z] = new Track();
+    for(        int i=(x>0? x-1 : x), nx =(x<dim.x -1? x+1 : x); i<=nx; i++)
+        for(    int j=(y>0? y-1 : y), ny =(y<dim.y -1? y+1 : y); j<=ny; j++)
+            for(int k=(z>0? z-1 : z), nz =(z<dim.z -1? z+1 : z); k<=nz; k++)
+                Clear_Cell_Sisters(i,j,k,track);
+}
+
 
 
 
@@ -439,13 +453,12 @@ Grid3D::Get_Top_Left_Syster(int x, int y)
     if(x<0 || y<0) return NULL;
     if(x>=dim.x || y>=dim.y) return NULL;
 
-    Track *aux = grid[x][y][offset.z].Get_Track();
-    if(aux == &null_track || !tracks[aux]) return NULL;
+    Track *aux = grid[x][y][offset.z];
 
     int i=x,j=y;
-    for(;x>=0; x--, i--) if(grid[x][y][offset.z].Get_Track() != aux) break;
+    for(;x>=0; x--, i--) if(grid[x][y][offset.z] != aux) break;
     x++;
-    for(;y>=0; y--, j--) if(grid[x][y][offset.z].Get_Track() != aux) break;
+    for(;y>=0; y--, j--) if(grid[x][y][offset.z] != aux) break;
 
     Point3D<int> *point = new Point3D<int>(i+1,j+1,0);
 
@@ -455,8 +468,7 @@ Grid3D::Get_Top_Left_Syster(int x, int y)
 Point3D<int>&
 Grid3D::Normalize_Offset(Point3D<int>& some_offset)
 {
-    Point3D<int>* value = new Point3D<int>, aux;
-    aux = some_offset;
+    Point3D<int> *value = new Point3D<int>, aux = some_offset;
 
     if(aux.x <0) aux.x = 0;
     if(aux.y <0) aux.y = 0;
@@ -519,26 +531,23 @@ Grid3D::Save(char* path)
     fstream o(path,ios::out);
     if(!o) return 0;
 
-    map< Track* , Track* > drown;
-    drown[&null_track]=&null_track;
+    map< Track* , Track* > painted;
     Track* aux=NULL;
-    Point3D<int>* point=NULL;
+    Point3D<int> point;
     for(int i=0; i<dim.x; i++)
         for(int j=0; j<dim.y; j++)
             for(int k=0; k<1/*dim.z*/; k++)
             {
-                aux = grid[i][j][k].Get_Track();
-                if(!drown[aux] && tracks[aux] && aux!= &null_track)
+                aux = grid[i][j][k];
+                if((*aux).Get_Name() != "none" && !painted[aux])
                 {
-                    point = (*aux).Get_First_Cell();
+                    point = *((*aux).Get_First_Cell());
                     o<<"[Cell_"<<i<<j<<"]\n";
-                    o<<"x = "<<(*point).x + i<<"\n";
-                    o<<"y = "<<(*point).y + j<<"\n";
+                    o<<"x = "<<point.x + i<<"\n";
+                    o<<"y = "<<point.y + j<<"\n";
                     o<<"model = "<<(*aux).Get_Name().c_str()<<"\n";
-                    o<<"rotation = "<<((*aux).Get_Rotation()+0)%360<<"\n\n";
-                    drown[aux]=aux;
-                    delete point;
-                    point = NULL;
+                    o<<"rotation = "<<(*aux).Get_Rotation() %360<<"\n\n";
+                    painted[aux]=aux;
                 }
             }
     o.close();
@@ -638,5 +647,26 @@ Grid3D::Load(char* path)
 //                }
 //            }
 //    o.close();
+}
+
+void
+Grid3D::Debug_Print_Grid(char* fich, int sufix, char* ext, char* remmark)
+{
+    char cad[100];
+    sprintf(cad,"%s.%d.%s",(fich?fich:strdup("")),sufix,(ext?ext:strdup("")));
+    ofstream o;
+    o.open(cad);
+
+    o<<remmark<<endl;
+    for(int k = 0, nz = dim.z; k<nz; k++)
+        for(int j = 0, ny = dim.y; j<ny; j++)
+            for(int i = 0, nx = dim.x; i<nx; )
+            {
+                if((*grid[i][j][k]).Get_Name() == "none") o<<"[    ]";
+                else    o<<"["<< (*grid[i][j][k]).Get_Name()<<"]";
+                if(++i >= nx) o<<endl;
+            }
+    o<<endl;
+    o.close();
 }
 
