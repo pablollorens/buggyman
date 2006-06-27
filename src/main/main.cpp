@@ -30,7 +30,7 @@ void Insert_into_map(map< pair<int,int> , Button* > & buttons, Button & button)
 
 void Init_Menu()
 {
-    if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
+    if(SDL_Init( SDL_INIT_VIDEO ) < 0 )
     {
         dsError( "Unable to init SDL: %s\n", SDL_GetError() );
         exit( 100 );
@@ -196,7 +196,7 @@ int main ( int argc, char** argv )
                 Button* boton = buttons[coord];
                 if(boton)
                 {
-                    Quit_Menu();
+                    //Quit_Menu();
                     (*boton).Set_Status(BUTTON_STATUS_OVER);
                     (*boton).Click();
                     Init_Menu();
