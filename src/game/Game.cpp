@@ -36,9 +36,13 @@ void Game::Run()
 
   dsPrint("\tCreating the World, Ground & Car...\n");
   WorldInit();
+  dsPrint("\tWorld OK\n");
   WorldConfig();
+  dsPrint("\tWorld Config OK\n");
   GroundInit();
+  dsPrint("\tGround OK\n");
   CarInit();
+  dsPrint("\tCar OK\n");
 
   /// Simulacion ///
 

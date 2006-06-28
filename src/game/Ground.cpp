@@ -18,6 +18,8 @@ Ground::Ground(dWorldID world, dSpaceID space)
     int i,j,rotation,model;
     string s_model;
 
+    dsPrint("\tCarga de Modelos\n");
+
     // Cargamos todos los modelos de las pistas
     ground_Model = new MilkshapeModel(); // solo para dibujado del suelo
     ground_Model->loadModelData("data/sector.ms3d");
@@ -51,6 +53,8 @@ Ground::Ground(dWorldID world, dSpaceID space)
     ModelosMilky[LOOP]->loadModelData("tracks/loop/model.ms3d");
     ModelosMilky[TREE]->loadModelData("tracks/tree/model.ms3d");
 
+    dsPrint("\tCreación de TriMeshes\n");
+
     // Creamos ahora la información de las mesh de estos modelos de pista
     for(int p=0; p<K_MODEL ; p++)
     {
@@ -60,6 +64,8 @@ Ground::Ground(dWorldID world, dSpaceID space)
                                                    ModelosMilky[p]->getIndices(),
                                                    ModelosMilky[p]->getIndexCount());
     }
+
+    dsPrint("\tInicialización de Casillas\n");
 
     // Inicializamos todas las casillas
     for(i=0; i<X ; i++)
@@ -168,6 +174,7 @@ void Ground::Draw(int cell_x, int cell_y)
       dGeomEnable(Cell_Matrix[i][j].geomID);
     }
     /// Draw the wall!
+
     dsSetColorAlpha (0,1,0,0.5);
     dReal sides0[3] = {X*CELL_TAM+CELL_TAM,WALL_TAM,WALL_HEIGHT};
     dReal sides1[3] = {WALL_TAM,X*CELL_TAM+CELL_TAM,WALL_HEIGHT};
@@ -176,7 +183,7 @@ void Ground::Draw(int cell_x, int cell_y)
     dsDrawBox(dGeomGetPosition(walls[2]),dGeomGetRotation(walls[2]),sides1);
     dsDrawBox(dGeomGetPosition(walls[3]),dGeomGetRotation(walls[3]),sides0);
 
-    /// Back Ground
+    /// BackGround
     dsDrawSkyDome(dGeomGetPosition(Cell_Matrix[0][0].geomID), dGeomGetRotation(Cell_Matrix[0][0].geomID),0,1000);
     dsDrawFakeGround();
 }

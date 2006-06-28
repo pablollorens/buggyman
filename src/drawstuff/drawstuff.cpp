@@ -60,6 +60,11 @@ GLfloat transform_matrix[16];
 GLuint Texture_Ground;
 GLuint Texture_Sky;
 
+#define DAY 1
+#define NIGHT 2
+
+int DayOrNight = DAY;
+
 //***************************************************************************
 // misc mathematics stuff
 
@@ -133,7 +138,7 @@ static void setMaterialColor (float r, float g, float b, float alpha)
   glMaterialfv (GL_FRONT_AND_BACK, GL_AMBIENT, light_ambient);
   glMaterialfv (GL_FRONT_AND_BACK, GL_DIFFUSE, light_diffuse);
   glMaterialfv (GL_FRONT_AND_BACK, GL_SPECULAR, light_specular);
-  glMaterialf (GL_FRONT_AND_BACK, GL_SHININESS, 5.0f);
+  glMaterialf  (GL_FRONT_AND_BACK, GL_SHININESS, 5.0f);
 }
 
 
@@ -523,8 +528,22 @@ void dsMotion (int mode, int deltax, int deltay)
 
 void dsStartGraphics (int width, int height, dsFunctions *fn)
 {
-    Texture_Ground = dsLoadGLMipMap( "./textures/ground.bmp" );
-    Texture_Sky = dsLoadGLTexture( "./textures/sky.bmp" );
+    // random day or nitgh
+	srand(SDL_GetTicks()/100);		/*initialize random number generator*/
+	double random = rand()%10;
+    DayOrNight = random>4 ? DAY : NIGHT ;
+
+    // load textures
+    if (DayOrNight == DAY)
+    {
+       Texture_Sky = dsLoadGLTexture( "./textures/skyDay.bmp" );
+       Texture_Ground = dsLoadGLMipMap( "./textures/groundDay.bmp" );
+    }
+    else
+    {
+       Texture_Sky = dsLoadGLTexture( "./textures/skyNight.bmp" );
+       Texture_Ground = dsLoadGLMipMap( "./textures/groundNight.bmp" );
+    }
 
   // setup viewport
   glViewport (0,0,width,height);
@@ -545,12 +564,20 @@ void dsStartGraphics (int width, int height, dsFunctions *fn)
   // setup lights. it makes a difference whether this is done in the
   // GL_PROJECTION matrix mode (lights are scene relative) or the
   // GL_MODELVIEW matrix mode (lights are camera relative, bad!).
-  static GLfloat light_ambient[] = { 0.5, 0.5, 0.5, 1.0 };
-  static GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
-  static GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-  glLightfv (GL_LIGHT0, GL_AMBIENT, light_ambient);
-  glLightfv (GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-  glLightfv (GL_LIGHT0, GL_SPECULAR, light_specular);
+  /// DAY
+  static GLfloat light_ambient_day[] = { 0.5, 0.5, 0.5, 1.0 };
+  static GLfloat light_diffuse_day[] = { 1.0, 1.0, 1.0, 1.0 };
+  static GLfloat light_specular_day[] = { 1.0, 1.0, 1.0, 1.0 };
+  glLightfv (GL_LIGHT0, GL_AMBIENT, light_ambient_day);
+  glLightfv (GL_LIGHT0, GL_DIFFUSE, light_diffuse_day);
+  glLightfv (GL_LIGHT0, GL_SPECULAR, light_specular_day);
+  /// NIGHT
+  static GLfloat light_ambient_night[] = { 0.25, 0.25, 0.25, 1.0 };
+  static GLfloat light_diffuse_night[] = { 0.25, 0.0, 1.0, 1.0 };
+  static GLfloat light_specular_night[] = { 0.25, 0.0, 1.0, 1.0 };
+  glLightfv (GL_LIGHT1, GL_AMBIENT, light_ambient_night);
+  glLightfv (GL_LIGHT1, GL_DIFFUSE, light_diffuse_night);
+  glLightfv (GL_LIGHT1, GL_SPECULAR, light_specular_night);
 //  glColor3f (1.0, 1.0, 1.0);
 
   // clear the window
@@ -571,11 +598,13 @@ void dsStartGraphics (int width, int height, dsFunctions *fn)
   // set the light position (for some reason we have to do this in model view.
   static GLfloat light_position[] = { LIGHTX, LIGHTY, 1.0, 0.0 };
   glLightfv (GL_LIGHT0, GL_POSITION, light_position);
+  glLightfv (GL_LIGHT1, GL_POSITION, light_position);
 
   // leave openGL in a known state - flat shaded white, no textures
     // setup stuff
   glEnable (GL_LIGHTING);
-  glEnable (GL_LIGHT0);
+  if (DayOrNight==DAY)  glEnable (GL_LIGHT0);
+  else                  glEnable (GL_LIGHT1);
 
   glDisable (GL_TEXTURE_2D);
   glDisable (GL_TEXTURE_GEN_S);
@@ -870,7 +899,10 @@ extern "C" void dsDrawSkyDome (const float pos[3], const float R[12], const floa
 extern "C" void dsDrawFakeGround()
 {
   glPushAttrib( GL_ENABLE_BIT );
-  glDisable (GL_LIGHTING);
+  //glDisable (GL_LIGHTING);
+
+glEnable(GL_LIGHTING);
+setMaterialColor(0.0,0.0,1.0,1.0);
 
   const float gsize = 10000.0f;
   const float offset = 0; // -0.001f; ... polygon offsetting doesn't work well
@@ -960,8 +992,8 @@ GLuint dsLoadGLMipMap( const char *filename )						// Load Bitmaps And Convert T
 		glBindTexture(GL_TEXTURE_2D, texture);
 		//glTexImage2D(GL_TEXTURE_2D, 0, 3, pImage->sizeX, pImage->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, pImage->data);
 		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, pImage->sizeX, pImage->sizeY, GL_RGB, GL_UNSIGNED_BYTE, pImage->data);
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR_MIPMAP_NEAREST);
 
 		free(pImage->data);											// Free The Texture Image Memory
 		free(pImage);												// Free The Image Structure
