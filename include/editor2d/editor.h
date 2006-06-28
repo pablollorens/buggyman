@@ -58,7 +58,7 @@
 extern IMG_Collection image_collection;
 
 
-class Editor
+class Editor// : public Menu
 {
     public:
         Editor();

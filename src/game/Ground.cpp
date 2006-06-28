@@ -37,6 +37,7 @@ Ground::Ground(dWorldID world, dSpaceID space)
     ModelosMilky[RAMP_B] = new MilkshapeModel();
     ModelosMilky[LOOP] = new MilkshapeModel();
     ModelosMilky[TREE] = new MilkshapeModel();
+    ModelosMilky[START] = new MilkshapeModel();
 
 
     ModelosMilky[BANK_A]->loadModelData("tracks/bank_a/model.ms3d");
@@ -52,6 +53,7 @@ Ground::Ground(dWorldID world, dSpaceID space)
     ModelosMilky[RAMP_B]->loadModelData("tracks/ramp_b/model.ms3d");
     ModelosMilky[LOOP]->loadModelData("tracks/loop/model.ms3d");
     ModelosMilky[TREE]->loadModelData("tracks/tree/model.ms3d");
+    ModelosMilky[START]->loadModelData("tracks/start/model.ms3d");
 
     dsPrint("\tCreación de TriMeshes\n");
 
@@ -120,6 +122,7 @@ Ground::Ground(dWorldID world, dSpaceID space)
         ids["RAMP_B"] = RAMP_B;
         ids["LOOP"] = LOOP;
         ids["TREE"] = TREE;
+        ids["START"] = START;
 
         // Tenemos un pequeño problema con las X pero bueno
         // esta mas o menos arreglado
@@ -127,7 +130,7 @@ Ground::Ground(dWorldID world, dSpaceID space)
         i = CFG_ReadInt("x",0);
         j = CFG_ReadInt("y",0);
         rotation = CFG_ReadInt("rotation",0);
-        s_model = CFG_ReadText("model","RECTA");
+        s_model = CFG_ReadText("model","STRAIGHT");
         model = ids[s_model];
         Cell_Matrix[X-1-i][j].Checkpoint = 1;
         Cell_Matrix[X-1-i][j].num_modelo = model;
@@ -145,9 +148,16 @@ Ground::Ground(dWorldID world, dSpaceID space)
 
 void Ground::LoadTextures()
 {
-    ground_Model->reloadTextures();
-    for(int p=0; p<K_MODEL; p++)
-        ModelosMilky[p]->reloadTextures();
+    char fcadena[300];
+    string ruta = getcwd(fcadena,300);
+    string ruta_nueva = ruta + "\\tracks\\start";
+    chdir(ruta_nueva.c_str());
+    ModelosMilky[START]->reloadTextures();
+//    ModelosMilky[STRAIGHT]->reloadTextures();
+//    ground_Model->reloadTextures();
+//    for(int p=0; p<K_MODEL; p++)
+//        ModelosMilky[p]->reloadTextures();
+    chdir(ruta.c_str());
 }
 
 void Ground::Draw(int cell_x, int cell_y)

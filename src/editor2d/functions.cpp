@@ -1,24 +1,13 @@
 #include"functions.h"
 
-Blit_Task* New_Blit_Task(SDL_Surface * some_src, SDL_Rect &some_window, SDL_Surface * some_dst)
-{
-    Blit_Task* bt = new Blit_Task;
-    bt->src = some_src;
-    bt->window.x = some_window.x;
-    bt->window.y = some_window.y;
-    bt->window.w = some_window.w;
-    bt->window.h = some_window.h;
-    bt->dst = some_dst;
-    return bt;
-}
-
 list<string> Get_Directories(char* dir_work)
 {
     char dirchain[300];
     list<string> list_directories;
 
     string path_work = getcwd(dirchain,300);
-    string full_path = path_work + "\\" + dir_work;
+    string  full_path = path_work + "\\";
+            full_path += dir_work;
 
     DIR *pdir;
     struct dirent *pent;
@@ -34,7 +23,8 @@ list<string> Get_Directories(char* dir_work)
     while ((pent=readdir(pdir)))
     {
         string name = pent->d_name;
-        string path_completly = full_path + "\\" + name;
+        string  path_completly = full_path + "\\";;
+                path_completly += name;
 
         if (stat(path_completly.c_str(), &dataFile) == -1)
             printf ("not exist directory\n");

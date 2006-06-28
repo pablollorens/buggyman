@@ -45,6 +45,7 @@ Editor::Add_Tracks(Grid3D & grid)
     icon = image_collection("tracks/banked_standard_curve/icon.png");
     icon3d = image_collection("tracks/banked_standard_curve/icon3d.png");
     Track banked_standard_curve("BANKED_STANDARD_CURVE",icon,icon3d,2,2,1,"banked_standard_curve");
+    banked_standard_curve.Set_I_CheckPoint(true);
 
     icon = image_collection("tracks/banked_straight/icon.png");
     icon3d = image_collection("tracks/banked_straight/icon3d.png");
@@ -58,13 +59,20 @@ Editor::Add_Tracks(Grid3D & grid)
     icon3d = image_collection("tracks/straight/icon3d.png");
     Track straight("STRAIGHT",icon,icon3d,1,1,1,"STRAIGHT");
 
+    icon = image_collection("tracks/start/icon.png");
+    icon3d = image_collection("tracks/start/icon3d.png");
+    Track start("START",icon,icon3d,1,1,1,"START");
+    start.Set_Start(true);
+
     icon = image_collection("tracks/inner_curve/icon.png");
     icon3d = image_collection("tracks/inner_curve/icon3d.png");
     Track inner_curve("INNER_CURVE",icon,icon3d,1,1,1,"INNER_CURVE");
+    inner_curve.Set_I_CheckPoint(true);
 
     icon = image_collection("tracks/standard_curve/icon.png");
     icon3d = image_collection("tracks/standard_curve/icon3d.png");
     Track standard_curve("STANDARD_CURVE",icon,icon3d,2,2,1,"standard_curve");
+    standard_curve.Set_I_CheckPoint(true);
 
     icon = image_collection("tracks/cross/icon.png");
     icon3d = image_collection("tracks/cross/icon3d.png");
@@ -93,6 +101,7 @@ Editor::Add_Tracks(Grid3D & grid)
     grid.Set_Track(1,0,0,inner_curve);
     grid.Set_Track(2,0,0,cross);
     grid.Set_Track(3,0,0,building1);
+    grid.Set_Track(0,6,0,start);
 
     grid.Set_Track(0,1,0,bank_a);
     grid.Set_Track(1,1,0,banked_straight);
@@ -143,9 +152,9 @@ Editor::Run(SDL_Surface* screen, char* path_to_save_circuit)
 
     // create a new window
 //    printf("Setting VideoMode... \0");
-//    /*SDL_Surface* */screen = SDL_SetVideoMode(
-//        VIDEO_width, VIDEO_height, VIDEO_depth,
-//        SDL_HWSURFACE|SDL_DOUBLEBUF|FULLSCREEN_FLAG);
+    /*SDL_Surface* */screen = SDL_SetVideoMode(
+        VIDEO_width, VIDEO_height, VIDEO_depth,
+        SDL_HWSURFACE|SDL_DOUBLEBUF|FULLSCREEN_FLAG);
 ////        SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN|SDL_OPENGLBLIT);
 //    if ( !screen ) { printf("Unable to set %dx%d video: %s\n", VIDEO_width, VIDEO_height, SDL_GetError()); return 1; }
 //    printf("ok\n");
@@ -170,7 +179,7 @@ Editor::Run(SDL_Surface* screen, char* path_to_save_circuit)
     Track null_track("Void",void_icon,void_icon3d);
 
     printf("Creating tracks grid... \0");
-    Grid3D tools("Tools",4,6,1,
+    Grid3D tools("Tools",4,7,1,
         EDITOR_TRACKS_WINDOW_X, EDITOR_TRACKS_WINDOW_Y,
         EDITOR_TRACKS_WINDOW_W, EDITOR_TRACKS_WINDOW_H);
     printf("ok\n");

@@ -22,6 +22,8 @@ Track::Track(
     window = icon; //sets w and h
     rotation = 0;
     num_connectors = 0;
+    start = 0;
+    i_checkpoint = 0;
 }
 
 Track::Track(
@@ -47,6 +49,8 @@ Track::Track(
     window = icon; //sets w and h
     rotation = 0;
     num_connectors = 0;
+    start = 0;
+    i_checkpoint = 0;
 }
 
 Track::Track(
@@ -72,6 +76,8 @@ Track::Track(
     window = icon; //sets w and h
     rotation = 0;
     num_connectors = 0;
+    start = 0;
+    i_checkpoint = 0;
 }
 
 Track::Track(char* file)
@@ -96,6 +102,8 @@ Track::Track(char* file)
         num_connectors = CFG_ReadInt("connectors", 2);
         Set_Icon3D((char*)CFG_ReadText("icon3d",TRACK_icon3d_void));
         Set_Icon((char*)CFG_ReadText("icon",TRACK_icon_void));
+        start = CFG_ReadBool("start", false);
+        i_checkpoint = CFG_ReadBool("i_checkpoint", false);
     }
     else
     {
@@ -107,6 +115,8 @@ Track::Track(char* file)
         num_connectors = 0;
         Set_Icon3D(TRACK_icon3d_void);
         Set_Icon(TRACK_icon_void);
+        start = 0;
+        i_checkpoint = 0;
     }
 
     Cell3D aux(this);
@@ -149,6 +159,8 @@ Track::~Track()
     selected = NULL;
     dimx = dimy = dimz = 0;
     rotation = 0;
+    start = 0;
+    i_checkpoint = 0;
 }
 
 Track &
@@ -175,6 +187,8 @@ Track::operator=(const Track & some)
 
     window = some.window;
     rotation = some.rotation;
+    start = some.start;
+    i_checkpoint = some.i_checkpoint;
 
     return(*this);
 }
@@ -190,7 +204,9 @@ Track::operator==(const Track & some)
         dimy == some.dimy &&
         dimz == some.dimz &&
         icon == some.icon &&
-        icon3D == some.icon3D);
+        icon3D == some.icon3D &&
+        start == some.start &&
+        i_checkpoint == some.i_checkpoint);
     return ok;
 }
 

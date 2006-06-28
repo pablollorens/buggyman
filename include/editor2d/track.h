@@ -101,6 +101,11 @@ class Track
         inline void UnSelect() { active_trans = false;}
         inline void ToggleSelect() { active_trans ^= 1;}
 
+        inline void Set_Start(bool value) {start = value;}
+        inline bool Get_Start() {return start;}
+        inline void Set_I_CheckPoint(bool value) {i_checkpoint = value;}
+        inline bool Get_I_CheckPoint() {return i_checkpoint;}
+
         void Clear();
         bool Is_Clear();
 
@@ -121,6 +126,8 @@ class Track
         int rotation;
         Rect2D window;
         string description;
+        bool start;
+        bool i_checkpoint;
 };
 
 #endif /* __TRACK_H__ */

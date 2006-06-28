@@ -62,9 +62,9 @@ void Engine::SimLoop (int pause)
 
         switch(Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].num_modelo)
         {
-            case RAMP_B: Car::MAX_SPEED = 50; break;
+            //case RAMP_B: Car::MAX_SPEED = 50; break;
             //case STRAIGHT: Car::MAX_SPEED = 200; break;
-            case CROSS: setAcabado(1); break;
+            case START: setAcabado(1); break;
             default: if (Car::MAX_SPEED>15) Car::MAX_SPEED--; break;
         }
 

@@ -545,8 +545,12 @@ Grid3D::Save(char* path)
                     o<<"[Cell_"<<i<<j<<"]\n";
                     o<<"x = "<<point.x + i<<"\n";
                     o<<"y = "<<point.y + j<<"\n";
+                    o<<"z = "<<point.z + k<<"\n";
                     o<<"model = "<<(*aux).Get_Name().c_str()<<"\n";
-                    o<<"rotation = "<<(*aux).Get_Rotation() %360<<"\n\n";
+                    o<<"rotation = "<<(*aux).Get_Rotation() %360<<"\n";
+                    if((*aux).Get_Start()) o<<"start = true\n";
+                    if((*aux).Get_I_CheckPoint()) o<<"i_checkpoint = true\n";
+                    o<<endl;
                     painted[aux]=aux;
                 }
             }

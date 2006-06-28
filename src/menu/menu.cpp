@@ -7,6 +7,10 @@ Menu::Menu(char* some_name, SDL_Surface* some_screen)
     screen = some_screen;
     update_required = true;
     loop_done = false;
+
+    video_mode = 0;
+    video_mode_flags = 0;
+    video_mode_ready = 0;
 }
 
 Menu::Menu(const Menu& some)
@@ -28,6 +32,9 @@ Menu::operator=(const Menu& some)
     buttons = some.buttons;
     keys = some.keys;
 
+    video_mode       = some.video_mode ;
+    video_mode_flags = some.video_mode_flags ;
+    video_mode_ready = some.video_mode_ready ;
 	return(*this);
 }
 
@@ -37,32 +44,33 @@ Menu::~Menu()
     screen = NULL;
     update_required = false;
     loop_done = true;
+
+    video_mode = 0;
+    video_mode_flags = 0;
+    video_mode_ready = 0;
 }
 
 int
 Menu::Run()
 {
     if(!screen) return 0;
+    if(!video_mode_ready) return 0;
 
     FPSmanager manager;
     SDL_initFramerate(&manager);
     SDL_setFramerate(&manager, 30);
 
-    Rect2D position;
-    SDL_Surface* cursor_default = image_collection("cursor/mouse1.gif");
-    SDL_Surface* cursor = cursor_default;
-    Rect2D cursor_rect(0,0,48,48);
-    position = 0;
-    Button* actual_button =NULL;
-
     // program main loop
+    cursor = image_collection("cursor/mouse1.gif");
+    cursor_rect.Set_values(0,0,48,48);
+    actual_button =NULL;
     loop_done = 0;
     SDL_Event event;
     while (!loop_done)
     {
         // message processing loop
         SDL_WaitEvent(&event);
-        Manage_Events(event, cursor_rect, actual_button);
+        Manage_Events(event);
         if(update_required)
         {
             Draw();
@@ -79,8 +87,9 @@ Menu::Run()
 }
 
 bool
-Menu::Manage_Events(SDL_Event & event, Rect2D & cursor_rect, Button* actual_button)
+Menu::Manage_Events(SDL_Event & event)
 {
+    update_required = 0;
     switch (event.type)
     {
         // exit if the window is closed
@@ -91,14 +100,16 @@ Menu::Manage_Events(SDL_Event & event, Rect2D & cursor_rect, Button* actual_butt
         {
             Button * button = keys[(int)event.key.keysym.sym];
             if(button){ (*button).Click(); loop_done=true;}
-            if(event.key.keysym.sym == SDLK_ESCAPE) loop_done = true;
+            //if(event.key.keysym.sym == SDLK_ESCAPE) loop_done = true;
             break;
         }
         case SDL_MOUSEMOTION:
         {
             update_required = 1;
-            cursor_rect.x = event.motion.x;
-            cursor_rect.y = event.motion.y;
+
+            cursor_rect.Set_XY(event.motion.x,event.motion.y);
+//            cursor_rect.x = event.motion.x;
+//            cursor_rect.y = event.motion.y;
             pair<int,int> coord(event.motion.x,event.motion.y);
             Button* boton = buttons[coord];
             if(boton)
@@ -141,7 +152,7 @@ Menu::Manage_Events(SDL_Event & event, Rect2D & cursor_rect, Button* actual_butt
                 //Quit_Menu();
                 (*boton).Set_Status(BUTTON_STATUS_OVER);
                 (*boton).Click();
-                Init_Menu(800,600,32,SDL_HWSURFACE|SDL_DOUBLEBUF); //esti asi no eh???
+                Set_Video_Mode();
             }
             update_required = 1;
             break;
@@ -161,34 +172,55 @@ Menu::Add_Button(Button & button, SDLKey key)
         }
     //keys[(int)key] button.Get_Click_Function();
     button_list.push_back(&button);
-    keys[(int)key] = &button;
+    if(key != SDLK_UNKNOWN)
+        keys[(int)key] = &button;
+}
+
+void
+Menu::Add_Button(Button & button)
+{
+    Add_Button(button, SDLK_UNKNOWN);
 }
 
 void
 Menu::Draw()
 {
     SDL_BlitSurface(background, 0, screen, 0);
-    fprintf(stderr,"la lista tiene %d elementos\n",button_list.size());
-
     for(list< Button* >::iterator itr=button_list.begin(), end=button_list.end();
         itr != end; ++itr)
     {
-        Button * boton = (*itr);
+        //Button * boton = (*itr);
         //SDL_SetClipRect(screen, &cursor_rect);
-        (*boton).Draw(screen);
+        //(*boton).Draw(screen);
+        (*(*itr)).Draw(screen);
     }
 }
 
 void
-Menu::Init_Menu(int x, int y, int bpp, Uint32 flags)
+Menu::Init_Menu()
 {
     if(SDL_Init( SDL_INIT_VIDEO ) < 0 )
     {
         dsError( "Unable to init SDL: %s\n", SDL_GetError() );
         exit( 100 );
     }
+}
 
-    screen = SDL_SetVideoMode( x, y, bpp, flags);
+void
+Menu::Set_Video_Mode_CFG(int x, int y, int bpp, Uint32 flags)
+{
+    video_mode.x = x;
+    video_mode.y = y;
+    video_mode.z = bpp;
+    video_mode_flags = flags;
+    video_mode_ready = 1;
+}
+
+void
+Menu::Set_Video_Mode()
+{
+    if(!video_mode_ready) return;
+    screen = SDL_SetVideoMode( video_mode.x, video_mode.y, video_mode.z, video_mode_flags);
     if ( !screen )
     {
         dsError("Unable to set video: %s\n", SDL_GetError());
