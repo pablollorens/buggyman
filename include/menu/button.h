@@ -63,6 +63,7 @@ class Button
         inline void Disable() { Set_Status(BUTTON_STATUS_DISABLED); }
 
         inline void  Set_Click_Function(int (*func)(void* data)) {click = func;}
+        //inline  int (*(Get_Click_Function()))(void* data) {return click;}
         inline void  Set_Click_Data(void* some_data) {click_data = some_data;}
         inline void* Get_Click_Data() { return click_data;}
         inline void  Click() {if(click) click(click_data);}

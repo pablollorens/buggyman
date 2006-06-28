@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <editor.h>
 #include <button.h>
+#include <menu.h>
 #include <vector>
 #include <map>
 #include <SDL/SDL.h>
@@ -81,6 +82,34 @@ int Quit_Game(void* data)
     return 0;
 }
 
+
+
+
+
+
+
+
+int Prueba_Menu(void* data)
+{
+    Menu un_menu("pepe",screen);
+    un_menu.Set_Background("menu/prueba.jpg");
+
+    Button quit_game("Quit Game",362,437,
+                    "menu/button_exit_def.png","menu/button_exit_press.png",
+                    "menu/button_exit_over.png","menu/button_exit_dis.png",
+                    Quit_Game,(bool*)un_menu.Get_Loop_Boolean());
+    un_menu.Add_Button(quit_game, SDLK_p);
+    return un_menu.Run();
+}
+
+
+
+
+
+
+
+
+
 int main ( int argc, char** argv )
 {
     dsPrint("### MAIN ###\n");
@@ -126,6 +155,12 @@ int main ( int argc, char** argv )
                     "menu/button_exit_over.png","menu/button_exit_dis.png",
                     Quit_Game,(bool*)&done);
     Insert_into_map(buttons,quit_game);
+
+    Button prueba("PRUEBA",0,0,
+                    "menu/button_exit_def.png","menu/button_exit_press.png",
+                    "menu/button_exit_over.png","menu/button_exit_dis.png",
+                    Prueba_Menu,NULL);
+    Insert_into_map(buttons,prueba);
 
     SDL_Surface* background = image_collection("menu/backg_main.png");
 
@@ -216,6 +251,7 @@ int main ( int argc, char** argv )
             runeditor.Draw(screen);
             configuration.Draw(screen);
             quit_game.Draw(screen);
+            prueba.Draw(screen);
             SDL_BlitSurface(cursor, 0, screen, &cursor_rect);
 
             // DRAWING ENDS HERE

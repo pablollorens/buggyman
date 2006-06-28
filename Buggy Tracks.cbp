@@ -210,6 +210,12 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
+		<Unit filename="include\menu\menu.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
 		<Unit filename="src\SDL_Config\SDL_config.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
@@ -296,6 +302,11 @@
 		<Unit filename="src\menu\button.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
+		</Unit>
+		<Unit filename="src\menu\menu.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+			<Breakpoint line="168" enabled="1" pass="0" />
 		</Unit>
 	</Project>
 </CodeBlocks_project_file>
