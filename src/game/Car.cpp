@@ -22,6 +22,12 @@ const dReal * Car::car_wheel_right;
 const dReal * Car::car_wheel_left;
 const dReal * Car::car_wheel_right2;
 const dReal * Car::car_wheel_left2;
+
+float Car::length;
+float Car::width;
+float Car::height;
+float Car::distance;
+
 dVector3 Car::car_prey;
 float Car::factor_equilibrio;
 
@@ -40,7 +46,7 @@ Model *Car::wheel_Model = NULL;												// Holds The Model Data
 //Model *Car::stuff2_Model = NULL;
 
 int Car::CheckpointList[1024];
-int Car::MAX_SPEED = 16;
+int Car::max_speed = 16;
 
 /// //////////////////////////////////////////////////////////////////////// ///
 /// CONSTRUCTOR
@@ -74,6 +80,11 @@ Car::Car(dWorldID world, dSpaceID space,CarInfo car_info,int x1,int y1,int z1,in
   Chassis_BodyID = dBodyCreate (world);
   dBodySetPosition (Chassis_BodyID,x1*7,y1*7,STARTZ);
 
+  length = car_info.length;
+  width = car_info.width;
+  height = car_info.height;
+  distance = car_info.distance;
+
   // geom
   Chassis_GeomID = dCreateBox (0, car_info.length, car_info.width, car_info.height);
   dGeomSetBody (Chassis_GeomID, Chassis_BodyID);
@@ -102,10 +113,10 @@ Car::Car(dWorldID world, dSpaceID space,CarInfo car_info,int x1,int y1,int z1,in
     dBodySetMass (Wheel_BodyID[i],&m);
   }
 
-    dBodySetPosition (Wheel_BodyID[0],(x1*7)+car_info.posX_front,(y1*7)+car_info.posY_front,STARTZ-0.2);
-    dBodySetPosition (Wheel_BodyID[1],(x1*7)+car_info.posX_front,(y1*7)-car_info.posY_front,STARTZ-0.2);
-    dBodySetPosition (Wheel_BodyID[2],(x1*7)-car_info.posX_back,(y1*7)+car_info.posY_back,STARTZ-0.2);
-    dBodySetPosition (Wheel_BodyID[3],(x1*7)-car_info.posX_back,(y1*7)-car_info.posY_back,STARTZ-0.2);
+    dBodySetPosition (Wheel_BodyID[0],(x1*7)+car_info.posX_front,(y1*7)+car_info.posY_front,STARTZ-distance); // originalmente 0.2
+    dBodySetPosition (Wheel_BodyID[1],(x1*7)+car_info.posX_front,(y1*7)-car_info.posY_front,STARTZ-distance);
+    dBodySetPosition (Wheel_BodyID[2],(x1*7)-car_info.posX_back,(y1*7)+car_info.posY_back,STARTZ-distance);
+    dBodySetPosition (Wheel_BodyID[3],(x1*7)-car_info.posX_back,(y1*7)-car_info.posY_back,STARTZ-distance);
 
   // front and back wheel hinges
   for (int i=0; i<WHEELS; i++) {
@@ -188,14 +199,7 @@ Car::Car(dWorldID world, dSpaceID space,CarInfo car_info,int x1,int y1,int z1,in
   camera_box = dCreateBox (0,0.1,0.1,0.1);
   camera_view_box = dCreateBox (0,0.1,0.1,0.1);
 
-  dGeomSetPosition(camera_box,x1*7,y1*7,dBodyGetPosition(Chassis_BodyID)[2]+0.4);
-
-  car_wheel_right = dBodyGetPosition(Wheel_BodyID[0]);
-  car_wheel_left  = dBodyGetPosition(Wheel_BodyID[1]);
-
-  for(int coord=0; coord < 3; coord++)
-    car_prey[coord] = (car_wheel_right[coord]+car_wheel_left[coord])/2.0;
-  dGeomSetPosition(camera_view_box,car_prey[0],car_prey[1],car_prey[2]+0.4);
+  Update_Camera_Box();
 
   // Añadimos camaras al espacio de colisiones del coche
   dSpaceAdd (Car_Space, camera_box);
@@ -233,8 +237,10 @@ void Car::Update_Camera_Box()
     car_wheel_right2 = dBodyGetPosition(Wheel_BodyID[2]);
     car_wheel_left2  = dBodyGetPosition(Wheel_BodyID[3]);
 
-    factor_equilibrio = dBodyGetPosition(Chassis_BodyID)[2]-car_wheel_right[2];
+    if (Camera::vista_micro) factor_equilibrio = 1;
+    else factor_equilibrio = (dBodyGetPosition(Chassis_BodyID)[2]-car_wheel_right[2]);
 
+    if (factor_equilibrio < -0.03){ factor_equilibrio *= -2.0; printf("%f",factor_equilibrio);}
 
     ///Calcularemos la posicion de la camara
     // Hallamos las posiciones de la camara trasera multiplicando por -1 la orientación
@@ -242,9 +248,9 @@ void Car::Update_Camera_Box()
     float posY = (car_wheel_right[1]-car_wheel_right2[1])*-1;
 
     dGeomSetPosition(camera_box,
-                        dBodyGetPosition(Chassis_BodyID)[0]+posX*3,
-                        dBodyGetPosition(Chassis_BodyID)[1]+posY*3,
-                        dBodyGetPosition(Chassis_BodyID)[2]+(5.5*factor_equilibrio));
+                        dBodyGetPosition(Chassis_BodyID)[0]+posX*1.7,
+                        dBodyGetPosition(Chassis_BodyID)[1]+posY*1.7,
+                        dBodyGetPosition(Chassis_BodyID)[2]+(10.0*factor_equilibrio));
     const dReal * rotation =  dBodyGetRotation(Chassis_BodyID);
     dGeomSetRotation(camera_box,rotation);
 
@@ -273,8 +279,7 @@ void Car::LoadTextures()
 void Car::Draw()
 {
   // chassis //
-
-	car_Model->draw(1,dBodyGetPosition(Chassis_BodyID), dBodyGetRotation(Chassis_BodyID));
+	car_Model->draw(1,dBodyGetPosition(Chassis_BodyID),dBodyGetRotation(Chassis_BodyID));
 
   // wheels //
 
@@ -299,16 +304,16 @@ void Car::Draw()
 //    dsDrawBox ( dBodyGetPosition(Stuff_BodyID[2]), dBodyGetRotation(Stuff_BodyID[2]), sides1);
 //    dsDrawBox ( dBodyGetPosition(Stuff_BodyID[3]), dBodyGetRotation(Stuff_BodyID[3]), sides1);
 
-//    dsSetColorAlpha (0,0,0,0.4);
-//    dReal sides2[3] = {LENGTH,WIDTH,HEIGHT};
-//    dsDrawBox ( dBodyGetPosition(Chassis_BodyID), dBodyGetRotation(Chassis_BodyID), sides2);
+    dsSetColorAlpha (0,0,0,0.4);
+    dReal sides2[3] = {length,width,height};
+    dsDrawBox ( dBodyGetPosition(Chassis_BodyID), dBodyGetRotation(Chassis_BodyID), sides2);
 
       /// DIBUJAMOS LOS CUADROS DE LA CAMARA
-//    dsSetColorAlpha (0,1,0,0.5);
-//
-//    dReal sides_camera_box[3] = {0.4,0.4,0.4};
-//    dsDrawBox( dGeomGetPosition(camera_box),dGeomGetRotation(camera_box),sides_camera_box);
-//    dsDrawBox( dGeomGetPosition(camera_view_box),dGeomGetRotation(camera_view_box),sides_camera_box);
+    dsSetColorAlpha (0,1,0,0.5);
+
+    dReal sides_camera_box[3] = {0.4,0.4,0.4};
+    dsDrawBox( dGeomGetPosition(camera_box),dGeomGetRotation(camera_box),sides_camera_box);
+    dsDrawBox( dGeomGetPosition(camera_view_box),dGeomGetRotation(camera_view_box),sides_camera_box);
 }
 
 /// //////////////////////////////////////////////////////////////////////// ///
@@ -318,7 +323,7 @@ void Car::SpeedIncrease(int sign)
 {
   if (sign > 0)
   {
-    if (speed < MAX_SPEED)
+    if (speed < max_speed)
       speed += SPEED_ACCEL_SENSIBILITY;
   }
   else
@@ -364,7 +369,7 @@ void Car::DoAction(int action)
   switch (action)
   {
      case 1:
-       dBodySetForce(Chassis_BodyID,0.0,0,10);
+       dBodySetForce(Chassis_BodyID,0.0,0,1);
        break;
      case 2:
        // Tecla "R" = reiniciar partida

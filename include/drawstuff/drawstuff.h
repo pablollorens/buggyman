@@ -63,7 +63,7 @@ typedef struct CarInfo {
   const char * carfile;
   const char * wheelfile;
   // atributes
-  float length,width,height,radius;
+  float length,width,height,radius,distance;
   // wheels position
   float posX_front;
   float posX_back;
@@ -142,7 +142,7 @@ void resetRecord();
 void dsSetViewpoint (float xyz[3], float hpr[3]);
 void dsGetViewpoint (float xyz[3], float hpr[3]);
 
-void dsSetCameraLookAt(float, float, float, float, float, float);
+void dsSetCameraLookAt(float,float,float, float,float,float, float,float,float);
 
 /* stop the simulation loop. calling this from within dsSimulationLoop()
  * will cause it to exit and return to the caller. it is the same as if the

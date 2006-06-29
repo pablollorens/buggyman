@@ -151,7 +151,7 @@ void Game::CarInit()
   CFG_File config;
 
   /// We can use "golgotha.car" too
-  int result = CFG_OpenFile("desert.car", &config );
+  int result = CFG_OpenFile("manhunter.car", &config );
 
   if ( result == CFG_ERROR || result == CFG_CRITICAL_ERROR )
   {
@@ -170,6 +170,7 @@ void Game::CarInit()
   car_info.posX_back = CFG_ReadFloat("POSX_BACK",0.425);
   car_info.posY_front = CFG_ReadFloat("POSY_FRONT",0.35);
   car_info.posY_back = CFG_ReadFloat("POSY_BACK",0.35);
+  car_info.distance = CFG_ReadFloat("DIST",0.2);
 
   chdir(ruta.c_str());
 

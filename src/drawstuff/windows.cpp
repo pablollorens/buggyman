@@ -262,6 +262,9 @@ void EventsKeys(SDL_Event event, dsInterfaces *interfaces)
         case SDLK_5:
             interfaces->SetView(4);
             break;
+        case SDLK_6:
+            interfaces->SetView(5);
+            break;
     }
 
     // NON CONST
@@ -289,14 +292,16 @@ void EventsKeys(SDL_Event event, dsInterfaces *interfaces)
       interfaces->SteerDecrease();
 
     // actions
-
-    if (event.key.keysym.sym == interfaces->Break)
-      interfaces->DoAction(3);
-    else
-    if (event.key.keysym.sym == interfaces->Action
-               && event.type == SDL_KEYDOWN)
+    if (key_state[interfaces->Break])
         interfaces->DoAction(1);
-    else
+
+//    if (event.key.keysym.sym == interfaces->Break)
+//      interfaces->DoAction(3);
+//    else
+//    if (event.key.keysym.sym == interfaces->Action
+//               && event.type == SDL_KEYDOWN)
+//        interfaces->DoAction(1);
+//    else
     if (event.key.keysym.sym == SDLK_r
                 && event.type == SDL_KEYDOWN)
       interfaces->DoAction(2);

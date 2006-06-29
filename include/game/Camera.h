@@ -16,6 +16,7 @@ class Camera
     static dReal seguir[3];
     static bool move;
     static bool interior;
+    static bool vista_micro;
 
   private:
 

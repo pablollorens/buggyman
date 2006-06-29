@@ -682,9 +682,10 @@ extern "C" void dsGetViewpoint (float xyz[3], float hpr[3])
 
 
 extern "C" void dsSetCameraLookAt(float eyex, float eyey, float eyez,
-                                  float posx, float posy, float posz)
+                                  float posx, float posy, float posz,
+                                  float upx,  float upy,  float upz)
 {
-  gluLookAt( posx,posy,posz, eyez,eyex,eyey, 0,0,1);
+    gluLookAt( posx,posy,posz, eyez,eyex,eyey, upx,upy,upz);
 }
 
 

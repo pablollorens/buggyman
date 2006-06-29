@@ -7,6 +7,7 @@
 #include <game/MilkshapeModel.h>
 #include <game/utils.h>
 #include <unistd.h>
+#include <game/Camera.h>
 #include <string>
 using namespace std;
 
@@ -22,11 +23,11 @@ using namespace std;
 
 //#define MAX_SPEED 18
 #define MIN_SPEED 10
-#define MAX_STEER 0.7
+#define MAX_STEER 1.3
 
 #define STEER_SENSIBILITY 0.05
 #define SPEED_ACCEL_SENSIBILITY 0.5
-#define SPEED_BREAK_SENSIBILITY 0.1
+#define SPEED_BREAK_SENSIBILITY 0.4
 
 /// //////////////////////////////////////////////////////////////////////// ///
 
@@ -71,7 +72,9 @@ class Car {
     static int CheckpointList[1024];
 
     ///PRUEBAS
-    static int MAX_SPEED;
+    static int max_speed;
+    static float factor_equilibrio;
+
 
 /// //////////////////////////////////////////////////////////////////////// ///
 
@@ -84,9 +87,13 @@ class Car {
     static const dReal * car_wheel_left;
     static const dReal * car_wheel_right2;
     static const dReal * car_wheel_left2;
+    static float length;
+    static float width;
+    static float height;
+    static float distance;
+
     static dVector3 car_prey;
 
-    static float factor_equilibrio;
 //    static Model *stuff1_Model;
 //    static Model *stuff2_Model;
 };

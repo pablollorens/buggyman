@@ -27,4 +27,6 @@
 #define TREE                    12
 #define START                   13
 
+#define MAX_SPEED 16
+
 #define DIR_VEHICLES "vehicles"
