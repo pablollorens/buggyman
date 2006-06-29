@@ -383,6 +383,8 @@ void Car::DoAction(int action)
        setCronometro(0);    // Pararemos el cronometro al final
        resetTempo();        // Reseteamos la cuenta atras
        resetRecord();       // Reseteamos el record
+       for (int i = 0; i < 1024 ; ++i ) CheckpointList[i] = 0;
+       Checkpoints = 0;
        break;
      case 3:
        speed = 0;
