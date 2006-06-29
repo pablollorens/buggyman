@@ -151,7 +151,7 @@ void Game::CarInit()
   CFG_File config;
 
   /// We can use "golgotha.car" too
-  int result = CFG_OpenFile("manhunter.car", &config );
+  int result = CFG_OpenFile("panda.car", &config );
 
   if ( result == CFG_ERROR || result == CFG_CRITICAL_ERROR )
   {

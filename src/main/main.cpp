@@ -24,7 +24,7 @@ int Run_Game(void* data)
     dsPrint("\t### RUN GAME ###\n");
 
     Game::SetResolution(((int*)data)[0],((int*)data)[1]);
-    Game::SetFullScreen(false);
+    Game::SetFullScreen(true);
     Game::Run();
 
     dsPrint("\t### END GAME ###\n");
@@ -72,8 +72,8 @@ int main ( int argc, char** argv )
                     "menu/button_play640_def.png","menu/button_play640_press.png",
                     "menu/button_play640_over.png","menu/button_play640_dis.png",
                     Run_Game,(int*)new int(2));
-    ((int*)playhigh.Get_Click_Data())[0]=640;
-    ((int*)playhigh.Get_Click_Data())[1]=480;
+    ((int*)playhigh.Get_Click_Data())[0]=800;
+    ((int*)playhigh.Get_Click_Data())[1]=600;
     main_menu.Add_Button(playhigh, SDLK_h);
 
     Button runeditor("Run Editor",277,324,

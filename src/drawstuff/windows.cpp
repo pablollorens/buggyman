@@ -1,6 +1,7 @@
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
+#include <SDL/SDL_Framerate.h>
 #include <ode/config.h>
 #include <GL/gl.h>
 #include <game\Game.h>
@@ -424,6 +425,10 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
 
 	done = false;
 
+	FPSmanager manager;
+    SDL_initFramerate(&manager);
+    SDL_setFramerate(&manager, 60);
+
     while (!done)
     {
         // FrameRate
@@ -510,8 +515,8 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
 
         // finally, update the screen :)
         SDL_GL_SwapBuffers();
-
         SDL_Flip(screen);
+        SDL_framerateDelay(&manager);
     } // end main loop
 
     /// END ///

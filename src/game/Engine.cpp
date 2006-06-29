@@ -60,7 +60,7 @@ void Engine::SimLoop (int pause)
     {
         Car::Sim();
 
-        switch(Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].num_modelo)
+        switch(Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].id)
         {
             //case RAMP_B: Car::max_speed = 50; break;
             //case RAMP_A: Car::max_speed = 50; break;
@@ -80,8 +80,8 @@ void Engine::SimLoop (int pause)
         for(int j=0; j<Y; j++)
         {
             dGeomDisable(Ground::Cell_Matrix[i][j].geomID);
-            if (Ground::Cell_Matrix[i][j].modelo)
-                dGeomDisable(Ground::Cell_Matrix[i][j].geomPista);
+            if (Ground::Cell_Matrix[i][j].road_model)
+                dGeomDisable(Ground::Cell_Matrix[i][j].road_geom);
         }
 
     Car::Update_Camera_Box();

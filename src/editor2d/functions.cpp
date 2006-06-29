@@ -1,4 +1,4 @@
-#include"functions.h"
+#include "functions.h"
 
 list<string> & Get_Directories(char* dir_work)
 {

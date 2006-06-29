@@ -10,7 +10,7 @@
 
 using namespace std;
 
-list<string> Get_Directories(char*);
+list<string> & Get_Directories(char*);
 
 #endif //__FUNCTIONS_H__
 
