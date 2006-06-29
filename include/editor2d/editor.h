@@ -46,6 +46,7 @@
 #include <windows.h>
 #include <gl/gl.h>
 
+#include <menu.h>
 #include <grid3d.h>
 #include <defines.h>
 #include <functions.h>
@@ -58,17 +59,22 @@
 extern IMG_Collection image_collection;
 
 
-class Editor// : public Menu
+class Editor : public Menu
 {
     public:
-        Editor();
-        Editor(const Editor&);
-        Editor& operator=(const Editor&);
+        Editor(char* some_name = "none", SDL_Surface* some_screen = NULL):
+            Menu(some_name,some_screen) {};
+        Editor(const Editor& some) : Menu(some) {};
         ~Editor();
-        int Run(SDL_Surface* screen, char* path_to_save_circuit=NULL);
+        int Run();
+
     private methods:
+        //Manage_Events(SDL_Event & event);
+        //void Draw();
         void Add_Tracks(Grid3D & grid);
     private:
+//        Grid3D world;
+//        Grid3D track;
 };
 
 #endif // __EDITOR_H__

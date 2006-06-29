@@ -1,25 +1,15 @@
 #include "editor.h"
 
-Editor::Editor()
-{
-}
-
-Editor::Editor(const Editor& some)
-{
-    (*this)=some;
-}
-
-Editor&
-Editor::operator=(const Editor& some)
-{
-	if(this != &some)
-	{
-	}
-    return(*this);
-}
-
 Editor::~Editor()
 {
+    background = NULL;
+    screen = NULL;
+    update_required = false;
+    loop_done = true;
+
+    video_mode = 0;
+    video_mode_flags = 0;
+    video_mode_ready = 0;
 }
 
 void
@@ -118,33 +108,22 @@ Editor::Add_Tracks(Grid3D & grid)
 }
 
 int
-Editor::Run(SDL_Surface* screen, char* path_to_save_circuit)
+Editor::Run()
 {
+    if(!screen) return 0;
+//    if(!video_mode_ready) return 0;
+
+    FPSmanager manager;
+    SDL_initFramerate(&manager);
+    SDL_setFramerate(&manager, 30);
+
+
     //event flags
-    bool update_required = true;
     bool level = 0;
     int status = EDITOR_STATUS_NONE;
     bool mode_displacement_on; //Variable to implementation of drawn by mouse displacement
-    bool make_pause = 1; //frame rate flag por activate or deactivate it
     bool move_grid = 0;
 
-
-    // Gestion de los fps
-    // //////////////////
-    printf("Setting FPSmanager... \0");
-    FPSmanager manager;
-    SDL_initFramerate(&manager);
-    SDL_setFramerate(&manager, FPSrate);
-    printf("ok\n");
-
-
-    // initialize SDL video
-//    printf("Starting SDL_Init... \0");
-//    if ( SDL_Init( SDL_INIT_VIDEO ) < 0 ) { printf( "Unable to init SDL: %s\n", SDL_GetError() ); return 1; }
-//    printf("ok\n");
-
-    // make sure SDL cleans up before exit
-    //atexit(SDL_Quit);
 
 //    printf("Setting window icon... \0");
 //    SDL_WM_SetIcon(IMG_Load("textures/icon.gif"), NULL);
@@ -152,9 +131,9 @@ Editor::Run(SDL_Surface* screen, char* path_to_save_circuit)
 
     // create a new window
 //    printf("Setting VideoMode... \0");
-    /*SDL_Surface* */screen = SDL_SetVideoMode(
-        VIDEO_width, VIDEO_height, VIDEO_depth,
-        SDL_HWSURFACE|SDL_DOUBLEBUF|FULLSCREEN_FLAG);
+//    /*SDL_Surface* */screen = SDL_SetVideoMode(
+//        VIDEO_width, VIDEO_height, VIDEO_depth,
+//        SDL_HWSURFACE|SDL_DOUBLEBUF|FULLSCREEN_FLAG);
 ////        SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN|SDL_OPENGLBLIT);
 //    if ( !screen ) { printf("Unable to set %dx%d video: %s\n", VIDEO_width, VIDEO_height, SDL_GetError()); return 1; }
 //    printf("ok\n");
@@ -163,12 +142,12 @@ Editor::Run(SDL_Surface* screen, char* path_to_save_circuit)
 
     // load an image
     printf("Loading background and cursors... \n");
-    SDL_Surface* background = image_collection(EDITOR_background);
+    background = image_collection(EDITOR_background);
     SDL_Surface* cursor_default = image_collection(CURSOR_DEFAULT);
     SDL_Surface* cursor_hand_open = image_collection(CURSOR_HAND_OPEN);
     SDL_Surface* cursor_hand_close = image_collection(CURSOR_HAND_CLOSE);
-    SDL_Surface* cursor = cursor_default;
-    Rect2D cursor_rect(0,0,48,48);
+    cursor = cursor_default;
+    cursor_rect.Set_values(0,0,48,48);
     Rect2D dstrect;
     printf("Loading background and cursors... ok\n");
 
@@ -224,12 +203,11 @@ Editor::Run(SDL_Surface* screen, char* path_to_save_circuit)
                     if (event.key.keysym.sym == SDLK_ESCAPE)
                     done = true;
                     if (event.key.keysym.sym == SDLK_LSHIFT) mode_displacement_on = true;
-                    if (event.key.keysym.sym == SDLK_UP)    world.Decr_Offset_Y();
-                    if (event.key.keysym.sym == SDLK_DOWN)  world.Incr_Offset_Y();
-                    if (event.key.keysym.sym == SDLK_LEFT)  world.Decr_Offset_X();
-                    if (event.key.keysym.sym == SDLK_RIGHT) world.Incr_Offset_X();
+//                    if (event.key.keysym.sym == SDLK_UP)    world.Decr_Offset_Y();
+//                    if (event.key.keysym.sym == SDLK_DOWN)  world.Incr_Offset_Y();
+//                    if (event.key.keysym.sym == SDLK_LEFT)  world.Decr_Offset_X();
+//                    if (event.key.keysym.sym == SDLK_RIGHT) world.Incr_Offset_X();
                     update_required=true;
-                    if (event.key.keysym.sym == SDLK_r) make_pause ^= 1;
                     if (event.key.keysym.sym == SDLK_m)
                     {
                         if(move_grid == 0)
@@ -383,7 +361,7 @@ Editor::Run(SDL_Surface* screen, char* path_to_save_circuit)
         {
             // DRAWING STARTS HERE
             // clear screen
-            SDL_FillRect(screen, 0, SDL_MapRGB(screen->format, 0, 0, 0));
+            //SDL_FillRect(screen, 0, SDL_MapRGB(screen->format, 0, 0, 0));
 
             // draw bitmap
             dstrect.x = 0;
@@ -409,15 +387,15 @@ Editor::Run(SDL_Surface* screen, char* path_to_save_circuit)
             SDL_GL_SwapBuffers();
             SDL_Flip(screen);
         }
-        if(make_pause) SDL_framerateDelay(&manager);
     } // end main loop
 
-    if(path_to_save_circuit)
-    {
-        printf("Saving Circuit... \0");
-        if(world.Save(path_to_save_circuit))    printf("ok\n");
-        else                                    printf("FAILED\n");
-    }
+//    if(path_to_save_circuit)
+//    {
+//        printf("Saving Circuit... \0");
+//        if(world.Save(path_to_save_circuit))    printf("ok\n");
+//        else                                    printf("FAILED\n");
+//    }
+    world.Save("terreno.cfg");
 
     // all is well ;)
     printf("Editor Terminated cleanly.\n");

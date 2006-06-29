@@ -24,7 +24,7 @@ int Run_Game(void* data)
     dsPrint("\t### RUN GAME ###\n");
 
     Game::SetResolution(((int*)data)[0],((int*)data)[1]);
-    Game::SetFullScreen(true);
+    Game::SetFullScreen(false);
     Game::Run();
 
     dsPrint("\t### END GAME ###\n");
@@ -36,8 +36,10 @@ int Run_Editor(void* data)
 {
     dsPrint("\t### RUN EDITOR ###\n");
 
-    Editor ed;
-    ed.Run(screen, "terreno.cfg");
+    Editor ed("Editor",screen);
+    ed.Set_Video_Mode_CFG(800,600,32,SDL_HWSURFACE|SDL_DOUBLEBUF);
+    ed.Set_Video_Mode();
+    ed.Run();
 
     dsPrint("\t### END EDITOR ###\n");
 
