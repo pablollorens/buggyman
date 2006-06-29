@@ -26,63 +26,63 @@ Editor::Add_Tracks(Grid3D & grid)
 
     icon = image_collection("tracks/bank_a/icon.png");
     icon3d = image_collection("tracks/bank_a/icon3d.png");
-    Track bank_a("BANK_A",icon,icon3d,1,1,1,"Bank A");
+    Track bank_a("bank_a",icon,icon3d,1,1,1,"Bank A");
 
     icon = image_collection("tracks/bank_b/icon.png");
     icon3d = image_collection("tracks/bank_b/icon3d.png");
-    Track bank_b("BANK_B",icon,icon3d,1,1,1,"Bank B");
+    Track bank_b("bank_b",icon,icon3d,1,1,1,"Bank B");
 
     icon = image_collection("tracks/banked_standard_curve/icon.png");
     icon3d = image_collection("tracks/banked_standard_curve/icon3d.png");
-    Track banked_standard_curve("BANKED_STANDARD_CURVE",icon,icon3d,2,2,1,"banked_standard_curve");
+    Track banked_standard_curve("banked_standard_curve",icon,icon3d,2,2,1,"banked_standard_curve");
     banked_standard_curve.Set_I_CheckPoint(true);
 
     icon = image_collection("tracks/banked_straight/icon.png");
     icon3d = image_collection("tracks/banked_straight/icon3d.png");
-    Track banked_straight("BANKED_STRAIGHT",icon,icon3d,1,1,1,"banked_straight");
+    Track banked_straight("banked_straight",icon,icon3d,1,1,1,"banked_straight");
 
     icon = image_collection("tracks/building1/icon.png");
     icon3d = image_collection("tracks/building1/icon3d.png");
-    Track building1("BUILDING1",icon,icon3d,1,1,1,"building1");
+    Track building1("building1",icon,icon3d,1,1,1,"building1");
 
     icon = image_collection("tracks/straight/icon.png");
     icon3d = image_collection("tracks/straight/icon3d.png");
-    Track straight("STRAIGHT",icon,icon3d,1,1,1,"STRAIGHT");
+    Track straight("straight",icon,icon3d,1,1,1,"STRAIGHT");
 
     icon = image_collection("tracks/start/icon.png");
     icon3d = image_collection("tracks/start/icon3d.png");
-    Track start("START",icon,icon3d,1,1,1,"START");
+    Track start("start",icon,icon3d,1,1,1,"START");
     start.Set_Start(true);
 
     icon = image_collection("tracks/inner_curve/icon.png");
     icon3d = image_collection("tracks/inner_curve/icon3d.png");
-    Track inner_curve("INNER_CURVE",icon,icon3d,1,1,1,"INNER_CURVE");
+    Track inner_curve("inner_curve",icon,icon3d,1,1,1,"INNER_CURVE");
     inner_curve.Set_I_CheckPoint(true);
 
     icon = image_collection("tracks/standard_curve/icon.png");
     icon3d = image_collection("tracks/standard_curve/icon3d.png");
-    Track standard_curve("STANDARD_CURVE",icon,icon3d,2,2,1,"standard_curve");
+    Track standard_curve("standard_curve",icon,icon3d,2,2,1,"standard_curve");
     standard_curve.Set_I_CheckPoint(true);
 
     icon = image_collection("tracks/cross/icon.png");
     icon3d = image_collection("tracks/cross/icon3d.png");
-    Track cross("CROSS",icon,icon3d,1,1,1,"cross");
+    Track cross("cross",icon,icon3d,1,1,1,"cross");
 
     icon = image_collection("tracks/ramp_a/icon.png");
     icon3d = image_collection("tracks/ramp_a/icon3d.png");
-    Track ramp_a("RAMP_A",icon,icon3d,2,1,1,"ramp_a");
+    Track ramp_a("ramp_a",icon,icon3d,2,1,1,"ramp_a");
 
     icon = image_collection("tracks/ramp_b/icon.png");
     icon3d = image_collection("tracks/ramp_b/icon3d.png");
-    Track ramp_b("RAMP_B",icon,icon3d,2,1,1,"ramp_b");
+    Track ramp_b("ramp_b",icon,icon3d,2,1,1,"ramp_b");
 
     icon = image_collection("tracks/loop/icon.png");
     icon3d = image_collection("tracks/loop/icon3d.png");
-    Track loop("LOOP",icon,icon3d,2,2,1,"loop");
+    Track loop("loop",icon,icon3d,2,2,1,"loop");
 
     icon = image_collection("tracks/tree/icon.png");
     icon3d = image_collection("tracks/tree/icon3d.png");
-    Track tree("TREE",icon,icon3d,1,1,1,"tree");
+    Track tree("tree",icon,icon3d,1,1,1,"tree");
 
     printf("Creatring tracks... ok\n");
 

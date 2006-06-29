@@ -1,9 +1,9 @@
 #include"functions.h"
 
-list<string> Get_Directories(char* dir_work)
+list<string> & Get_Directories(char* dir_work)
 {
     char dirchain[300];
-    list<string> list_directories;
+    list<string> *list_directories = new list<string>;
 
     string path_work = getcwd(dirchain,300);
     string full_path = path_work + "\\";
@@ -31,7 +31,7 @@ list<string> Get_Directories(char* dir_work)
         else
         {
             if (S_ISDIR(dataFile.st_mode) && name != "." && name != ".." && name != "CVS")
-                list_directories.push_back(path_completly);
+                (*list_directories).push_back(pent->d_name);
                 //printf("%s\n", pent->d_name); // Variable a almacenar -- path_completly --
         }
     }
@@ -43,6 +43,6 @@ list<string> Get_Directories(char* dir_work)
     }
     closedir(pdir);
 
-    return list_directories;
+    return *list_directories;
 }
 

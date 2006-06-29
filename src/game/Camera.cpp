@@ -19,7 +19,6 @@ float Camera::cam_speed = 0.1;
 
 void Camera::Update()
 {
-
     //Camera Stuff
     const dReal * pos = dBodyGetPosition(Car::Chassis_BodyID);
     dVector3 pos_Camara;

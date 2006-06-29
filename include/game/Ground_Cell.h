@@ -3,6 +3,9 @@
 
 #include <ode/ode.h>
 #include <game/milkshapemodel.h>
+#include <string>
+#include <utils.h>
+using namespace std;
 
 class Ground_Cell {
 
@@ -10,14 +13,13 @@ class Ground_Cell {
 
     Ground_Cell();
 
+    string name;
     dGeomID geomID;
-    dGeomID geomPista;
-    Model * modelo;
-    int num_modelo;
-
-    bool arbol;
-
-    int Checkpoint;
+    dGeomID road_geom;
+    Model * road_model;
+    int id;
+    int i_checkpoint;
+    int start;
 
   private:
 

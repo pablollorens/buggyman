@@ -13,10 +13,18 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
-
+#include <list>
+#include <functions.h>
 #include <game/utils.h>
 
 using namespace std;
+
+typedef struct TrackInfo {
+  int id;
+  string name;
+  Model * roadmodel;
+  dTriMeshDataID roadmesh;
+} TrackInfo;
 
 /// //////////////////////////////////////////////////////////////////////// ///
 
@@ -36,6 +44,8 @@ class Ground {
     static dTriMeshDataID MeshesData[K_MODEL];
     static Model * ground_Model;
     static dGeomID walls[4];
+
+    static map< string, TrackInfo* > track_map;
 
 /// //////////////////////////////////////////////////////////////////////// ///
 

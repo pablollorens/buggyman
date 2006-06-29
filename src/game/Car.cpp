@@ -240,7 +240,7 @@ void Car::Update_Camera_Box()
     if (Camera::vista_micro) factor_equilibrio = 1;
     else factor_equilibrio = (dBodyGetPosition(Chassis_BodyID)[2]-car_wheel_right[2]);
 
-    if (factor_equilibrio < -0.03){ factor_equilibrio *= -2.0; printf("%f",factor_equilibrio);}
+    if (factor_equilibrio < -0.03){ factor_equilibrio *= -2.0; }
 
     ///Calcularemos la posicion de la camara
     // Hallamos las posiciones de la camara trasera multiplicando por -1 la orientación
