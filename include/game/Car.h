@@ -70,6 +70,7 @@ class Car {
     static dReal speed,steer;	// user commands
 
     static int CheckpointList[1024];
+    static int Checkpoints;
 
     ///PRUEBAS
     static int max_speed;

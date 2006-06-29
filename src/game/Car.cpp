@@ -17,6 +17,9 @@ dBodyID Car::Wheel_BodyID[WHEELS];
 dGeomID Car::Wheel_GeomID[WHEELS];
 dJointID Car::Wheel_JointID[WHEELS];
 
+int Car::CheckpointList[1024];
+int Car::Checkpoints = 0;
+int Car::max_speed = 16;
 
 const dReal * Car::car_wheel_right;
 const dReal * Car::car_wheel_left;
@@ -44,9 +47,6 @@ Model *Car::car_Model = NULL;												// Holds The Model Data
 Model *Car::wheel_Model = NULL;												// Holds The Model Data
 //Model *Car::stuff1_Model = NULL;
 //Model *Car::stuff2_Model = NULL;
-
-int Car::CheckpointList[1024];
-int Car::max_speed = 16;
 
 /// //////////////////////////////////////////////////////////////////////// ///
 /// CONSTRUCTOR
@@ -204,6 +204,9 @@ Car::Car(dWorldID world, dSpaceID space,CarInfo car_info,int x1,int y1,int z1,in
   // Añadimos camaras al espacio de colisiones del coche
   dSpaceAdd (Car_Space, camera_box);
   dSpaceAdd (Car_Space, camera_view_box);
+
+  /// Ponemos a cero el vector de checkpoints
+  for (int i = 0; i < 1024 ; ++i ) CheckpointList[i] = 0;
 }
 
 void Car::setPosCar(int i, int j, int z, int rotation)

@@ -10,6 +10,7 @@ Model *Ground::ModelosMilky[K_MODEL];
 dTriMeshDataID Ground::MeshesData[K_MODEL];
 map< string, TrackInfo* > Ground::track_map;
 dGeomID Ground::walls[4];
+int Ground::Checkpoints_Total = 0;
 
 /// //////////////////////////////////////////////////////////////////////// ///
 /// CONSTRUCTOR
@@ -88,7 +89,7 @@ Ground::Ground(dWorldID world, dSpaceID space)
         //int k = CFG_ReadInt("z",0);
         int rotation = CFG_ReadInt("rotation",0);
         string s_model = CFG_ReadText("model",(*track_map.begin()).first.c_str());
-        Cell_Matrix[X-1-i][j].i_checkpoint = CFG_ReadBool("i_checkpoint",0);
+        if ( CFG_ReadBool("i_checkpoint",0) ) Cell_Matrix[X-1-i][j].i_checkpoint = ++Checkpoints_Total;
         Cell_Matrix[X-1-i][j].start = CFG_ReadBool("start",0);
 
         Cell_Matrix[X-1-i][j].id = track_map[s_model]->id;

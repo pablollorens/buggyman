@@ -427,7 +427,7 @@ void dsPlatformSimLoop (int window_width, int window_height, bool fullscreen, ds
 
 	FPSmanager manager;
     SDL_initFramerate(&manager);
-    SDL_setFramerate(&manager, 60);
+    SDL_setFramerate(&manager, 80);
 
     while (!done)
     {

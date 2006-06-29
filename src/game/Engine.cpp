@@ -60,14 +60,18 @@ void Engine::SimLoop (int pause)
     {
         Car::Sim();
 
-        switch(Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].id)
+        int i_checkpoint = Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].i_checkpoint;
+        if (i_checkpoint)
         {
-            //case RAMP_B: Car::max_speed = 50; break;
-            //case RAMP_A: Car::max_speed = 50; break;
-            //case STRAIGHT: Car::max_speed = 200; break;
-            case CROSS: setAcabado(1); break;
-            default: if (Car::max_speed>MAX_SPEED) Car::max_speed--; break;
+            if (!(Car::CheckpointList[i_checkpoint-1]) )
+            {
+                Car::Checkpoints++;
+                Car::CheckpointList[i_checkpoint-1] = 1;
+            }
         }
+        if (Ground::Checkpoints_Total == Car::Checkpoints &&
+            Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].name == "start")
+            setAcabado(1);
 
         dSpaceCollide (Space,0,&nearCallback);
 
