@@ -6,8 +6,8 @@ list<string> Get_Directories(char* dir_work)
     list<string> list_directories;
 
     string path_work = getcwd(dirchain,300);
-    string  full_path = path_work + "\\";
-            full_path += dir_work;
+    string full_path = path_work + "\\";
+           full_path += dir_work;
 
     DIR *pdir;
     struct dirent *pent;
