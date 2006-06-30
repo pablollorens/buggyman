@@ -595,10 +595,13 @@ Grid3D::Save(char* path)
                 if((*aux).Get_Name() != "none" && !painted[aux])
                 {
                     point = *((*aux).Get_First_Cell());
-                    o<<"[Cell_"<<i<<j<<"]\n";
+                    o<<"[Cell_"<<i<<j<<k<<"]\n";
                     o<<"x = "<<point.x + i<<"\n";
                     o<<"y = "<<point.y + j<<"\n";
                     o<<"z = "<<point.z + k<<"\n";
+                    o<<"x0 = "<<i<<"\n";
+                    o<<"y0 = "<<j<<"\n";
+                    o<<"z0 = "<<k<<"\n";
                     o<<"model = "<<(*aux).Get_Name().c_str()<<"\n";
                     o<<"rotation = "<<(*aux).Get_Rotation() %360<<"\n";
                     if((*aux).Get_Start()) o<<"start = true\n";
@@ -612,98 +615,67 @@ Grid3D::Save(char* path)
 }
 
 int
-Grid3D::Load(char* path)
+Grid3D::Load(char* path, map<string, Track* > &tracks_map)
 {
-    return 0;
-//    if(!path) return 0;
-//    if(dim<1) return 0;
-//
-//    CFG_File config;
-//
-//    int result = CFG_OpenFile(path, &config);
-//
-//    if ( result == CFG_ERROR || result == CFG_CRITICAL_ERROR )
+    if(!path) return 0;
+    if(dim<1) return 0;
+
+    fstream i(path,ios::in);
+    if(!i) return 0;
+
+    CFG_File config;
+
+    int result = CFG_OpenFile(path, &config);
+    if ( result == CFG_ERROR || result == CFG_CRITICAL_ERROR )
+    {
+        fprintf(stderr,"Unable to load file: %s\n", SDL_GetError());
+        exit(1);
+    }
+
+//    if( CFG_OK == CFG_SelectGroup("Info", 0) ||
+//        CFG_OK == CFG_SelectGroup("info", 0) )
 //    {
-//        fprintf(stderr,"Unable to load file: %s\n", SDL_GetError());
-//        exit(1);
 //    }
-//
-//    if ( CFG_OK == CFG_SelectGroup("Info", 0) )
-//    {
-//        name = CFG_ReadText("name", "unspecified");
-//        description = CFG_ReadText("description", "");
-//        dimx = CFG_ReadInt("size_x", 1);
-//        dimy = CFG_ReadInt("size_y", 1);
-//        dimz = CFG_ReadInt("size_z", 1);
-//        num_connectors = CFG_ReadInt("connectors", 2);
-//        Set_Icon3D((char*)CFG_ReadText("icon3d",TRACK_icon3d_void));
-//        Set_Icon((char*)CFG_ReadText("icon",TRACK_icon_void));
-//    }
-//    else
-//    {
-//        name = "none";
-//        description = "none";
-//        dimx=1;
-//        dimy=1;
-//        dimz=1;
-//        num_connectors = 0;
-//        Set_Icon3D(TRACK_icon3d_void);
-//        Set_Icon(TRACK_icon_void);
-//    }
-//
-//    Cell3D aux(this);
-//    vector< Cell3D > vz(dimz,aux);
-//    vector< vector< Cell3D > > vy(dimy,vz);
-//    cells.resize(dimx,vy);
-//
-//    active_trans = 0;
-//    window = icon; //sets w and h
-//    rotation = 0;
-//
-//    for ( CFG_StartGroupIteration(); !CFG_IsLastGroup(); CFG_SelectNextGroup() )
-//    {
-//        int x = CFG_ReadInt("x",0);
-//        int y = CFG_ReadInt("y",0);
-//        int z = CFG_ReadInt("y",0);
-//        x = 0<=x && x<dimx ? x : 0;
-//        y = 0<=y && y<dimy ? y : 0;
-//        z = 0<=z && z<dimz ? z : 0;
-//
-//        cells[x][y][z].Set_North(CFG_ReadInt("north",CONN_NONE));
-//        cells[x][y][z].Set_West(CFG_ReadInt("west",CONN_NONE));
-//        cells[x][y][z].Set_South(CFG_ReadInt("south",CONN_NONE));
-//        cells[x][y][z].Set_East(CFG_ReadInt("east",CONN_NONE));
-//        cells[x][y][z].Set_Track(this);
-//    }
-//    CFG_CloseFile(0);
-//
-//
-//
-//
-//
-//
-//    fstream o(path,ios::out);
-//    if(!o) return 0;
-//
-//    map< Track* , Track* > drown;
-//    drown[&null_track]=&null_track;
-//    Track* aux=NULL;
-//    for(int i=0; i<dim.x; i++)
-//        for(int j=0; j<dim.y; j++)
-//            for(int k=0; k<1/*dim.z*/; k++)
-//            {
-//                aux = grid[i][j][k].Get_Track();
-//                if(!drown[aux] && tracks[aux] && aux!= &null_track)
-//                {
-//                    o<<"[Cell_"<<i<<j<<"]\n";
-//                    o<<"x = "<<i<<"\n";
-//                    o<<"y = "<<j<<"\n";
-//                    o<<"model = "<<(*aux).Get_Name().c_str()<<"\n";
-//                    o<<"rotation = "<<((*aux).Get_Rotation()+0)%360<<"\n\n";
-//                    drown[aux]=aux;
-//                }
-//            }
-//    o.close();
+
+    for ( CFG_StartGroupIteration(); !CFG_IsLastGroup(); CFG_SelectNextGroup() )
+    {
+//        if( !strcmp(CFG_GetSelectedGroupName(),"Info") ||
+//            !strcmp(CFG_GetSelectedGroupName(),"info")) continue;
+        int x = CFG_ReadInt("x0",0);
+        int y = CFG_ReadInt("y0",0);
+        int z = CFG_ReadInt("y0",0);
+        x = 0<x && x<dim.x ? x : 0;
+        y = 0<y && y<dim.y ? y : 0;
+        z = 0<z && z<dim.z ? z : 0;
+
+        string some_name = CFG_ReadText("model","");
+        int rotation  = CFG_ReadInt("rotation",0);
+
+        Track* track = tracks_map[some_name];
+        if(!track) continue;
+        track = new Track(*track);
+
+        switch(rotation)
+        {
+            case 90:
+                (*track).Rotate_Counter_Clockwise();
+                break;
+            case 180:
+                (*track).Rotate_Counter_Clockwise();
+                (*track).Rotate_Counter_Clockwise();
+                break;
+            case 270:
+                (*track).Rotate_Counter_Clockwise();
+                (*track).Rotate_Counter_Clockwise();
+                (*track).Rotate_Counter_Clockwise();
+                break;
+        };
+        Set_Track(x,y,z,*track);
+        //delete track;
+    }
+    CFG_CloseFile(0);
+    i.close();
+    return 1;
 }
 
 void

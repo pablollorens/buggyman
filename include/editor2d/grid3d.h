@@ -87,7 +87,7 @@ class Grid3D
 
         //Circuit Load & Save methods
         int Save(char* path);
-        int Load(char* path);
+        int Load(char* path, map<string, Track* > &tracks_map);
         void Debug_Print_Grid(char* fich, int sufix, char* ext, char* remmark);
 
     private:

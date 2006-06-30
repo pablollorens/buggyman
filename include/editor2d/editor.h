@@ -74,8 +74,7 @@ class Editor : public Menu
         void Add_Tracks(Grid3D & grid);
         void Load_Tracks(Grid3D & grid);
     private:
-//        Grid3D world;
-//        Grid3D track;
+        map<string, Track* > tracks_map;
 };
 
 #endif // __EDITOR_H__

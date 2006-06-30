@@ -41,6 +41,7 @@ Editor::Load_Tracks(Grid3D & grid)
         grid.Set_Track(0,j,0,*track);
         fprintf(stderr,"Pista almacenada en <0,%d,0>\n",j);
         j+=(*track).Get_DimY();
+        tracks_map[*itr] = track;
     }
     chdir(ruta.c_str());
 }
@@ -207,6 +208,7 @@ Editor::Run()
         EDITOR_CIRCUIT_WINDOW_X, EDITOR_CIRCUIT_WINDOW_Y,
         EDITOR_CIRCUIT_WINDOW_W, EDITOR_CIRCUIT_WINDOW_H);
     printf("ok\n");
+    world.Load("terreno.cfg",tracks_map);
 
     Track* floating = NULL;
 
