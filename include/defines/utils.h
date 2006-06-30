@@ -2,8 +2,6 @@
 #ifndef _DEFINES_UTILS_H_
 #define _DEFINES_UTILS_H_
 
-
-
 ///Defines de Ground
 
 //World size in cells
