@@ -63,6 +63,7 @@ class Grid3D
         void Set_Window(SDL_Rect& some_window);
         inline void Set_Window(int x, int y) {window.x = x; window.y = y;};
         void Set_Window(int x, int y, Uint16 w, Uint16 h);
+        bool Mouse_Over(Uint16 x, Uint16 y);
 
         //Offset point management
         void Set_Offset(Point3D<int>& some_offset);

@@ -471,6 +471,14 @@ Grid3D::Set_Offset(Point3D<int>& some_offset)
     offset = Normalize_Offset(some_offset);
 }
 
+bool
+Grid3D::Mouse_Over(Uint16 x, Uint16 y)
+{
+    if(x < window.x || y < window.y) return 0;
+    if(x >= window.x + window.w || y >= window.y + window.h) return 0;
+    return 1;
+}
+
 
 
 

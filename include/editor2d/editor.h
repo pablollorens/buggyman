@@ -50,6 +50,7 @@
 #include <grid3d.h>
 #include <defines.h>
 #include <functions.h>
+#include <utils.h>
 #include <list>
 
 #define methods
@@ -57,7 +58,6 @@
 //Global variable of SDL_Surface* collecion
 #include <img_collection.h>
 extern IMG_Collection image_collection;
-
 
 class Editor : public Menu
 {
@@ -72,6 +72,7 @@ class Editor : public Menu
         //Manage_Events(SDL_Event & event);
         //void Draw();
         void Add_Tracks(Grid3D & grid);
+        void Load_Tracks(Grid3D & grid);
     private:
 //        Grid3D world;
 //        Grid3D track;

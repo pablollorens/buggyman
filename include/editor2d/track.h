@@ -16,6 +16,7 @@
 #include <SDL_rotozoom.h>
 #include <SDL_config.h>
 
+#include <unistd.h>
 #include <string>
 #include <vector>
 #include"defines.h"
@@ -54,7 +55,7 @@ class Track
             char* some_icon3d,
             int DimX = 1, int DimY = 1, int DimZ = 1,
             char* some_description = "none");
-        Track(char* file);
+        Track(string& file);
         Track(const Track & some);
         ~Track();
         Track & operator=(const Track & some);

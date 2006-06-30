@@ -67,6 +67,22 @@ Cell3D::Validate_Connector(int some_conn)
     return some_conn;
 }
 
+int
+Cell3D::Validate_Connector(const char* some_conn)
+{
+    if(!some_conn) return CONN_NONE;
+
+    string conn = some_conn;
+    if (conn == "NONE") return CONN_NONE; // caso mas frecuente
+    if (conn == "PLANE") return CONN_PLANE;
+    if (conn == "FREEWAY") return CONN_FREEWAY;
+    if (conn == "BANKED_A") return CONN_BANKED_A;
+    if (conn == "BANKED_B") return CONN_BANKED_B;
+    if (conn == "TUBE") return CONN_TUBE;
+    if (conn == "BRIDGE") return CONN_BRIDGE;
+    return CONN_NONE;
+}
+
 void
 Cell3D::Connectors_Rotation()
 {

@@ -24,7 +24,7 @@ int Run_Game(void* data)
     dsPrint("\t### RUN GAME ###\n");
 
     Game::SetResolution(((int*)data)[0],((int*)data)[1]);
-    Game::SetFullScreen(true);
+    Game::SetFullScreen(false);//no lo cambies COÑO!!! xDDD
     Game::Run();
 
     dsPrint("\t### END GAME ###\n");

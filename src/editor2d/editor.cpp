@@ -13,6 +13,39 @@ Editor::~Editor()
 }
 
 void
+Editor::Load_Tracks(Grid3D & grid)
+{
+    char fcadena[300];
+    string ruta = getcwd(fcadena,300);
+    int j=0;
+
+    list< string > directorios = Get_Directories(DIR_TRACKS);
+    for (list< string >::iterator itr = directorios.begin(), end = directorios.end();
+         itr != end ; ++itr)
+    {
+        fprintf(stderr,"==================================\n");
+        fprintf(stderr,"cargando pista \"%s\"\n",(char*)(*itr).c_str());
+        string ruta_nueva = ruta + "\\";
+               ruta_nueva += DIR_TRACKS;
+               ruta_nueva += "\\";
+               ruta_nueva += *itr;
+        chdir(ruta_nueva.c_str());
+
+        FILE *fich = fopen("config.cfg","r");
+        if(fich == NULL) continue;
+        else fclose(fich);
+
+        string con = "config.cfg";
+        Track * track = new Track(con);
+        (*track).Set_Name(*itr);
+        grid.Set_Track(0,j,0,*track);
+        fprintf(stderr,"Pista almacenada en <0,%d,0>\n",j);
+        j+=(*track).Get_DimY();
+    }
+    chdir(ruta.c_str());
+}
+
+void
 Editor::Add_Tracks(Grid3D & grid)
 {
     // Carga de iconos de los tramos. esto ira en capsulado y automatizado
@@ -158,12 +191,13 @@ Editor::Run()
     Track null_track("Void",void_icon,void_icon3d);
 
     printf("Creating tracks grid... \0");
-    Grid3D tools("Tools",4,7,1,
+    Grid3D tools("Tools",4,50/*7*/,1,
         EDITOR_TRACKS_WINDOW_X, EDITOR_TRACKS_WINDOW_Y,
         EDITOR_TRACKS_WINDOW_W, EDITOR_TRACKS_WINDOW_H);
     printf("ok\n");
 
-    Add_Tracks(tools);
+    //Add_Tracks(tools);
+    Load_Tracks(tools);
     fprintf(stderr,"Pistas anyadidas a Tools\n");
     fprintf(stderr,"------------------------\n");
     // ///////////////////////////////////////////////////////////////////////
@@ -243,10 +277,8 @@ Editor::Run()
                         cursor = cursor_default;
                         if(move_grid)
                         {
-                            if( event.button.x >= EDITOR_CIRCUIT_WINDOW_X &&
-                                event.button.x< EDITOR_CIRCUIT_WINDOW_X + EDITOR_CIRCUIT_WINDOW_W &&
-                                event.button.y >= EDITOR_CIRCUIT_WINDOW_Y &&
-                                event.button.y< EDITOR_CIRCUIT_WINDOW_Y + EDITOR_CIRCUIT_WINDOW_H)
+                            if( world.Mouse_Over(event.button.x,event.button.y) ||
+                                tools.Mouse_Over(event.button.x,event.button.y))
                                 {
                                     cursor = cursor_hand_close;
                                 }
@@ -268,15 +300,9 @@ Editor::Run()
                             }
                             else
                             {
-//                                if(!( event.button.x >= EDITOR_TRACKS_WINDOW_X &&
-//                                    event.button.x< EDITOR_TRACKS_WINDOW_X + EDITOR_TRACKS_WINDOW_W &&
-//                                    event.button.y >= EDITOR_TRACKS_WINDOW_Y &&
-//                                    event.button.y< EDITOR_TRACKS_WINDOW_Y + EDITOR_TRACKS_WINDOW_H))
-                                {
-                                    delete floating;
-                                    floating = NULL;
-                                    status = EDITOR_STATUS_NONE;
-                                }
+                                delete floating;
+                                floating = NULL;
+                                status = EDITOR_STATUS_NONE;
                             }
                         }
                         else
@@ -312,7 +338,10 @@ Editor::Run()
                 case SDL_MOUSEMOTION:
                     if(move_grid && cursor == cursor_hand_close)
                     {
-                        world.Incr_Offset(-event.motion.xrel,-event.motion.yrel,0);
+                        if( world.Mouse_Over(event.motion.x,event.motion.y))
+                            world.Incr_Offset(-event.motion.xrel,-event.motion.yrel,0);
+                        if( tools.Mouse_Over(event.motion.x,event.motion.y))
+                            tools.Incr_Offset(-event.motion.xrel,-event.motion.yrel,0);
                     }
                     update_required=true;
                     ratonx = event.motion.x;
@@ -320,10 +349,7 @@ Editor::Run()
                     // Implementation of drawn by mouse displacement
                     if (floating)
                     {
-                        if(!( event.button.x >= EDITOR_TRACKS_WINDOW_X &&
-                            event.button.x< EDITOR_TRACKS_WINDOW_X + EDITOR_TRACKS_WINDOW_W &&
-                            event.button.y >= EDITOR_TRACKS_WINDOW_Y &&
-                            event.button.y< EDITOR_TRACKS_WINDOW_Y + EDITOR_TRACKS_WINDOW_H))
+                        if(!( tools.Mouse_Over(event.motion.x,event.motion.y)))
                         {
                             world.Activate_Tracks_Under(event.button.x,event.button.y,floating);
                             if (mode_displacement_on &&
@@ -387,6 +413,8 @@ Editor::Run()
             SDL_GL_SwapBuffers();
             SDL_Flip(screen);
         }
+        SDL_framerateDelay(&manager);
+        update_required=0;
     } // end main loop
 
 //    if(path_to_save_circuit)

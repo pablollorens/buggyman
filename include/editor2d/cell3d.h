@@ -20,6 +20,7 @@
 #define CONN_BANKED_A 3       //for inclined roads, left side
 #define CONN_BANKED_B 4       //for inclined roads, right side
 #define CONN_TUBE     5       //for tubural roads
+#define CONN_BRIDGE   6       //elevated roads
 
 #define CONN_MIN_CONNECTOR -1
 #define CONN_MAX_CONNECTOR 5
@@ -48,10 +49,15 @@ class Cell3D
         inline void Set_East(int value) {connectors[CELL3D_EAST] = Validate_Connector(value);}
         inline void Set_South(int value) {connectors[CELL3D_SOUTH] = Validate_Connector(value);}
         inline void Set_West(int value) {connectors[CELL3D_WEST] = Validate_Connector(value);}
+        inline void Set_North(const char* value) {connectors[CELL3D_NORTH] = Validate_Connector(value);}
+        inline void Set_East(const char* value) {connectors[CELL3D_EAST] = Validate_Connector(value);}
+        inline void Set_South(const char* value) {connectors[CELL3D_SOUTH] = Validate_Connector(value);}
+        inline void Set_West(const char* value) {connectors[CELL3D_WEST] = Validate_Connector(value);}
         inline Track* Get_Track() {return track;}
         inline void Set_Track(Track* some_track) {track = some_track;}
         bool Is_totally_none();
         int Validate_Connector(int some_conn);
+        int Validate_Connector(const char* some_conn);
         void Connectors_Rotation();
 
     private:

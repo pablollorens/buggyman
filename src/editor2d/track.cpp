@@ -80,41 +80,47 @@ Track::Track(
     i_checkpoint = 0;
 }
 
-Track::Track(char* file)
+Track::Track(string & file)
 {
     CFG_File config;
 
-    int result = CFG_OpenFile(file, &config );
-
+    int result = CFG_OpenFile(file.c_str(), &config );
     if ( result == CFG_ERROR || result == CFG_CRITICAL_ERROR )
     {
         fprintf(stderr,"Unable to load file: %s\n", SDL_GetError());
         exit(1);
     }
 
-    if ( CFG_OK == CFG_SelectGroup("Info", 0) )
+    if( CFG_OK == CFG_SelectGroup("Info", 0) ||
+        CFG_OK == CFG_SelectGroup("info", 0) )
     {
-        name = CFG_ReadText("name", "unspecified");
+//        name = CFG_ReadText("name", "unspecified");
         description = CFG_ReadText("description", "");
         dimx = CFG_ReadInt("size_x", 1);
         dimy = CFG_ReadInt("size_y", 1);
         dimz = CFG_ReadInt("size_z", 1);
         num_connectors = CFG_ReadInt("connectors", 2);
-        Set_Icon3D((char*)CFG_ReadText("icon3d",TRACK_icon3d_void));
-        Set_Icon((char*)CFG_ReadText("icon",TRACK_icon_void));
         start = CFG_ReadBool("start", false);
         i_checkpoint = CFG_ReadBool("i_checkpoint", false);
+
+        char fcadena[300];
+        string ruta = getcwd(fcadena,300);
+        string ruta_icon = ruta + "\\icon.png";
+        string ruta_icon3d = ruta + "\\icon3d.png";
+        Set_Icon((char*)ruta_icon.c_str());
+        Set_Icon3D((char*)ruta_icon3d.c_str());
+
     }
     else
     {
-        name = "none";
-        description = "none";
+//        name = "none";
+        description = "";
         dimx=1;
         dimy=1;
         dimz=1;
         num_connectors = 0;
-        Set_Icon3D(TRACK_icon3d_void);
-        Set_Icon(TRACK_icon_void);
+        Set_Icon3D(TRACK_icon3d_void);  //puede petardear si no esta
+        Set_Icon(TRACK_icon_void);      //en el directorio del ejecutable!!
         start = 0;
         i_checkpoint = 0;
     }
@@ -128,8 +134,14 @@ Track::Track(char* file)
     window = icon; //sets w and h
     rotation = 0;
 
-    for ( CFG_StartGroupIteration(); !CFG_IsLastGroup(); CFG_SelectNextGroup() )
+    fprintf(stderr,"description: %s\n", (char*)description.c_str());
+    fprintf(stderr,"tamanyo: <%d,%d,%d>\n", dimx,dimy,dimz);
+    fprintf(stderr,"num_conn: %d\n", num_connectors);
+    if(start) fprintf(stderr,"is start\n");
+    if(i_checkpoint) fprintf(stderr,"i_checkpoint\n");
+    if(num_connectors) for ( CFG_StartGroupIteration(); !CFG_IsLastGroup(); CFG_SelectNextGroup() )
     {
+        if(!strcmp(CFG_GetSelectedGroupName(),"Info") || !strcmp(CFG_GetSelectedGroupName(),"info")) continue;
         int x = CFG_ReadInt("x",0);
         int y = CFG_ReadInt("y",0);
         int z = CFG_ReadInt("y",0);
@@ -137,11 +149,21 @@ Track::Track(char* file)
         y = 0<=y && y<dimy ? y : 0;
         z = 0<=z && z<dimz ? z : 0;
 
-        cells[x][y][z].Set_North(CFG_ReadInt("north",CONN_NONE));
-        cells[x][y][z].Set_West(CFG_ReadInt("west",CONN_NONE));
-        cells[x][y][z].Set_South(CFG_ReadInt("south",CONN_NONE));
-        cells[x][y][z].Set_East(CFG_ReadInt("east",CONN_NONE));
+        cells[x][y][z].Set_North(CFG_ReadText("north","NONE"));
+        cells[x][y][z].Set_West(CFG_ReadText("west","NONE"));
+        cells[x][y][z].Set_South(CFG_ReadText("south","NONE"));
+        cells[x][y][z].Set_East(CFG_ReadText("east","NONE"));
         cells[x][y][z].Set_Track(this);
+
+        fprintf(stderr,"  celda[%d][%d][%d]\n",x,y,z);
+        if(cells[x][y][z].Get_North())
+            fprintf(stderr,"  north = %d\n",cells[x][y][z].Get_North());
+        if(cells[x][y][z].Get_West())
+            fprintf(stderr,"  west = %d\n",cells[x][y][z].Get_West());
+        if(cells[x][y][z].Get_South())
+            fprintf(stderr,"  south = %d\n",cells[x][y][z].Get_South());
+        if(cells[x][y][z].Get_East())
+            fprintf(stderr,"  east = %d\n",cells[x][y][z].Get_East());
     }
     CFG_CloseFile(0);
 }
