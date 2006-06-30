@@ -39,6 +39,7 @@
 			<Add option="-lSDL"/>
 			<Add option="-lSDL_gfx"/>
 			<Add option="-lSDL_Image"/>
+			<Add option="-lSDL_mixer.dll"/>
 			<Add option="-lSDL_ttf"/>
 			<Add option="-lstdc++"/>
 			<Add option="-lComctl32"/>

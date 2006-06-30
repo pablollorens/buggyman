@@ -5,6 +5,7 @@
 #include <SDL.h>
 #include <SDL_Image.h>
 #include <SDL_framerate.h>
+#include <SDL_mixer.h>
 //#include <SDL_config.h>
 #include <drawstuff/drawstuff.h>
 

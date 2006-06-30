@@ -5,7 +5,6 @@ Lista de tareas pendientes
 
 VISUALES Y SONOROS
 
- - Diseño de pistas de SALIDA y LLEGADA.
 
  - Crear un menu de juego donde se muestre:
 	- Estado del cronometro.
@@ -17,7 +16,6 @@ VISUALES Y SONOROS
 
 JUGABILIDAD
 
-  - Implementar el concepto de checkpoint y reglas.
   - Mejorar la fisica del coche -> debe parecer real, se gira solo!!! ggrr!!!
     creo que es tiempo de creación de hecho algunas veces cuando pulsas "r" para volver
     a empezar ya no lo hace...
@@ -31,7 +29,7 @@ OPTIMIZACION
 			- Continuar (lo q habría ahora mismo más o menos)
 			- Partida Nueva (invicar el reinicio de las variables del juego)
   - Al finalizar el juego no se libera toda la memoria
-	(si se ejecuta varias veces, la memoria va en aumento)
+    (si se ejecuta varias veces, la memoria va en aumento)
 
 
 EDITOR
@@ -39,7 +37,6 @@ EDITOR
   - Minimapa
   - Diseño
   - Reglas de construccion
-  - Lectura de tramos desde HD.
   - Funcionalidad (cargar / guardar)
 
   - Clase Menu. De esta clase, que provee metodos basicos para la gestion de botones

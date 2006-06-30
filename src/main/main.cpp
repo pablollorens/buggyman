@@ -14,9 +14,9 @@
 #include <img_collection.h>
 IMG_Collection image_collection;
 SDL_Surface *screen;
+Mix_Music *musica_fondo;
+Mix_Music *coche_arranque;
 using namespace std;
-
-
 
 
 int Run_Game(void* data)
@@ -25,6 +25,8 @@ int Run_Game(void* data)
 
     Game::SetResolution(((int*)data)[0],((int*)data)[1]);
     Game::SetFullScreen(false);//no lo cambies COÑO!!! xDDD
+    Mix_PlayMusic(coche_arranque, 1);
+    Mix_PlayMusic(musica_fondo, -1);
     Game::Run();
 
     dsPrint("\t### END GAME ###\n");
@@ -96,9 +98,24 @@ int main ( int argc, char** argv )
 
     main_menu.Set_Video_Mode_CFG(800,600,32,SDL_HWSURFACE|SDL_DOUBLEBUF);
     main_menu.Set_Video_Mode();
-    main_menu.Run();
 
+    /// Musica del juego
+    musica_fondo   = Mix_LoadMUS("music/prodigy.mp3");
+    coche_arranque = Mix_LoadMUS("music/arranque.mp3");
+
+    if ( !musica_fondo || !coche_arranque ) {
+        printf("No pude cargar musica: %s\n", Mix_GetError());
+        exit(1);
+    }
+
+    main_menu.Run();
     main_menu.Quit_Menu();
+
+    // Paramos la música
+    Mix_HaltMusic();
+    // liberamos recursos
+    Mix_FreeMusic(musica_fondo);
+    Mix_FreeMusic(coche_arranque);
 
     dsPrint("### THE END ###\n");
     return 0;

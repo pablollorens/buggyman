@@ -199,7 +199,7 @@ Menu::Draw()
 void
 Menu::Init_Menu()
 {
-    if(SDL_Init( SDL_INIT_VIDEO ) < 0 )
+    if(SDL_Init( SDL_INIT_VIDEO | SDL_INIT_AUDIO ) < 0 )
     {
         dsError( "Unable to init SDL: %s\n", SDL_GetError() );
         exit( 100 );
@@ -227,6 +227,12 @@ Menu::Set_Video_Mode()
         exit( 101 );
     }
     SDL_ShowCursor(SDL_DISABLE);
+
+    if(Mix_OpenAudio(22050, AUDIO_S16, 2, 4096)){
+        printf("No se puede inicializar SDL_mixer %s\n",Mix_GetError());
+        exit(0);
+    }
+    atexit(Mix_CloseAudio);
 }
 
 void
