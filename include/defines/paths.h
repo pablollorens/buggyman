@@ -6,15 +6,16 @@
 #define DIR_TRACKS "tracks"
 
 
-#define TRACK_icon3d    "icon3d.png"
-#define TRACK_icon      "icon.png"
 
 
 //Diretories
 #define DIR_modbase "baseJRV"
 #define DIR_Textures "textures"
-#define DIR_Tracks "tracks"
 #define DIR_players "players"
+
+#define TRACK_icon3d    "icon3d.png"
+#define TRACK_icon      "icon.png"
+#define GRID_background "textures\\land.jpg"
 
 //file names
 #define FILE_track_model "model.ms3d"

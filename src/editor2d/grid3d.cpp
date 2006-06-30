@@ -20,11 +20,9 @@ Grid3D::Grid3D( char* some_name,
             for(int k = 0, l = dim.z; k<l; k++)
                 grid[i][j][k] = new Track;
 
-    window_surface = NULL;
-    window_background = NULL;
+    Set_BackGround(GRID_background);
     offset = 0;
     Set_Window(wx, wy, ww, wh);
-
 }
 
 Grid3D::Grid3D( char* some_name, Point3D<int> & some_dim, Rect2D & some_window)
@@ -42,8 +40,7 @@ Grid3D::Grid3D( char* some_name, Point3D<int> & some_dim, Rect2D & some_window)
             for(int k = 0, l = dim.z; k<l; k++)
                 grid[i][j][k] = new Track;
 
-    window_surface = NULL;
-    window_background = NULL;
+    Set_BackGround(GRID_background);
     offset=0;
     Set_Window(some_window);
 }
@@ -80,7 +77,7 @@ Grid3D::operator=(Grid3D & some)
 
     window = some.window;
     window_surface = zoomSurface(some.window_surface,1,1,0);
-    window_background = zoomSurface(some.window_background,1,1,0);
+    window_background = some.window_background;
     offset = some.offset;
     window_changed = true;
 
@@ -122,48 +119,83 @@ void
 Grid3D::Draw(SDL_Surface* screen)
 {
     if(screen == NULL) return;
-    //if(window_surface == NULL) return;
     if(dim<1) return;
 
-    //cout<< *this<<endl;
-//    if(!window_changed)
-//    {
-//        SDL_BlitSurface(window_surface, 0, screen, &window);
-//        window_changed = 0;
-//        return;
-//    }
-//    SDL_BlitSurface(window_background, 0, screen, &window);
-    SDL_SetClipRect(screen, &window);
+//    if(window_changed)
+    {
+        SDL_SetClipRect(screen, &window);
+        Rect2D rect(window.x - offset.x,window.y - offset.y,0,0);
+        SDL_BlitSurface(window_surface, 0, screen, &rect);
+        window_changed = 0;
+        SDL_SetClipRect(screen, NULL);
+    }
+    return;
 
-    //limit and offset in cells
-    Point3D<int> limit( window.w / CELL_X +1, window.h / CELL_Y +1,1);
-    Point3D<int> cell_offset( offset.x / CELL_X, offset.y / CELL_Y,offset.z);
 
-    map< Track* , Track* > painted;
-    Track *auxt=NULL;
-    Point3D<int> top_left;
 
-    for(int i=0; i<=limit.x && i+cell_offset.x<dim.x; i++)
-        for(int j=0; j<=limit.y && j+cell_offset.y<dim.y; j++)
-        {
-            auxt = grid[i+cell_offset.x][j+cell_offset.y][cell_offset.z];
-            if(!painted[auxt])
-            {
-                top_left = *Get_Top_Left_Syster(i+cell_offset.x, j+cell_offset.y);
-                (*auxt).Set_Window(
-                                top_left.x * CELL_X + window.x - offset.x,
-                                top_left.y * CELL_Y + window.y - offset.y);
-                (*auxt).Draw(screen);//window_surface);
-                painted[auxt]=auxt;
-            }
-        }
-    //SDL_BlitSurface(window_surface, 0, screen, &window);
-    SDL_SetClipRect(screen, NULL);
-    window_changed = 0;
+
+//    SDL_SetClipRect(screen, &window);
+//
+//    //limit and offset in cells
+//    Point3D<int> limit( window.w / CELL_X +1, window.h / CELL_Y +1,1);
+//    Point3D<int> cell_offset( offset.x / CELL_X, offset.y / CELL_Y,offset.z);
+//
+//    map< Track* , Track* > painted;
+//    Track *auxt=NULL;
+//    Point3D<int> top_left;
+//
+//    for(int i=0; i<=limit.x && i+cell_offset.x<dim.x; i++)
+//        for(int j=0; j<=limit.y && j+cell_offset.y<dim.y; j++)
+//        {
+//            auxt = grid[i+cell_offset.x][j+cell_offset.y][cell_offset.z];
+//            if(!painted[auxt])
+//            {
+//                top_left = *Get_Top_Left_Syster(i+cell_offset.x, j+cell_offset.y);
+//                (*auxt).Set_Window(
+//                                top_left.x * CELL_X + window.x - offset.x,
+//                                top_left.y * CELL_Y + window.y - offset.y);
+//                (*auxt).Draw(screen);//window_surface);
+//                painted[auxt]=auxt;
+//            }
+//        }
+//    //SDL_BlitSurface(window_surface, 0, screen, &window);
+//    SDL_SetClipRect(screen, NULL);
+//    window_changed = 0;
 }
 
+void
+Grid3D::Draw(Point3D<int> & p, Track & track, bool draw_track)
+{
+    Rect2D rect(p.x * CELL_X, p.y * CELL_Y,
+                track.Get_DimX()*CELL_X, track.Get_DimY()*CELL_Y);
 
+    SDL_SetClipRect(window_surface, &rect);
+    SDL_BlitSurface(window_background, 0, window_surface, 0);
+    SDL_SetClipRect(window_surface, NULL);
 
+    if(draw_track) track.Draw(window_surface,rect);
+
+    window_changed = true;
+}
+
+void
+Grid3D::Set_BackGround(SDL_Surface* image)
+{
+    window_background = zoomSurface(
+        image,(double)dim.x*CELL_X / image->w,(double)dim.y*CELL_Y / image->h,1);
+    window_surface = zoomSurface(window_background,1,1,0);
+}
+
+void
+Grid3D::Set_BackGround(char* image)
+{
+    window_background = image_collection(image);
+    window_background = zoomSurface(
+        window_background,
+        (double)dim.x*CELL_X / window_background->w,
+        (double)dim.y*CELL_Y / window_background->h,1);
+    window_surface = zoomSurface(window_background,1,1,0);
+}
 
 
 
@@ -226,9 +258,6 @@ Grid3D::Set_Track(Uint16 x, Uint16 y, Uint16 z, Track& some_track)
 
     //new copy of received track
     Track* newtrack = new Track(some_track);
-//    Track* voidtrack = new Track();
-    //tracks[newtrack]=newtrack;
-
 
     for(int i=0; i<nx; i++)
         for(int j=0; j<ny; j++)
@@ -237,15 +266,14 @@ Grid3D::Set_Track(Uint16 x, Uint16 y, Uint16 z, Track& some_track)
                 Track* aux = grid[p.x+i][p.y+j][p.z+k];
                 if((*aux).Get_Name() != "none")
                 {
-                    Clear_Cell_Sisters(p.x+i,p.y+j,p.z+k,aux);
-                    delete aux;
+                    //Clear_Cell_Sisters(p.x+i,p.y+j,p.z+k,aux);
+                    //delete aux;
+                    Delete_Track(p.x+i,p.y+j,p.z+k);
                 }
                 grid[p.x+i][p.y+j][p.z+k] = newtrack;
             }
 
-    //esto hay que cambiarlo:
-    //para que solo actualize la zona afectada y no toda la surface
-    window_changed = true;
+    Draw(p,(*newtrack), true);
     return true;
 }
 
@@ -317,15 +345,13 @@ Grid3D::Delete_Track(Uint16 x, Uint16 y, Uint16 z)
 
     Track* aux = grid[p.x][p.y][p.z];
     //Track *voidtrack = new Track;
-    if((*aux).Get_Name() != "none")
-    {
-        Clear_Cell_Sisters(p.x,p.y,p.z,aux);
-        delete aux;
-        window_changed = true;
-        return true;
-    }
+    if((*aux).Get_Name() == "none") return false;
+    Point3D<int> p0 = *Get_Top_Left_Syster(p.x,p.y);
+    Clear_Cell_Sisters(p.x,p.y,p.z,aux);
 
-    return false;
+    Draw(p0,(*aux), false);
+    delete aux;
+    return true;
 }
 
 bool
@@ -357,10 +383,7 @@ Grid3D::Activate_Tracks_Under(Uint16 x,Uint16 y,Uint16 z, Track* some_track)
     if(p.y + ny -1 >= dim.y) return false;
     if(p.z + nz -1 >= dim.z) return false;
 
-    for(int i=0; i<dim.x; i++)
-        for(int j=0; j<dim.y; j++)
-            for(int k=0; k<dim.z; k++)
-                (*grid[i][j][k]).UnSelect();
+    Deactivate_All_Tracks();
 
     Track* aux = NULL;
     for(int i=0; i<nx; i++)
@@ -368,14 +391,16 @@ Grid3D::Activate_Tracks_Under(Uint16 x,Uint16 y,Uint16 z, Track* some_track)
             for(int k=0; k<nz; k++)
             {
                 aux = grid[p.x+i][p.y+j][p.z+k];
+                if((*aux).Get_Selected()) continue;
                 (*aux).Select();
+
+                Point3D<int> *p0 = Get_Top_Left_Syster(p.x+i,p.y+j);
+                Draw(*p0,(*aux), true);
+                //pair<Track* , Point3D<int> > par(aux,*p0);
+                //activated_tracks.push_back(par);
             }
 
-    // /////////////////////////////
-    // Codigo para actualisar las surface
-    // /////////////////////////////
-    window_changed = true;
-    return true;
+    return window_changed;
 }
 
 int
@@ -394,14 +419,27 @@ Grid3D::Activate_Tracks_Under(Uint16 x,Uint16 y, Track* some_track)
 void
 Grid3D::Deactivate_All_Tracks()
 {
+//    fprintf(stderr,"Pistas activadas = %d\n",activated_tracks.size());
+//    for(list<pair<Track*, Point3D<int> > >::iterator itr = activated_tracks.begin(),
+//    end = activated_tracks.begin();
+//    itr != end; ++itr)
+//    {
+//        Track* track = (*itr).first;
+//        (*track).UnSelect();
+//        //Point3D<int> p = (*itr).second;
+//        Draw((*itr).second,(*track), true);
+//    }
+//    activated_tracks.clear();
+
     for(int i=0; i<dim.x; i++)
         for(int j=0; j<dim.y; j++)
             for(int k=0; k<dim.z; k++)
+            {
+                if(!(*grid[i][j][k]).Get_Selected()) continue;
                 (*grid[i][j][k]).UnSelect();
-
-    // /////////////////////////////
-    // Codigo para actualisar las surface
-    // /////////////////////////////
+                Point3D<int> *p = Get_Top_Left_Syster(i,j);
+                Draw(*p,*grid[i][j][k], true);
+            }
     window_changed = true;
 }
 

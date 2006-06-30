@@ -6,13 +6,18 @@ extern int world_frame;
 #include<iostream>
 #include<fstream>
 #include<SDL/SDL.h>
+#include<SDL/SDL_rotozoom.h>
 #include<string>
 #include<vector>
 #include <map>
+#include <list>
 #include"utils.h"
+#include"paths.h"
 #include"track.h"
 #include"grid3d.h"
 #include"point3d.h"
+
+#define methods
 
 #define GRID_Background "textures/land.jpg"
 //Global variable of SDL_Surface* collecion
@@ -78,6 +83,12 @@ class Grid3D
 
         //Render 2D methods
         void Draw(SDL_Surface* screen);
+        void Draw(Point3D<int> & p, Track & track, bool draw_track);
+
+        //Background ciucit management
+        void Set_BackGround(SDL_Surface* image);
+        void Set_BackGround(char* image);
+        inline SDL_Surface* Get_BackGround() {return window_background;};
 
         //Dimension access methods
         inline Point3D<int> & Get_Dims() { return dim; }
@@ -90,6 +101,10 @@ class Grid3D
         int Load(char* path, map<string, Track* > &tracks_map);
         void Debug_Print_Grid(char* fich, int sufix, char* ext, char* remmark);
 
+    private methods:
+        Point3D<int>& Normalize_Offset(Point3D<int>& some_offset);
+        Point3D<int>* Get_Top_Left_Syster(int x, int y);
+
     private:
         string name;
 
@@ -101,13 +116,7 @@ class Grid3D
         Point3D<int> dim;
         Point3D<int> offset;
         vector< vector< vector< Track* > > > grid;
-        //map< Track* , Track* > tracks;
-        //Track null_track;
-
-        //Private methods
-        Point3D<int>& Normalize_Offset(Point3D<int>& some_offset);
-        Point3D<int>* Get_Top_Left_Syster(int x, int y);
-        //void Clean_Sisters_and_yourself(vector< vector< vector< Cell3D > > >& grid,unsigned int x,unsigned int y,unsigned int z, Track* old_track, Track* new_track);
+        //list< pair<Track*, Point3D<int> > > activated_tracks;
 };
 
 #endif // __GRID3D_H__

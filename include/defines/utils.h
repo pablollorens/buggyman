@@ -9,7 +9,7 @@
 //World size in cells
 #define GRID_X 30
 #define GRID_Y 30
-#define GRID_Z 1
+#define GRID_Z 30
 
 //#define X 30 // Tamaño X del terreno
 //#define Y 30 // Tamaño Y del terreno
