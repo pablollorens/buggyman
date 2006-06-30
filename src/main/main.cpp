@@ -24,9 +24,10 @@ int Run_Game(void* data)
     dsPrint("\t### RUN GAME ###\n");
 
     Game::SetResolution(((int*)data)[0],((int*)data)[1]);
-    Game::SetFullScreen(false);//no lo cambies COÑO!!! xDDD
-    Mix_PlayMusic(coche_arranque, 1);
-    Mix_PlayMusic(musica_fondo, -1);
+    Game::SetFullScreen(false);
+
+    if(musica_fondo) Mix_PlayMusic(musica_fondo, -1);
+//    Mix_PlayMusic(coche_arranque, 1);
     Game::Run();
 
     dsPrint("\t### END GAME ###\n");
@@ -100,13 +101,12 @@ int main ( int argc, char** argv )
     main_menu.Set_Video_Mode();
 
     /// Musica del juego
-    musica_fondo   = Mix_LoadMUS("music/prodigy.mp3");
-    coche_arranque = Mix_LoadMUS("music/arranque.mp3");
-
-    if ( !musica_fondo || !coche_arranque ) {
-        printf("No pude cargar musica: %s\n", Mix_GetError());
-        exit(1);
-    }
+    //coche_arranque = Mix_LoadMUS("music/arranque.mp3");
+    musica_fondo   = Mix_LoadMUS("music/song1.mp3");
+//    if ( !musica_fondo || !coche_arranque ) {
+//        printf("No pude cargar musica: %s\n", Mix_GetError());
+//        exit(1);
+//    }
 
     main_menu.Run();
     main_menu.Quit_Menu();
