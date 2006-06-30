@@ -15,7 +15,8 @@
 #include <time.h>
 #include <list>
 #include <functions.h>
-#include <game/utils.h>
+#include <utils.h>
+#include <paths.h>
 
 using namespace std;
 
@@ -37,11 +38,9 @@ class Ground {
     static void LoadTextures();
     static void Draw(int cell_x, int cell_y);
 
-    static Ground_Cell Cell_Matrix[X][Y];
+    static Ground_Cell Cell_Matrix[GRID_X][GRID_Y];
     static int Checkpoints_Total;
 
-    static Model * ModelosMilky[K_MODEL];
-    static dTriMeshDataID MeshesData[K_MODEL];
     static Model * ground_Model;
     static dGeomID walls[4];
 

@@ -5,7 +5,8 @@
 #include <ode/ode.h>
 #include <drawstuff/drawstuff.h>
 #include <game/MilkshapeModel.h>
-#include <game/utils.h>
+#include <paths.h>
+#include <utils.h>
 #include <unistd.h>
 #include <game/Camera.h>
 #include <string>

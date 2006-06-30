@@ -13,7 +13,6 @@
 
 //Connector types for to join tracks.
 //The undeclared edges will be considered like NONE connectors.
-#define CONN_INNER   -1       //Inner connector, for multicell tracks
 #define CONN_NONE     0       //null connector
 #define CONN_PLANE    1       //the standart connector
 #define CONN_FREEWAY  2       //wide road
@@ -22,8 +21,8 @@
 #define CONN_TUBE     5       //for tubural roads
 #define CONN_BRIDGE   6       //elevated roads
 
-#define CONN_MIN_CONNECTOR -1
-#define CONN_MAX_CONNECTOR 5
+#define CONN_MIN_CONNECTOR 0
+#define CONN_MAX_CONNECTOR 6
 using namespace std;
 
 class Grid3D;
@@ -31,7 +30,7 @@ class Track;
 #include <string>
 #include <vector>
 #include "point3d.h"
-#include "defines.h"
+#include "utils.h"
 class Cell3D
 {
     public:

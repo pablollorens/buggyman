@@ -11,7 +11,7 @@
 #include <game/Ground.h>
 #include <game/Camera.h>
 
-#include <game/utils.h>
+#include <utils.h>
 
 /// //////////////////////////////////////////////////////////////////////// ///
 

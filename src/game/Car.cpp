@@ -53,7 +53,7 @@ Model *Car::wheel_Model = NULL;												// Holds The Model Data
 
 Car::Car(dWorldID world, dSpaceID space,CarInfo car_info,int x1,int y1,int z1,int rotation)
 {
-  x1=X-1-x1;
+  x1=GRID_X-1-x1;
 
   /// CHECKPOINTS
   for (int i=0; i<32; i++)
@@ -211,7 +211,7 @@ Car::Car(dWorldID world, dSpaceID space,CarInfo car_info,int x1,int y1,int z1,in
 
 void Car::setPosCar(int i, int j, int z, int rotation)
 {
-    i=X-1-i;
+    i=GRID_X-1-i;
 
     // Ponemos la variable z temporalmente al valor de STARTZ
     z = (int)STARTZ;

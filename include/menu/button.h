@@ -9,7 +9,6 @@
 #include <string>
 //#include <vector>
 #include "rect2d.h"
-#include "defines.h"
 
 #include <img_collection.h>
 extern IMG_Collection image_collection;

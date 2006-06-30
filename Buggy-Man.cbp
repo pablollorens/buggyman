@@ -30,6 +30,7 @@
 			<Add directory="include\editor2d"/>
 			<Add directory="include\game"/>
 			<Add directory="include\menu"/>
+			<Add directory="include\defines"/>
 		</Compiler>
 		<Linker>
 			<Add option="-lmingw32"/>
@@ -78,6 +79,18 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
+		<Unit filename="include\defines\paths.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
+		<Unit filename="include\defines\utils.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
 		<Unit filename="include\drawstuff\drawstuff.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
@@ -91,12 +104,6 @@
 			<Option target="default"/>
 		</Unit>
 		<Unit filename="include\editor2d\cell3d.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="include\editor2d\defines.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -193,12 +200,6 @@
 			<Option target="default"/>
 		</Unit>
 		<Unit filename="include\game\Model.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
-		</Unit>
-		<Unit filename="include\game\utils.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>

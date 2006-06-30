@@ -9,7 +9,7 @@ dWorldID Engine::World;
 dSpaceID Engine::Space;
 dJointGroupID Engine::ContactGroup;
 
-float Engine::xyz[3] = { ((X-1)*7)-3.5f, -1.5f, 3.0f };
+float Engine::xyz[3] = { ((GRID_X-1)*7)-3.5f, -1.5f, 3.0f };
 float Engine::hpr[3] = { 75.0f, -27.5f, 0.0f };
 
 int Engine::car_Cell_X = 0;
@@ -80,8 +80,8 @@ void Engine::SimLoop (int pause)
         dJointGroupEmpty (ContactGroup);
     }
 
-    for(int i=0;i<X;i++)
-        for(int j=0; j<Y; j++)
+    for(int i=0;i<GRID_X;i++)
+        for(int j=0; j<GRID_Y; j++)
         {
             dGeomDisable(Ground::Cell_Matrix[i][j].geomID);
             if (Ground::Cell_Matrix[i][j].road_model)

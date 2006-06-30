@@ -3,18 +3,13 @@
 
 extern int world_frame;
 
-//World size in cells
-#define GRID_X 30
-#define GRID_Y 30
-#define GRID_Z 5
-
 #include<iostream>
 #include<fstream>
 #include<SDL/SDL.h>
 #include<string>
 #include<vector>
 #include <map>
-#include"defines.h"
+#include"utils.h"
 #include"track.h"
 #include"grid3d.h"
 #include"point3d.h"

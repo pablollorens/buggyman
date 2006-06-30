@@ -10,7 +10,6 @@
 
 #include <button.h>
 #include <point3d.h>
-#include <defines.h>
 #include <list>
 #include <map>
 

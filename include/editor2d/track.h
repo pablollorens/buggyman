@@ -6,10 +6,6 @@
 #define TRACK_icon3d_background "textures/track_icon3d_background.png"
 #define TRACK_icon_selected "textures/cell_yellow.png"
 
-#define TRACK_dir       "tracks"
-#define TRACK_icon3d    "icon3d.png"
-#define TRACK_icon      "icon.gif"
-
 
 #include <SDL.h>
 #include <SDL_Image.h>
@@ -19,7 +15,6 @@
 #include <unistd.h>
 #include <string>
 #include <vector>
-#include"defines.h"
 #include"cell3d.h"
 #include"rect2d.h"
 #include"point3d.h"
