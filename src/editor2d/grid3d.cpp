@@ -263,6 +263,51 @@ Grid3D::Set_Track(Uint16 x, Uint16 y, Track& some_track)
 }
 
 bool
+Grid3D::Add_Track(Track * some_track)
+{
+    return 0;
+    //lo comentado aki es copia de Set_Track
+    //devuelve cierto si se ha insertado la track
+
+//    if(dim<1) return false;
+//    if(!some_track) return false;
+//
+//    Point3D<int> p(x,y,z);
+//    p = p.Get_Limited_to(0,0,0,dim.x-1,dim.y-1,dim.z-1);
+//
+//    int nx=some_track.Get_DimX();
+//    int ny=some_track.Get_DimY();
+//    int nz=some_track.Get_DimZ();
+//    if(p.x + nx -1 >= dim.x) return false;
+//    if(p.y + ny -1 >= dim.y) return false;
+//    if(p.z + nz -1 >= dim.z) return false;
+//
+//    //new copy of received track
+//    Track* newtrack = new Track(some_track);
+////    Track* voidtrack = new Track();
+//    //tracks[newtrack]=newtrack;
+//
+//
+//    for(int i=0; i<nx; i++)
+//        for(int j=0; j<ny; j++)
+//            for(int k=0; k<nz; k++)
+//            {
+//                Track* aux = grid[p.x+i][p.y+j][p.z+k];
+//                if((*aux).Get_Name() != "none")
+//                {
+//                    Clear_Cell_Sisters(p.x+i,p.y+j,p.z+k,aux);
+//                    delete aux;
+//                }
+//                grid[p.x+i][p.y+j][p.z+k] = newtrack;
+//            }
+//
+//    //esto hay que cambiarlo:
+//    //para que solo actualize la zona afectada y no toda la surface
+//    window_changed = true;
+//    return true;
+}
+
+bool
 Grid3D::Delete_Track(Uint16 x, Uint16 y, Uint16 z)
 {
     if(dim < 1) return false;

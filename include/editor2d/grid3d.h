@@ -48,6 +48,7 @@ class Grid3D
         //Track Management methods
         bool   Set_Track(Uint16 x, Uint16 y, Uint16 z, Track& some_track);
         bool   Set_Track(Uint16 x, Uint16 y, Track& some_track);
+        bool Add_Track(Track * some_track);
         Track* Get_Track(Uint16 x, Uint16 y, Uint16 z);
         Track* Get_Track(Uint16 x, Uint16 y);
         bool Delete_Track(Uint16 x, Uint16 y, Uint16 z);
