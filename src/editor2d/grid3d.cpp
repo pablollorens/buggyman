@@ -818,3 +818,14 @@ Grid3D::Check_Connector(int conn_1, int conn_2)
     return correct;
 }
 
+bool
+Grid3D::Clear_Circuit()
+{
+    for (int x_grid = 0; x_grid < Get_DimX(); x_grid++)
+    {
+        for (int y_grid = 0; y_grid < Get_DimY(); y_grid++)
+        {
+            Delete_Track(x_grid, y_grid, 0);
+        }
+    }
+}

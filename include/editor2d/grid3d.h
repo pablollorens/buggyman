@@ -116,6 +116,8 @@ class Grid3D
         //Circuit Check
         bool Check_Circuit();
 
+        bool Clear_Circuit();
+
 
     private methods:
         bool Delete_Track_without_Update(Uint16 x, Uint16 y, Uint16 z);
