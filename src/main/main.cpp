@@ -109,13 +109,13 @@ int main ( int argc, char** argv )
 //    }
 
     main_menu.Run();
-    main_menu.Quit_Menu();
 
     // Paramos la música
     Mix_HaltMusic();
     // liberamos recursos
     Mix_FreeMusic(musica_fondo);
     Mix_FreeMusic(coche_arranque);
+    main_menu.Quit_Menu();
 
     dsPrint("### THE END ###\n");
     return 0;
