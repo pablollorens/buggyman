@@ -22,6 +22,7 @@ Grid3D::Grid3D( char* some_name,
 
     Set_BackGround(GRID_background);
     offset = 0;
+    minimap = NULL;
     Set_Window(wx, wy, ww, wh);
 }
 
@@ -42,6 +43,7 @@ Grid3D::Grid3D( char* some_name, Point3D<int> & some_dim, Rect2D & some_window)
 
     Set_BackGround(GRID_background);
     offset=0;
+    minimap = NULL;
     Set_Window(some_window);
 }
 
@@ -49,18 +51,18 @@ Grid3D::Grid3D(Grid3D & some)
 {
     window_background = NULL;
     window_surface = NULL;
+    minimap = NULL;
     (*this)=some;
 }
 
 Grid3D::~Grid3D()
 {
     dim = 0;
-    if(window_surface)
-    {
-        SDL_FreeSurface(window_surface);
-        window_surface = NULL;
-        window_background = NULL;
-    }
+    if(window_surface) SDL_FreeSurface(window_surface);
+    if(minimap) SDL_FreeSurface(minimap);
+    window_surface = NULL;
+    window_background = NULL;
+    minimap = NULL;
 }
 
 Grid3D &
@@ -78,6 +80,8 @@ Grid3D::operator=(Grid3D & some)
     window = some.window;
     window_surface = zoomSurface(some.window_surface,1,1,0);
     window_background = some.window_background;
+    minimap = zoomSurface(some.minimap,1,1,0);
+    minimap_rect = some.minimap_rect;
     offset = some.offset;
     window_changed = true;
 
@@ -128,39 +132,13 @@ Grid3D::Draw(SDL_Surface* screen)
         SDL_BlitSurface(window_surface, 0, screen, &rect);
         window_changed = 0;
         SDL_SetClipRect(screen, NULL);
+
+        //Update_Minimap();
+        SDL_SetClipRect(screen, &minimap_rect);
+        SDL_BlitSurface(minimap, 0, screen, &minimap_rect);
+        SDL_SetClipRect(screen, NULL);
     }
     return;
-
-
-
-
-//    SDL_SetClipRect(screen, &window);
-//
-//    //limit and offset in cells
-//    Point3D<int> limit( window.w / CELL_X +1, window.h / CELL_Y +1,1);
-//    Point3D<int> cell_offset( offset.x / CELL_X, offset.y / CELL_Y,offset.z);
-//
-//    map< Track* , Track* > painted;
-//    Track *auxt=NULL;
-//    Point3D<int> top_left;
-//
-//    for(int i=0; i<=limit.x && i+cell_offset.x<dim.x; i++)
-//        for(int j=0; j<=limit.y && j+cell_offset.y<dim.y; j++)
-//        {
-//            auxt = grid[i+cell_offset.x][j+cell_offset.y][cell_offset.z];
-//            if(!painted[auxt])
-//            {
-//                top_left = *Get_Top_Left_Syster(i+cell_offset.x, j+cell_offset.y);
-//                (*auxt).Set_Window(
-//                                top_left.x * CELL_X + window.x - offset.x,
-//                                top_left.y * CELL_Y + window.y - offset.y);
-//                (*auxt).Draw(screen);//window_surface);
-//                painted[auxt]=auxt;
-//            }
-//        }
-//    //SDL_BlitSurface(window_surface, 0, screen, &window);
-//    SDL_SetClipRect(screen, NULL);
-//    window_changed = 0;
 }
 
 void
@@ -174,7 +152,7 @@ Grid3D::Draw(Point3D<int> & p, Track & track, bool draw_track)
     SDL_SetClipRect(window_surface, NULL);
 
     if(draw_track) track.Draw(window_surface,rect);
-
+    //Update_Minimap();
     window_changed = true;
 }
 
@@ -189,14 +167,30 @@ Grid3D::Set_BackGround(SDL_Surface* image)
 void
 Grid3D::Set_BackGround(char* image)
 {
-    window_background = image_collection(image);
-    window_background = zoomSurface(
-        window_background,
-        (double)dim.x*CELL_X / window_background->w,
-        (double)dim.y*CELL_Y / window_background->h,1);
-    window_surface = zoomSurface(window_background,1,1,0);
+    Set_BackGround(image_collection(image));
 }
 
+void
+Grid3D::Set_Minimap_Window(SDL_Rect& some_window)
+{
+    Set_Minimap_Window(some_window.x, some_window.y, some_window.w, some_window.h);
+}
+
+void
+Grid3D::Set_Minimap_Window(int x, int y, Uint16 w, Uint16 h)
+{
+    minimap_rect.Set_values(x,y,w,h);
+    Update_Minimap();
+}
+
+void
+Grid3D::Update_Minimap()
+{
+    if(minimap) SDL_FreeSurface(minimap);
+    minimap = zoomSurface(window_surface,
+    (double)minimap_rect.w/ window_surface->w,
+    (double)minimap_rect.h/ window_surface->h,1);
+}
 
 
 
@@ -268,12 +262,13 @@ Grid3D::Set_Track(Uint16 x, Uint16 y, Uint16 z, Track& some_track)
                 {
                     //Clear_Cell_Sisters(p.x+i,p.y+j,p.z+k,aux);
                     //delete aux;
-                    Delete_Track(p.x+i,p.y+j,p.z+k);
+                    Delete_Track_without_Update(p.x+i,p.y+j,p.z+k);
                 }
                 grid[p.x+i][p.y+j][p.z+k] = newtrack;
             }
 
     Draw(p,(*newtrack), true);
+    Update_Minimap();
     return true;
 }
 
@@ -314,6 +309,27 @@ Grid3D::Add_Track(Track * some_track)
 
 bool
 Grid3D::Delete_Track(Uint16 x, Uint16 y, Uint16 z)
+{
+    if(dim < 1) return false;
+
+    Point3D<int> p(x,y,z);
+    p = p.Get_Limited_to(0,0,0,dim.x-1,dim.y-1,dim.z-1);
+
+    Track* aux = grid[p.x][p.y][p.z];
+    //Track *voidtrack = new Track;
+    if((*aux).Get_Name() == "none") return false;
+    Point3D<int> p0 = *Get_Top_Left_Syster(p.x,p.y);
+    Clear_Cell_Sisters(p.x,p.y,p.z,aux);
+
+    Draw(p0,(*aux), false);
+    Update_Minimap();
+    delete aux;
+    return true;
+}
+
+
+bool
+Grid3D::Delete_Track_without_Update(Uint16 x, Uint16 y, Uint16 z)
 {
     if(dim < 1) return false;
 
@@ -470,12 +486,6 @@ Grid3D::Set_Window(int x, int y, Uint16 w, Uint16 h)
     if(h > dim.y * CELL_Y) h = dim.y * CELL_Y;
     window.Set_values(x,y,w,h);
 
-    //window_background = image_collection(GRID_Background);
-    //window_background = zoomSurface(window_background,(double)w/window_background->w,(double)h/window_background->h,1);
-
-//    SDL_BlitSurface(window_background, 0, window_surface, &window);
-//    if(window_surface) SDL_FreeSurface(window_surface);
-//    Set_Offset(offset);
     window_changed = 1;
 }
 
@@ -493,6 +503,13 @@ Grid3D::Mouse_Over(Uint16 x, Uint16 y)
     if(x >= window.x + window.w || y >= window.y + window.h) return 0;
     return 1;
 }
+
+
+
+
+
+
+
 
 
 

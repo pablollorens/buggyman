@@ -65,10 +65,17 @@ class Grid3D
 
         //Window management
         inline SDL_Rect Get_Window() { return window; }
-        void Set_Window(SDL_Rect& some_window);
         inline void Set_Window(int x, int y) {window.x = x; window.y = y;};
+        void Set_Window(SDL_Rect& some_window);
         void Set_Window(int x, int y, Uint16 w, Uint16 h);
         bool Mouse_Over(Uint16 x, Uint16 y);
+
+        //Minimap Management
+        inline SDL_Rect Get_Minimap_Window() { return window; }
+        inline void Set_Minimap_Window(int x, int y) {window.x = x; window.y = y;};
+        void Set_Minimap_Window(SDL_Rect& some_window);
+        void Set_Minimap_Window(int x, int y, Uint16 w, Uint16 h);
+        void Update_Minimap();
 
         //Offset point management
         void Set_Offset(Point3D<int>& some_offset);
@@ -111,6 +118,7 @@ class Grid3D
 
 
     private methods:
+        bool Delete_Track_without_Update(Uint16 x, Uint16 y, Uint16 z);
         Point3D<int>& Normalize_Offset(Point3D<int>& some_offset);
         Point3D<int>* Get_Top_Left_Syster(int x, int y);
         //Circuit Check
@@ -124,6 +132,8 @@ class Grid3D
         Rect2D window;
         SDL_Surface* window_surface;
         SDL_Surface* window_background;
+        Rect2D minimap_rect;
+        SDL_Surface* minimap;
         bool window_changed;
 
         Point3D<int> dim;

@@ -113,6 +113,7 @@ Editor::Run()
         EDITOR_CIRCUIT_WINDOW_W, EDITOR_CIRCUIT_WINDOW_H);
     printf("ok\n");
     world.Load("terreno.cfg",tracks_map);
+    world.Set_Minimap_Window(592,461,121,121);
 
     Track* floating = NULL;
 
@@ -314,7 +315,11 @@ Editor::Run()
 
             cursor_rect.x = ratonx;
             cursor_rect.y = ratony;
+            cursor_rect.w = 48;
+            cursor_rect.h = 48;
+            SDL_SetClipRect(screen, &cursor_rect);
             SDL_BlitSurface(cursor, 0, screen, &cursor_rect);
+            SDL_SetClipRect(screen, NULL);
 
             SDL_GL_SwapBuffers();
             SDL_Flip(screen);
