@@ -19,6 +19,11 @@ extern int world_frame;
 
 #define methods
 
+#define NORTH    0
+#define WEST     1
+#define SOUTH    2
+#define EAST     3
+
 #define GRID_Background "textures/land.jpg"
 //Global variable of SDL_Surface* collecion
 #include <img_collection.h>
@@ -101,9 +106,17 @@ class Grid3D
         int Load(char* path, map<string, Track* > &tracks_map);
         void Debug_Print_Grid(char* fich, int sufix, char* ext, char* remmark);
 
+        //Circuit Check
+        bool Check_Circuit();
+
+
     private methods:
         Point3D<int>& Normalize_Offset(Point3D<int>& some_offset);
         Point3D<int>* Get_Top_Left_Syster(int x, int y);
+        //Circuit Check
+        int Get_Connector(int x_grid, int y_grid, int coordenate);
+        bool Check_Connector(int conn_1, int conn_2);
+
 
     private:
         string name;

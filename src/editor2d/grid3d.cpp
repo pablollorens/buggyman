@@ -293,46 +293,23 @@ Grid3D::Set_Track(Uint16 x, Uint16 y, Track& some_track)
 bool
 Grid3D::Add_Track(Track * some_track)
 {
-    return 0;
-    //lo comentado aki es copia de Set_Track
-    //devuelve cierto si se ha insertado la track
+    bool inserted = false;
 
-//    if(dim<1) return false;
-//    if(!some_track) return false;
-//
-//    Point3D<int> p(x,y,z);
-//    p = p.Get_Limited_to(0,0,0,dim.x-1,dim.y-1,dim.z-1);
-//
-//    int nx=some_track.Get_DimX();
-//    int ny=some_track.Get_DimY();
-//    int nz=some_track.Get_DimZ();
-//    if(p.x + nx -1 >= dim.x) return false;
-//    if(p.y + ny -1 >= dim.y) return false;
-//    if(p.z + nz -1 >= dim.z) return false;
-//
-//    //new copy of received track
-//    Track* newtrack = new Track(some_track);
-////    Track* voidtrack = new Track();
-//    //tracks[newtrack]=newtrack;
-//
-//
-//    for(int i=0; i<nx; i++)
-//        for(int j=0; j<ny; j++)
-//            for(int k=0; k<nz; k++)
-//            {
-//                Track* aux = grid[p.x+i][p.y+j][p.z+k];
-//                if((*aux).Get_Name() != "none")
-//                {
-//                    Clear_Cell_Sisters(p.x+i,p.y+j,p.z+k,aux);
-//                    delete aux;
-//                }
-//                grid[p.x+i][p.y+j][p.z+k] = newtrack;
-//            }
-//
-//    //esto hay que cambiarlo:
-//    //para que solo actualize la zona afectada y no toda la surface
-//    window_changed = true;
-//    return true;
+    for (int y_grid = 0; y_grid <= Get_DimY() && inserted == false; y_grid++)
+    {
+        for (int x_grid = 0; x_grid <= Get_DimX() && inserted == false; x_grid++)
+        {
+            if ((*Get_Track(x_grid,y_grid,0)).Get_Name() == "none")
+            {
+                if ((x_grid + (*some_track).Get_DimX() <= Get_DimX()) && (y_grid + (*some_track).Get_DimY() <= Get_DimY()))
+                {
+                    Set_Track(x_grid, y_grid, 0, (*some_track));
+                    inserted = true;
+                }
+            }
+        }
+    }
+    return true;
 }
 
 bool
@@ -735,5 +712,92 @@ Grid3D::Debug_Print_Grid(char* fich, int sufix, char* ext, char* remmark)
             }
     o<<endl;
     o.close();
+}
+
+
+
+// //////////////////////////////////////////////////////////////////////// //
+// //////////////////////////////////////////////////////////////////////// //
+// //////////////////////////////////////////////////////////////////////// //
+//                                                                          //
+//                           Check circuits                                 //
+//                                                                          //
+// //////////////////////////////////////////////////////////////////////// //
+// //////////////////////////////////////////////////////////////////////// //
+// //////////////////////////////////////////////////////////////////////// //
+
+bool
+Grid3D::Check_Circuit()
+{
+    bool correct = true;
+    //int x_grid = 0;
+    //int y_grid = 0;
+
+    for (int x_grid = 0; x_grid < Get_DimX() && correct == true; x_grid++)
+    //while (x_grid < Get_DimX() && correct == true)
+    {
+        for (int y_grid = 0; y_grid < Get_DimY() && correct == true; y_grid++)
+        //while (y_grid < Get_DimY() && correct == true)
+        {
+            fprintf(stderr,"<%d,%d> --- (%d,%d,%d,%d)\n", x_grid,y_grid,Get_Connector(x_grid,y_grid,NORTH),Get_Connector(x_grid,y_grid,WEST),Get_Connector(x_grid,y_grid,SOUTH),Get_Connector(x_grid,y_grid,EAST));
+
+            if (y_grid > 0)
+            {
+                if(Check_Connector(Get_Connector(x_grid,y_grid,NORTH),Get_Connector(x_grid,y_grid-1,SOUTH)) == false) correct=false;
+            }
+
+            if (x_grid < Get_DimX())
+            {
+                if(Check_Connector(Get_Connector(x_grid,y_grid,EAST),Get_Connector(x_grid+1,y_grid,WEST)) == false) correct=false;
+            }
+
+            if (y_grid < Get_DimY())
+            {
+                if(Check_Connector(Get_Connector(x_grid,y_grid,SOUTH),Get_Connector(x_grid,y_grid+1,NORTH)) == false) correct=false;
+            }
+
+            if (x_grid > 0)
+            {
+                if(Check_Connector(Get_Connector(x_grid,y_grid,WEST),Get_Connector(x_grid-1,y_grid,EAST)) == false) correct=false;
+            }
+            y_grid++;
+        }
+        x_grid++;
+    }
+    return correct;
+}
+
+int
+Grid3D::Get_Connector(int x_grid, int y_grid, int coordenate)
+{
+    int x_track = 0;
+    int y_track = 0;
+    Point3D<int> top_left = *Get_Top_Left_Syster(x_track, y_track);
+
+    switch (coordenate)
+    {
+        case 0: return ((*(*Get_Track(x_grid,y_grid,0)).Get_Cell(x_grid-top_left.x,y_grid-top_left.y,0)).Get_North()); break;
+        case 1: return ((*(*Get_Track(x_grid,y_grid,0)).Get_Cell(x_grid-top_left.x,y_grid-top_left.y,0)).Get_West()); break;
+        case 2: return ((*(*Get_Track(x_grid,y_grid,0)).Get_Cell(x_grid-top_left.x,y_grid-top_left.y,0)).Get_South()); break;
+        case 3: return ((*(*Get_Track(x_grid,y_grid,0)).Get_Cell(x_grid-top_left.x,y_grid-top_left.y,0)).Get_East()); break;
+        default: return -10; break;
+    }
+}
+
+bool
+Grid3D::Check_Connector(int conn_1, int conn_2)
+{
+    bool correct = true;
+    switch (conn_1)
+    {
+        case -1: if (conn_2 != -1) correct = false; break;
+        case  0: if (conn_2 != 0) correct = false; break;
+        case  1: if (conn_2 != 1) correct = false; break;
+        case  2: if (conn_2 != 2) correct = false; break;
+        case  3: if (conn_2 != 4) correct = false; break;
+        case  4: if (conn_2 != 3) correct = false; break;
+        case  5: if (conn_2 != 5) correct = false; break;
+    }
+    return correct;
 }
 
