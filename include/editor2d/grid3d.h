@@ -116,6 +116,8 @@ class Grid3D
         bool Check_Circuit(Point3D<int> &circuit_error);
         bool Clear_Circuit();
 
+        int Activate_Tracks_Error(Uint16 x,Uint16 y,Uint16 z);
+
 
     private methods:
         bool Delete_Track_without_Update(Uint16 x, Uint16 y, Uint16 z);

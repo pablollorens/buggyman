@@ -873,3 +873,23 @@ Grid3D::Clear_Circuit()
                 Delete_Track(i,j,k);
     return true;
 }
+
+int
+Grid3D::Activate_Tracks_Error(Uint16 x,Uint16 y,Uint16 z)
+{
+    if(dim < 1) return false;
+
+    Point3D<int> p(x,y,z);
+
+    Deactivate_All_Tracks();
+
+    Track* aux = NULL;
+    aux = grid[p.x][p.y][p.z];
+    (*aux).Select();
+
+    Point3D<int> *p0 = Get_Top_Left_Syster(p.x,p.y);
+    Draw(*p0,(*aux), true);
+
+    return window_changed;
+}
+

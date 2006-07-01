@@ -185,7 +185,14 @@ Editor::Run()
                     if (event.key.keysym.sym == SDLK_LEFT)  world.Incr_Offset(-CELL_X,0,0);
                     if (event.key.keysym.sym == SDLK_RIGHT) world.Incr_Offset(CELL_X,0,0);
                     update_required=true;
-                    if (event.key.keysym.sym == SDLK_c) if (!world.Check_Circuit(circuit_error)) fprintf(stderr,"CIRCUITO ERRONEO. CASILLA(%d,%d.%d)", circuit_error.x,circuit_error.y,circuit_error.z);
+                    if (event.key.keysym.sym == SDLK_c)
+                    {
+                        if (!world.Check_Circuit(circuit_error))
+                        {
+                            fprintf(stderr,"CIRCUITO ERRONEO. CASILLA(%d,%d.%d)", circuit_error.x,circuit_error.y,circuit_error.z);
+                            world.Activate_Tracks_Error(circuit_error.x,circuit_error.y,circuit_error.z);
+                        }
+                    }
                     if (event.key.keysym.sym == SDLK_m)
                     {
                         if(move_grid == 0)
