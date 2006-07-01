@@ -280,52 +280,72 @@ Track::Draw(SDL_Surface* screen, SDL_Rect & some_window, int angle, bool set_win
     if(screen == NULL) return;
 
     angle = Normalize_Angle(angle);
+    Rect2D rect = some_window;
 
     SDL_Surface *bmp=NULL, *sel=NULL;
     switch(angle)
     {
+        case 0:
+            SDL_BlitSurface(icon, 0, screen, &some_window);
+            if(active_trans)
+            {
+                sel = zoomSurface(selected,
+                        (double)icon->w/selected->w,
+                        (double)icon->h/selected->h, 0);
+                SDL_BlitSurface(sel, 0, screen, &rect);
+                SDL_FreeSurface(sel);
+            }
+            break;
         case 90:
             bmp = rotozoomSurface(icon, -270, 1, 0);
             some_window.x--;
             some_window.y-=2;
             SDL_BlitSurface(bmp, 0, screen, &some_window);
-            SDL_FreeSurface(bmp);
             if(active_trans)
             {
-                sel = rotozoomSurface(selected, -270, 1, 0);
-                SDL_BlitSurface(sel, 0, screen, &some_window);
+                rect.x+1;
+                rect.y+2;
+                sel = zoomSurface(selected,
+                        (double)((bmp->w-1)/selected->w),
+                        (double)((bmp->h-2)/selected->h), 0);
+                SDL_BlitSurface(sel, 0, screen, &rect);
                 SDL_FreeSurface(sel);
             }
+            SDL_FreeSurface(bmp);
             break;
         case 180:
-            bmp = rotozoomSurface(icon, angle, 1, 0);
+            bmp = rotozoomSurface(icon, 180, 1, 0);
             some_window.x-=2;
             some_window.y-=2;
             SDL_BlitSurface(bmp, 0, screen, &some_window);
-            SDL_FreeSurface(bmp);
             if(active_trans)
             {
-                sel = rotozoomSurface(selected, angle, 1, 0);
-                SDL_BlitSurface(sel, 0, screen, &some_window);
+                rect.x+2;
+                rect.y+2;
+                sel = zoomSurface(selected,
+                        (double)((bmp->w-2)/selected->w),
+                        (double)((bmp->h-2)/selected->h), 0);
+                SDL_BlitSurface(sel, 0, screen, &rect);
                 SDL_FreeSurface(sel);
             }
+            SDL_FreeSurface(bmp);
             break;
         case 270:
-            bmp = rotozoomSurface(icon, angle, 1, 0);
+            bmp = rotozoomSurface(icon, 270, 1, 0);
             some_window.x-=2;
             some_window.y--;
             SDL_BlitSurface(bmp, 0, screen, &some_window);
-            SDL_FreeSurface(bmp);
             if(active_trans)
             {
-                sel = rotozoomSurface(selected, angle, 1, 0);
-                SDL_BlitSurface(sel, 0, screen, &some_window);
+                rect.x+2;
+                rect.y+1;
+                sel = zoomSurface(selected,
+                        (double)((bmp->w-2)/selected->w),
+                        (double)((bmp->h-1)/selected->h), 0);
+                SDL_BlitSurface(sel, 0, screen, &rect);
                 SDL_FreeSurface(sel);
             }
-            break;
-        default:
-            SDL_BlitSurface(icon, 0, screen, &some_window);
-            if(active_trans) SDL_BlitSurface(selected, 0, screen, &some_window);
+            SDL_FreeSurface(bmp);
             break;
     }
     if(set_rotation) rotation = angle;

@@ -18,6 +18,10 @@ Mix_Music *musica_fondo;
 Mix_Music *coche_arranque;
 using namespace std;
 
+int Run_Game_with_System_call(void* data)
+{
+    return system("Buggy-Man.exe game\n");
+}
 
 int Run_Game(void* data)
 {
@@ -59,6 +63,15 @@ int main ( int argc, char** argv )
 {
     dsPrint("### MAIN ###\n");
 
+    if(argc == 2 && !strcmp(argv[1],"game"))
+    {
+        void* data = (int*)new int(2);
+        ((int*)data)[0]=320;
+        ((int*)data)[1]=240;
+        return(Run_Game(data));
+    }
+
+
     Menu main_menu("Main",screen);
     main_menu.Init_Menu();
     main_menu.Set_Background("menu/backg_main.png");
@@ -66,9 +79,9 @@ int main ( int argc, char** argv )
     Button playlow( "Play LowRes",242,208,
                     "menu/button_play320_def.png","menu/button_play320_press.png",
                     "menu/button_play320_over.png","menu/button_play320_dis.png",
-                    Run_Game,(int*)new int(2));
-    ((int*)playlow.Get_Click_Data())[0]=320;
-    ((int*)playlow.Get_Click_Data())[1]=240;
+                    Run_Game_with_System_call,NULL);
+//    ((int*)playlow.Get_Click_Data())[0]=320;
+//    ((int*)playlow.Get_Click_Data())[1]=240;
     main_menu.Add_Button(playlow, SDLK_l);
 
     Button playhigh("Play HighRes",241,268,

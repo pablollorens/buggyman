@@ -135,7 +135,9 @@ class Grid3D
         SDL_Surface* window_surface;
         SDL_Surface* window_background;
         Rect2D minimap_rect;
+        Rect2D minimap_view_rect;
         SDL_Surface* minimap;
+        SDL_Surface* minimap_view;
         bool window_changed;
 
         Point3D<int> dim;

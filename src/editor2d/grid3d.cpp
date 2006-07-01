@@ -23,6 +23,7 @@ Grid3D::Grid3D( char* some_name,
     Set_BackGround(GRID_background);
     offset = 0;
     minimap = NULL;
+    minimap_view = NULL;
     Set_Window(wx, wy, ww, wh);
 }
 
@@ -52,6 +53,7 @@ Grid3D::Grid3D(Grid3D & some)
     window_background = NULL;
     window_surface = NULL;
     minimap = NULL;
+    minimap_view = NULL;
     (*this)=some;
 }
 
@@ -63,6 +65,7 @@ Grid3D::~Grid3D()
     window_surface = NULL;
     window_background = NULL;
     minimap = NULL;
+    minimap_view = NULL;
 }
 
 Grid3D &
@@ -82,6 +85,8 @@ Grid3D::operator=(Grid3D & some)
     window_background = some.window_background;
     minimap = zoomSurface(some.minimap,1,1,0);
     minimap_rect = some.minimap_rect;
+    minimap_view = zoomSurface(some.minimap_view,1,1,0);
+    minimap_view_rect = some.minimap_view_rect;
     offset = some.offset;
     window_changed = true;
 
@@ -133,9 +138,9 @@ Grid3D::Draw(SDL_Surface* screen)
         window_changed = 0;
         SDL_SetClipRect(screen, NULL);
 
-        //Update_Minimap();
         SDL_SetClipRect(screen, &minimap_rect);
         SDL_BlitSurface(minimap, 0, screen, &minimap_rect);
+        SDL_BlitSurface(minimap_view, 0, screen, &minimap_view_rect);
         SDL_SetClipRect(screen, NULL);
     }
     return;
@@ -180,6 +185,13 @@ void
 Grid3D::Set_Minimap_Window(int x, int y, Uint16 w, Uint16 h)
 {
     minimap_rect.Set_values(x,y,w,h);
+    minimap_view = image_collection(GRID_minimap_view);
+
+    minimap_view = zoomSurface(minimap_view,
+        (double)(window.w * minimap_rect.w / (dim.x * CELL_X)) / minimap_view->w,
+        (double)(window.h * minimap_rect.h / (dim.y * CELL_Y)) / minimap_view->h,
+        1);
+    minimap_view_rect.Set_values(minimap_rect.x, minimap_rect.y, minimap_view->w, minimap_view->h);
     Update_Minimap();
 }
 
@@ -494,6 +506,9 @@ Grid3D::Set_Offset(Point3D<int>& some_offset)
 {
     window_changed = 1;
     offset = Normalize_Offset(some_offset);
+
+    minimap_view_rect.x = (offset.x * minimap_rect.w / (dim.x * CELL_X)) + minimap_rect.x;
+    minimap_view_rect.y = (offset.y * minimap_rect.h / (dim.y * CELL_Y)) + minimap_rect.y;
 }
 
 bool
@@ -627,7 +642,7 @@ Grid3D::Save(char* path)
                 if((*aux).Get_Name() != "none" && !painted[aux])
                 {
                     point = *((*aux).Get_First_Cell());
-                    o<<"[Cell_"<<i<<j<<k<<"]\n";
+                    o<<"[Cell_"<<i<<"_"<<j<<"_"<<k<<"]\n";
                     o<<"x = "<<point.x + i<<"\n";
                     o<<"y = "<<point.y + j<<"\n";
                     o<<"z = "<<point.z + k<<"\n";
@@ -673,12 +688,12 @@ Grid3D::Load(char* path, map<string, Track* > &tracks_map)
     {
 //        if( !strcmp(CFG_GetSelectedGroupName(),"Info") ||
 //            !strcmp(CFG_GetSelectedGroupName(),"info")) continue;
-        int x = CFG_ReadInt("x0",0);
-        int y = CFG_ReadInt("y0",0);
-        int z = CFG_ReadInt("y0",0);
-        x = 0<x && x<dim.x ? x : 0;
-        y = 0<y && y<dim.y ? y : 0;
-        z = 0<z && z<dim.z ? z : 0;
+        int x = CFG_ReadInt("x0",-1);
+        int y = CFG_ReadInt("y0",-1);
+        int z = CFG_ReadInt("z0",-1);
+        if(!(0<=x && x<dim.x)) continue;
+        if(!(0<=y && y<dim.y)) continue;
+        if(!(0<=z && z<dim.z)) continue;
 
         string some_name = CFG_ReadText("model","");
         int rotation  = CFG_ReadInt("rotation",0);
@@ -703,7 +718,7 @@ Grid3D::Load(char* path, map<string, Track* > &tracks_map)
                 break;
         };
         Set_Track(x,y,z,*track);
-        //delete track;
+        delete track;
     }
     CFG_CloseFile(0);
     i.close();

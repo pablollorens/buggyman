@@ -1,12 +1,6 @@
 #ifndef __TRACK_H__
 #define __TRACK_H__
 
-#define TRACK_icon_void "textures/track_void_icon.gif"
-#define TRACK_icon3d_void "textures/track_void_icon3d.gif"
-#define TRACK_icon3d_background "textures/track_icon3d_background.png"
-#define TRACK_icon_selected "textures/cell_yellow.png"
-
-
 #include <SDL.h>
 #include <SDL_Image.h>
 #include <SDL_rotozoom.h>

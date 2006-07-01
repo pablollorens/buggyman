@@ -55,30 +55,16 @@ Editor::Run()
     SDL_initFramerate(&manager);
     SDL_setFramerate(&manager, 30);
 
-
     //event flags
-    bool level = 0;
     int status = EDITOR_STATUS_NONE;
-    bool mode_displacement_on; //Variable to implementation of drawn by mouse displacement
+    bool mode_displacement_on;
     bool move_grid = 0;
-
 
 //    printf("Setting window icon... \0");
 //    SDL_WM_SetIcon(IMG_Load("textures/icon.gif"), NULL);
-//    printf("ok\n");
 
-    // create a new window
-//    printf("Setting VideoMode... \0");
-//    /*SDL_Surface* */screen = SDL_SetVideoMode(
-//        VIDEO_width, VIDEO_height, VIDEO_depth,
-//        SDL_HWSURFACE|SDL_DOUBLEBUF|FULLSCREEN_FLAG);
-////        SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN|SDL_OPENGLBLIT);
-//    if ( !screen ) { printf("Unable to set %dx%d video: %s\n", VIDEO_width, VIDEO_height, SDL_GetError()); return 1; }
-//    printf("ok\n");
 
-    //SDL_ShowCursor(SDL_DISABLE);
-
-    // load an image
+    // ///////////////////////////////////////////////////////////////////////
     printf("Loading background and cursors... \n");
     background = image_collection(EDITOR_background);
     SDL_Surface* cursor_default = image_collection(CURSOR_DEFAULT);
@@ -90,30 +76,53 @@ Editor::Run()
     printf("Loading background and cursors... ok\n");
 
     // ///////////////////////////////////////////////////////////////////////
-    SDL_Surface* bbox_icon  = image_collection("textures/track_box.gif");
-    SDL_Surface* void_icon  = image_collection(EDITOR_VOID_ICON);
-    SDL_Surface* void_icon3d  = image_collection(EDITOR_VOID_ICON3D);
+    SDL_Surface* void_icon  = image_collection(TRACK_icon_void);
+    SDL_Surface* void_icon3d  = image_collection(TRACK_icon3d_void);
     Track null_track("Void",void_icon,void_icon3d);
 
     printf("Creating tracks grid... \0");
-    Grid3D tools("Tools",4,10/*7*/,1,
+    Grid3D tools("Tools",TOOLS_X,TOOLS_Y,TOOLS_Z,
         EDITOR_TRACKS_WINDOW_X, EDITOR_TRACKS_WINDOW_Y,
         EDITOR_TRACKS_WINDOW_W, EDITOR_TRACKS_WINDOW_H);
-    printf("ok\n");
-
-    //Add_Tracks(tools);
+    tools.Set_BackGround(GRID_tools_backg);
     Load_Tracks(tools);
-    fprintf(stderr,"Pistas anyadidas a Tools\n");
-    fprintf(stderr,"------------------------\n");
+    printf("ok\n");
     // ///////////////////////////////////////////////////////////////////////
 
     printf("Creatring circuit grid... \0");
-    Grid3D world("Mundo",GRID_X,GRID_Y,2,//GRID_Z,
+    Grid3D world("Mundo",GRID_X,GRID_Y,GRID_Z,
         EDITOR_CIRCUIT_WINDOW_X, EDITOR_CIRCUIT_WINDOW_Y,
         EDITOR_CIRCUIT_WINDOW_W, EDITOR_CIRCUIT_WINDOW_H);
     printf("ok\n");
+    world.Set_BackGround(GRID_world_backg);
+    world.Set_Minimap_Window(
+        EDITOR_CIRCUIT_MINIMAP_WINDOW_X, EDITOR_CIRCUIT_MINIMAP_WINDOW_Y,
+        EDITOR_CIRCUIT_MINIMAP_WINDOW_W, EDITOR_CIRCUIT_MINIMAP_WINDOW_H);
+
     world.Load("terreno.cfg",tracks_map);
-    world.Set_Minimap_Window(592,461,121,121);
+
+//    int New_Circuit(void* data)
+//    {
+//        //(*((Grid3D*)data)).
+//        return 0;
+//    };
+
+    // ///////////////////////////////////////////////////////////////////////
+    // Buttons
+    // ///////////////////////////////////////////////////////////////////////
+//    Button new_circuit("New Circuit",0,194,
+//                    "menu/button_new__def.png","menu/button_new__press.png",
+//                    "menu/button_new__over.png","menu/button_new__dis.png",
+//                    New_Circuit,(Grid3D*)world);
+//    Add_Button(new_circuit, SDLK_n);
+
+
+
+
+
+
+
+
 
     Track* floating = NULL;
 
@@ -144,10 +153,10 @@ Editor::Run()
                     if (event.key.keysym.sym == SDLK_ESCAPE)
                     done = true;
                     if (event.key.keysym.sym == SDLK_LSHIFT) mode_displacement_on = true;
-//                    if (event.key.keysym.sym == SDLK_UP)    world.Decr_Offset_Y();
-//                    if (event.key.keysym.sym == SDLK_DOWN)  world.Incr_Offset_Y();
-//                    if (event.key.keysym.sym == SDLK_LEFT)  world.Decr_Offset_X();
-//                    if (event.key.keysym.sym == SDLK_RIGHT) world.Incr_Offset_X();
+                    if (event.key.keysym.sym == SDLK_UP)    world.Incr_Offset(0,-CELL_Y,0);
+                    if (event.key.keysym.sym == SDLK_DOWN)  world.Incr_Offset(0,CELL_Y,0);
+                    if (event.key.keysym.sym == SDLK_LEFT)  world.Incr_Offset(-CELL_X,0,0);
+                    if (event.key.keysym.sym == SDLK_RIGHT) world.Incr_Offset(CELL_X,0,0);
                     update_required=true;
                     if (event.key.keysym.sym == SDLK_m)
                     {
