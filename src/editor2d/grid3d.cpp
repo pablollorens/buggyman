@@ -24,6 +24,7 @@ Grid3D::Grid3D( char* some_name,
     offset = 0;
     minimap = NULL;
     minimap_view = NULL;
+    circuit_not_valid = NULL;
     Set_Window(wx, wy, ww, wh);
 }
 
@@ -45,6 +46,8 @@ Grid3D::Grid3D( char* some_name, Point3D<int> & some_dim, Rect2D & some_window)
     Set_BackGround(GRID_background);
     offset=0;
     minimap = NULL;
+    minimap_view = NULL;
+    circuit_not_valid = NULL;
     Set_Window(some_window);
 }
 
@@ -54,6 +57,7 @@ Grid3D::Grid3D(Grid3D & some)
     window_surface = NULL;
     minimap = NULL;
     minimap_view = NULL;
+    circuit_not_valid = NULL;
     (*this)=some;
 }
 
@@ -66,6 +70,7 @@ Grid3D::~Grid3D()
     window_background = NULL;
     minimap = NULL;
     minimap_view = NULL;
+    circuit_not_valid = NULL;
 }
 
 Grid3D &
@@ -87,6 +92,7 @@ Grid3D::operator=(Grid3D & some)
     minimap_rect = some.minimap_rect;
     minimap_view = zoomSurface(some.minimap_view,1,1,0);
     minimap_view_rect = some.minimap_view_rect;
+    circuit_not_valid = zoomSurface(some.circuit_not_valid,1,1,0);
     offset = some.offset;
     window_changed = true;
 
@@ -135,6 +141,10 @@ Grid3D::Draw(SDL_Surface* screen)
         SDL_SetClipRect(screen, &window);
         Rect2D rect(window.x - offset.x,window.y - offset.y,0,0);
         SDL_BlitSurface(window_surface, 0, screen, &rect);
+
+//        rect.Set_values(window.x - offset.x,window.y - offset.y,0,0);
+//        SDL_BlitSurface(window_surface, 0, screen, &rect);
+
         window_changed = 0;
         SDL_SetClipRect(screen, NULL);
 

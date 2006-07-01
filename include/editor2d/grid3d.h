@@ -115,7 +115,6 @@ class Grid3D
 
         //Circuit Check
         bool Check_Circuit();
-
         bool Clear_Circuit();
 
 
@@ -138,6 +137,7 @@ class Grid3D
         Rect2D minimap_view_rect;
         SDL_Surface* minimap;
         SDL_Surface* minimap_view;
+        SDL_Surface* circuit_not_valid;
         bool window_changed;
 
         Point3D<int> dim;

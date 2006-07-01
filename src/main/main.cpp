@@ -1,8 +1,11 @@
 
 #include <cstdlib>
+
 #include <windows.h>
 #include <editor.h>
 #include <button.h>
+#include"game_config.h"
+
 #include <menu.h>
 #include <vector>
 #include <map>
@@ -61,6 +64,8 @@ int Quit_Game(void* data)
 
 int main ( int argc, char** argv )
 {
+    Game_Config gc;
+    gc.Save(GAME_CONFIG_NAME);
     dsPrint("### MAIN ###\n");
 
     if(argc == 2 && !strcmp(argv[1],"game"))
