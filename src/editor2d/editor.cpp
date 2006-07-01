@@ -58,7 +58,7 @@ Editor::Run()
     //event flags
     int status = EDITOR_STATUS_NONE;
     bool mode_displacement_on;
-    bool move_grid = 0;
+    bool move_grid = 0, done;
 
 //    printf("Setting window icon... \0");
 //    SDL_WM_SetIcon(IMG_Load("textures/icon.gif"), NULL);
@@ -101,20 +101,41 @@ Editor::Run()
 
     world.Load("terreno.cfg",tracks_map);
 
-//    int New_Circuit(void* data)
-//    {
-//        //(*((Grid3D*)data)).
-//        return 0;
-//    };
+
 
     // ///////////////////////////////////////////////////////////////////////
     // Buttons
     // ///////////////////////////////////////////////////////////////////////
-//    Button new_circuit("New Circuit",0,194,
-//                    "menu/button_new__def.png","menu/button_new__press.png",
-//                    "menu/button_new__over.png","menu/button_new__dis.png",
-//                    New_Circuit,(Grid3D*)world);
-//    Add_Button(new_circuit, SDLK_n);
+    Button button_new_circuit("New Circuit",4,174,
+                    "menu/button_new_def.png","menu/button_new_press.png",
+                    "menu/button_new_over.png","menu/button_new_dis.png",
+                    New_Circuit,(Grid3D*)&world);
+    Add_Button(button_new_circuit, SDLK_n);
+
+    Button button_load_circuit("Load Circuit",4,226,
+                    "menu/button_load_def.png","menu/button_load_press.png",
+                    "menu/button_load_over.png","menu/button_load_dis.png",
+                    NULL,NULL,BUTTON_STATUS_DISABLED);
+    Add_Button(button_load_circuit, SDLK_l);
+
+    Button button_save_circuit("Save Circuit",4,278,
+                    "menu/button_save_def.png","menu/button_save_press.png",
+                    "menu/button_save_over.png","menu/button_save_dis.png",
+                    NULL,NULL,BUTTON_STATUS_DISABLED);
+    Add_Button(button_save_circuit, SDLK_s);
+
+    Button button_save_as_circuit("Save Circuit As...",4,330,
+                    "menu/button_save_as_def.png","menu/button_save_as_press.png",
+                    "menu/button_save_as_over.png","menu/button_save_as_dis.png",
+                    NULL,NULL,BUTTON_STATUS_DISABLED);
+    Add_Button(button_save_as_circuit, SDLK_a);
+
+    Button button_quit_editor("Quit Editor",4,383,
+                    "menu/button_exit2_def.png","menu/button_exit2_press.png",
+                    "menu/button_exit2_over.png","menu/button_exit2_dis.png",
+                    Quit_Editor,(bool*)&done);
+    Add_Button(button_quit_editor, SDLK_ESCAPE);
+
 
 
 
@@ -133,7 +154,7 @@ Editor::Run()
     // program main loop
     printf("Main Loop...\n");
     SDL_Event event;
-    for(bool done = false; !done; update_required=false)
+    for(done = false; !done; update_required=false)
     {
         // message processing loop
         //printf("\tLectura de eventos...\n");
@@ -149,9 +170,12 @@ Editor::Run()
 
                 // check for keypresses
                 case SDL_KEYDOWN:
-                    // exit if ESCAPE is pressed
+                {
+                    Button * button = keys[(int)event.key.keysym.sym];
+                    if(button){ (*button).Click(); /*done=true;*/}
+
                     if (event.key.keysym.sym == SDLK_ESCAPE)
-                    done = true;
+                        done = true;
                     if (event.key.keysym.sym == SDLK_LSHIFT) mode_displacement_on = true;
                     if (event.key.keysym.sym == SDLK_UP)    world.Incr_Offset(0,-CELL_Y,0);
                     if (event.key.keysym.sym == SDLK_DOWN)  world.Incr_Offset(0,CELL_Y,0);
@@ -180,12 +204,15 @@ Editor::Run()
                         }
                     }
                     break;
-
+                }
                 case SDL_KEYUP:
+                {
                     if (event.key.keysym.sym == SDLK_LSHIFT) mode_displacement_on = false;
                     break;
+                }
 
                 case SDL_MOUSEBUTTONDOWN:
+                {
                     update_required=true;
                     if( event.button.button == (SDL_BUTTON_LEFT | !SDL_BUTTON_RIGHT | !SDL_BUTTON_MIDDLE))
                     {
@@ -241,17 +268,35 @@ Editor::Run()
                     {
                         if(floating) (*floating).Rotate_Counter_Clockwise();
                     }
-                    break;
 
+                    pair<int,int> coord(event.button.x,event.button.y);
+                    Button* boton = buttons[coord];
+                    if(boton)
+                    {
+                        (*boton).Set_Status(BUTTON_STATUS_PRESSED);
+                    }
+                    break;
+                }
                 case SDL_MOUSEBUTTONUP:
+                {
                     if (event.button.button == SDL_BUTTON_LEFT)
                     {
                         mode_displacement_on = false;
                         if(move_grid) cursor = cursor_hand_open;
                     }
+                    pair<int,int> coord(event.button.x,event.button.y);
+                    Button* boton = buttons[coord];
+                    if(boton)
+                    {
+                        //Quit_Menu();
+                        (*boton).Set_Status(BUTTON_STATUS_OVER);
+                        (*boton).Click();
+                        //Set_Video_Mode();
+                    }
                     break;
-
+                }
                 case SDL_MOUSEMOTION:
+                {
                     if(move_grid && cursor == cursor_hand_close)
                     {
                         if( world.Mouse_Over(event.motion.x,event.motion.y))
@@ -293,8 +338,31 @@ Editor::Run()
                             }
                         }
                     }
+                    //gestion de botones
+                    cursor_rect.Set_XY(event.motion.x,event.motion.y);
+                    pair<int,int> coord(event.motion.x,event.motion.y);
+                    Button* boton = buttons[coord];
+                    if(boton)
+                    {
+                        (*boton).Set_Status(BUTTON_STATUS_OVER);
+                        if(actual_button)
+                        {
+                            if(actual_button != boton)
+                            {
+                                (*actual_button).Set_Status(BUTTON_STATUS_DEFAULT);
+                                actual_button = boton;
+                            }
+                        }
+                        else actual_button = boton;
+                    }
+                    else if(actual_button)
+                    {
+                        (*actual_button).Set_Status(BUTTON_STATUS_DEFAULT);
+                        actual_button = NULL;
+                    }
                     // End of implementation of drawn by mouse displacement
                     break;
+                }
             } // end switch
         } // end of message processing
 
@@ -313,6 +381,7 @@ Editor::Run()
 
             world.Draw(screen);
             tools.Draw(screen);
+            Draw();
 
             if(floating)
             {
@@ -351,3 +420,24 @@ Editor::Run()
     return 0;
 }
 
+void
+Editor::Draw()
+{
+    for(list< Button* >::iterator itr=button_list.begin(), end=button_list.end();
+        itr != end; ++itr)
+        (*(*itr)).Draw(screen);
+}
+
+int
+Editor::New_Circuit(void* data)
+{
+    (*((Grid3D*)data)).Clear_Circuit();
+    return 0;
+}
+
+int
+Editor::Quit_Editor(void* data)
+{
+    *((bool*)data) = true;
+    return 0;
+}

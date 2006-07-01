@@ -108,8 +108,6 @@ Menu::Manage_Events(SDL_Event & event)
             update_required = 1;
 
             cursor_rect.Set_XY(event.motion.x,event.motion.y);
-//            cursor_rect.x = event.motion.x;
-//            cursor_rect.y = event.motion.y;
             pair<int,int> coord(event.motion.x,event.motion.y);
             Button* boton = buttons[coord];
             if(boton)

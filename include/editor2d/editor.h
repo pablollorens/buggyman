@@ -48,9 +48,11 @@ class Editor : public Menu
 
     private methods:
         //Manage_Events(SDL_Event & event);
-        //void Draw();
+        void Draw();
         void Add_Tracks(Grid3D & grid);
         void Load_Tracks(Grid3D & grid);
+        static int New_Circuit(void* data);
+        static int Quit_Editor(void* data);
     private:
         map<string, Track* > tracks_map;
 };
