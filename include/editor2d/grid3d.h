@@ -12,7 +12,6 @@ extern int world_frame;
 #include <map>
 #include <list>
 #include"utils.h"
-#include"paths.h"
 #include"track.h"
 #include"grid3d.h"
 #include"point3d.h"
