@@ -147,16 +147,12 @@ Model::~Model()
 
 void Model::draw(int id,const dVector3 posicion, const float R[12])
 {
-    if (glIsList(id))
-    {
-        glPushMatrix();
-          setTransform(posicion,R);
-          glMultMatrixf (matrix);
-          glCallList(id);
-        glPopMatrix();
-    }
-    else
-        ModelDrawList(id);
+    glPushMatrix();
+      setTransform(posicion,R);
+      glMultMatrixf (matrix);
+      if (glIsList(id)) glCallList(id);
+      else ModelDrawList(id);
+    glPopMatrix();
 }
 
 void Model::reloadTextures()

@@ -124,7 +124,10 @@ void Ground::LoadTextures()
 
 void Ground::Draw(int cell_x, int cell_y)
 {
-    int R = 5; //pinta 2R+1*2R+1 casillas
+    // Este cálculo de la casilla donde se encuentra el coche
+    // lo realizamos para saber que casillas habilitar en cada momento
+
+    int R = 5; // 2R+1*2R+1 casillas (radio de casillas alrededor del coche)
     int min_x = cell_x <  R  ? 0 : cell_x-R;
     int max_x = cell_x >= GRID_X-R ? GRID_X-1 : cell_x+R;
     int min_y = cell_y <  R  ? 0 : cell_y-R;

@@ -55,11 +55,6 @@ Car::Car(dWorldID world, dSpaceID space,CarInfo car_info,int x1,int y1,int z1,in
 {
   x1=GRID_X-1-x1;
 
-  /// CHECKPOINTS
-  for (int i=0; i<32; i++)
-    CheckpointList[i] = false;
-
-
   /// CARGA DE MODELOS
   car_Model = new MilkshapeModel();
   wheel_Model = new MilkshapeModel();
