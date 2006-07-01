@@ -20,6 +20,7 @@ class Rect2D : public SDL_Rect
         Rect2D& operator-(int value);
         bool operator==(const SDL_Rect& rect);
         bool operator<(const SDL_Rect& rect);
+        bool IsOver(int x1, int y1);
         void Set_XY(int nx, int ny);
         void Set_values(int nx, int ny, Uint16 nw, Uint16 nh);
 };

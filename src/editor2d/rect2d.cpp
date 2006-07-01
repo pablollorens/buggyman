@@ -92,6 +92,14 @@ Rect2D::Set_values(int nx, int ny, Uint16 nw, Uint16 nh)
     h = nh;
 }
 
+bool
+Rect2D::IsOver(int x1, int y1)
+{
+    if(x1 < x || y1 < y) return 0;
+    if(x1 >= x + w || y1 >= y + h) return 0;
+    return 1;
+}
+
 ostream &
 operator<<(ostream & o, Rect2D & some)
 {

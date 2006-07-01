@@ -26,6 +26,9 @@
 //Render constants
 //how many n x n cells will be rendered
 #define DRAW_RATIO              5
+#define DRAW_RATIO_LOW          5
+#define DRAW_RATIO_MEDIUM       15
+#define DRAW_RATIO_HIGH         30
 //Sky is active?
 #define DRAW_SKY                1
 

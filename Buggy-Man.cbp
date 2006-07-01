@@ -205,6 +205,12 @@
 			<Option link="0"/>
 			<Option target="default"/>
 		</Unit>
+		<Unit filename="include\menu\configuration.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="default"/>
+		</Unit>
 		<Unit filename="include\menu\game_config.h">
 			<Option compilerVar="CPP"/>
 			<Option compile="0"/>
@@ -300,6 +306,12 @@
 		<Unit filename="src\menu\button.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="default"/>
+		</Unit>
+		<Unit filename="src\menu\configuration.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="default"/>
+			<Breakpoint line="305" enabled="1" pass="0" />
+			<Breakpoint line="306" enabled="1" pass="0" />
 		</Unit>
 		<Unit filename="src\menu\game_config.cpp">
 			<Option compilerVar="CPP"/>

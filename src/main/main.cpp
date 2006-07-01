@@ -7,6 +7,7 @@
 #include"game_config.h"
 
 #include <menu.h>
+#include <configuration.h>
 #include <vector>
 #include <map>
 #include <SDL/SDL.h>
@@ -61,7 +62,7 @@ int Run_Editor(void* data)
     dsPrint("\t### RUN EDITOR ###\n");
 
     Editor ed("Editor",screen);
-    ed.Set_Video_Mode_CFG(800,600,32,SDL_HWSURFACE|SDL_DOUBLEBUF);
+    ed.Set_Video_Mode_CFG(VIDEO_x,VIDEO_y,VIDEO_bpp,SDL_HWSURFACE|SDL_DOUBLEBUF);
     ed.Set_Video_Mode();
 
     vector< string > songs = Get_MusicFiles("music/editor");
@@ -80,6 +81,20 @@ int Run_Editor(void* data)
     if(musica_menu) Mix_PlayMusic(musica_menu, -1);
 
     dsPrint("\t### END EDITOR ###\n");
+
+    return 0;
+}
+
+int Run_Configuration(void* data)
+{
+    dsPrint("\t### RUN Configuration ###\n");
+
+    Configuration conf("Configuration",screen);
+    conf.Set_Video_Mode_CFG(VIDEO_x,VIDEO_y,VIDEO_bpp,SDL_HWSURFACE|SDL_DOUBLEBUF);
+    conf.Set_Video_Mode();
+    conf.Run();
+
+    dsPrint("\t### END Configuration ###\n");
 
     return 0;
 }
@@ -134,7 +149,7 @@ int main ( int argc, char** argv )
     Button configuration("Configuration",270,383,
                     "menu/button_configuration_def.png","menu/button_configuration_press.png",
                     "menu/button_configuration_over.png","menu/button_configuration_dis.png",
-                    NULL,NULL,BUTTON_STATUS_DISABLED);
+                    Run_Configuration,NULL);
     main_menu.Add_Button(configuration, SDLK_c);
 
     Button quit_game("Quit Game",362,437,

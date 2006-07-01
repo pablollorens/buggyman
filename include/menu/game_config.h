@@ -33,7 +33,7 @@ class Game_Config
         void Load(char* path);
         void Save(char* path);
 
-    private:
+    public:
 		Point3D <int> resolution;
 		bool full_screen;
 		int draw_ratio;
