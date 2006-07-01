@@ -27,7 +27,7 @@
 //how many n x n cells will be rendered
 #define DRAW_RATIO              5
 //Sky is active?
-#define DRAW_SKY                true
+#define DRAW_SKY                1
 
 //Day and night modes
 #define HOUR_RANDOM             0

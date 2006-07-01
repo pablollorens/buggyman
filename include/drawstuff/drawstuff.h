@@ -49,11 +49,13 @@ extern "C" {
 
 #include <SDL/SDL.h>
 #include <drawstuff/version.h>
+#include <SDL_Config/SDL_Config.h>
 
 #include <ode/config.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
+#include <defines/utils.h>
 
 #include <GL/glaux.h>
 												    // Our Local Copy Of The Header File

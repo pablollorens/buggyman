@@ -528,10 +528,24 @@ void dsMotion (int mode, int deltax, int deltay)
 
 void dsStartGraphics (int width, int height, dsFunctions *fn)
 {
-    // random day or nitgh
-	srand(SDL_GetTicks()/100);		/*initialize random number generator*/
-	double random = rand()%10;
-    DayOrNight = random>4 ? DAY : NIGHT ;
+    CFG_File config;
+
+    int result = CFG_OpenFile(GAME_CONFIG_NAME, &config );
+
+    if ( result == CFG_ERROR || result == CFG_CRITICAL_ERROR )
+    {
+        dsPrint("Unable to load file: %s\n", SDL_GetError());
+        exit(1);
+    }
+    DayOrNight = CFG_ReadInt("hour_to_game",HOUR_RANDOM);
+
+    if ( DayOrNight == HOUR_RANDOM )
+    {
+        // random day or nitgh
+        srand(SDL_GetTicks()/100);		/*initialize random number generator*/
+        double random = rand()%10;
+        DayOrNight = random>4 ? DAY : NIGHT ;
+    }
 
     // load textures
     if (DayOrNight == DAY)

@@ -39,6 +39,8 @@ class Ground {
 
     static Ground_Cell Cell_Matrix[GRID_X][GRID_Y];
     static int Checkpoints_Total;
+    static int R;
+    static int sky;
 
     static Model * ground_Model;
     static dGeomID walls[4];

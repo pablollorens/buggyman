@@ -17,13 +17,29 @@
 #include <img_collection.h>
 IMG_Collection image_collection;
 SDL_Surface *screen;
-Mix_Music *musica_fondo;
-Mix_Music *coche_arranque;
+Mix_Music *musica_juego;
+Mix_Music *musica_menu;
+Mix_Music *musica_editor;
 using namespace std;
 
 int Run_Game_with_System_call(void* data)
 {
-    return system("Buggy-Man.exe game\n");
+    vector< string > songs = Get_MusicFiles("music/game");
+    if (songs.size())
+    {
+        srand(SDL_GetTicks());
+        int cont = rand()%songs.size();
+        string ruta = "music/game/" + songs[cont];
+        musica_juego = Mix_LoadMUS(ruta.c_str());
+    }
+    if(musica_juego) Mix_PlayMusic(musica_juego, -1);
+
+    system("Buggy-Man.exe game\n");
+
+    Mix_HaltMusic();
+    if(musica_menu) Mix_PlayMusic(musica_menu, -1);
+
+    return(0);
 }
 
 int Run_Game(void* data)
@@ -33,8 +49,6 @@ int Run_Game(void* data)
     Game::SetResolution(((int*)data)[0],((int*)data)[1]);
     Game::SetFullScreen(false);
 
-    if(musica_fondo) Mix_PlayMusic(musica_fondo, -1);
-//    Mix_PlayMusic(coche_arranque, 1);
     Game::Run();
 
     dsPrint("\t### END GAME ###\n");
@@ -49,7 +63,21 @@ int Run_Editor(void* data)
     Editor ed("Editor",screen);
     ed.Set_Video_Mode_CFG(800,600,32,SDL_HWSURFACE|SDL_DOUBLEBUF);
     ed.Set_Video_Mode();
+
+    vector< string > songs = Get_MusicFiles("music/editor");
+    if (songs.size())
+    {
+        srand(SDL_GetTicks());
+        int cont = rand()%songs.size();
+        string ruta = "music/editor/" + songs[cont];
+        musica_editor = Mix_LoadMUS(ruta.c_str());
+    }
+    if(musica_editor) Mix_PlayMusic(musica_editor, -1);
+
     ed.Run();
+
+    Mix_HaltMusic();
+    if(musica_menu) Mix_PlayMusic(musica_menu, -1);
 
     dsPrint("\t### END EDITOR ###\n");
 
@@ -119,27 +147,25 @@ int main ( int argc, char** argv )
     main_menu.Set_Video_Mode();
 
     /// Musica del juego
-    //coche_arranque = Mix_LoadMUS("music/arranque.mp3");
-    vector< string > songs = Get_MusicFiles("music/game");
+    vector< string > songs = Get_MusicFiles("music/menu");
     if (songs.size())
     {
         srand(SDL_GetTicks());
         int cont = rand()%songs.size();
-        string ruta = "music/game/" + songs[cont];
-        musica_fondo = Mix_LoadMUS(ruta.c_str());
+        string ruta = "music/menu/" + songs[cont];
+        musica_menu = Mix_LoadMUS(ruta.c_str());
     }
-//    if ( !musica_fondo || !coche_arranque ) {
-//        printf("No pude cargar musica: %s\n", Mix_GetError());
-//        exit(1);
-//    }
+    if(musica_menu) Mix_PlayMusic(musica_menu, -1);
 
     main_menu.Run();
 
     // Paramos la música
     Mix_HaltMusic();
     // liberamos recursos
-    Mix_FreeMusic(musica_fondo);
-    Mix_FreeMusic(coche_arranque);
+    Mix_FreeMusic(musica_menu);
+    Mix_FreeMusic(musica_juego);
+    Mix_FreeMusic(musica_editor);
+
     main_menu.Quit_Menu();
 
     dsPrint("### THE END ###\n");

@@ -9,6 +9,8 @@ Model *Ground::ground_Model;
 map< string, TrackInfo* > Ground::track_map;
 dGeomID Ground::walls[4];
 int Ground::Checkpoints_Total = 0;
+int Ground::R = 5;
+int Ground::sky = 1;
 
 /// //////////////////////////////////////////////////////////////////////// ///
 /// CONSTRUCTOR
@@ -102,6 +104,18 @@ Ground::Ground(dWorldID world, dSpaceID space)
         dGeomSetRotation(Cell_Matrix[GRID_X-1-i][j].road_geom,R);
         dGeomSetPosition (Cell_Matrix[GRID_X-1-i][j].road_geom,(GRID_X-i-1)*CELL_TAM,j*CELL_TAM,0.1);
     }
+
+    /// Leemos del fichero de configuración la información del cielo y el radio de dibujado.
+    result = CFG_OpenFile(GAME_CONFIG_NAME, &config );
+
+    if ( result == CFG_ERROR || result == CFG_CRITICAL_ERROR )
+    {
+        dsPrint("Unable to load file: %s\n", SDL_GetError());
+        exit(1);
+    }
+
+    R = CFG_ReadInt("draw_ratio",DRAW_RATIO);
+    sky = CFG_ReadInt("show_sky",1);
 }
 
 void Ground::LoadTextures()
@@ -127,7 +141,7 @@ void Ground::Draw(int cell_x, int cell_y)
     // Este cálculo de la casilla donde se encuentra el coche
     // lo realizamos para saber que casillas habilitar en cada momento
 
-    int R = 5; // 2R+1*2R+1 casillas (radio de casillas alrededor del coche)
+    // 2R+1*2R+1 casillas (radio de casillas alrededor del coche)
     int min_x = cell_x <  R  ? 0 : cell_x-R;
     int max_x = cell_x >= GRID_X-R ? GRID_X-1 : cell_x+R;
     int min_y = cell_y <  R  ? 0 : cell_y-R;
@@ -159,6 +173,6 @@ void Ground::Draw(int cell_x, int cell_y)
     dsDrawBox(dGeomGetPosition(walls[3]),dGeomGetRotation(walls[3]),sides0);
 
     /// BackGround
-    dsDrawSkyDome(dGeomGetPosition(Cell_Matrix[0][0].geomID), dGeomGetRotation(Cell_Matrix[0][0].geomID),0,1000);
+    if (sky) dsDrawSkyDome(dGeomGetPosition(Cell_Matrix[0][0].geomID), dGeomGetRotation(Cell_Matrix[0][0].geomID),0,1000);
     dsDrawFakeGround();
 }
