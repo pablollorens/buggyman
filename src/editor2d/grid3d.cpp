@@ -769,43 +769,63 @@ Grid3D::Debug_Print_Grid(char* fich, int sufix, char* ext, char* remmark)
 // //////////////////////////////////////////////////////////////////////// //
 
 bool
-Grid3D::Check_Circuit()
+Grid3D::Check_Circuit(Point3D<int> & circuit_error)
 {
     bool correct = true;
-    //int x_grid = 0;
-    //int y_grid = 0;
+    int num_starts = 0;
+    int x_grid = 0;
+    int y_grid = 0;
 
-    for (int x_grid = 0; x_grid < Get_DimX() && correct == true; x_grid++)
+    for (x_grid = 0; x_grid < Get_DimX() && correct == true; x_grid++)
     //while (x_grid < Get_DimX() && correct == true)
     {
-        for (int y_grid = 0; y_grid < Get_DimY() && correct == true; y_grid++)
+        for (y_grid = 0; y_grid < Get_DimY() && correct == true; y_grid++)
         //while (y_grid < Get_DimY() && correct == true)
         {
-            fprintf(stderr,"<%d,%d> --- (%d,%d,%d,%d)\n", x_grid,y_grid,Get_Connector(x_grid,y_grid,NORTH),Get_Connector(x_grid,y_grid,WEST),Get_Connector(x_grid,y_grid,SOUTH),Get_Connector(x_grid,y_grid,EAST));
+            //fprintf(stderr,"<%d,%d> --- (%d,%d,%d,%d)\n", x_grid,y_grid,Get_Connector(x_grid,y_grid,NORTH),Get_Connector(x_grid,y_grid,WEST),Get_Connector(x_grid,y_grid,SOUTH),Get_Connector(x_grid,y_grid,EAST));
+            //fprintf(stderr,"<%d,%d> --- (%d,%d,%d,%d)\n", x_grid,y_grid+1,Get_Connector(x_grid,y_grid+1,NORTH),Get_Connector(x_grid,y_grid+1,WEST),Get_Connector(x_grid,y_grid+1,SOUTH),Get_Connector(x_grid,y_grid+1,EAST));
 
             if (y_grid > 0)
-            {
-                if(Check_Connector(Get_Connector(x_grid,y_grid,NORTH),Get_Connector(x_grid,y_grid-1,SOUTH)) == false) correct=false;
-            }
+                if(Check_Connector(Get_Connector(x_grid,y_grid,NORTH),Get_Connector(x_grid,y_grid-1,SOUTH)) == false)
+                {
+                    correct=false;
+                    break;
+                }
 
-            if (x_grid < Get_DimX())
-            {
-                if(Check_Connector(Get_Connector(x_grid,y_grid,EAST),Get_Connector(x_grid+1,y_grid,WEST)) == false) correct=false;
-            }
+            if (x_grid < Get_DimX()-1)
+                if(Check_Connector(Get_Connector(x_grid,y_grid,EAST),Get_Connector(x_grid+1,y_grid,WEST)) == false)
+                {
+                    correct=false;
+                    break;
+                }
 
-            if (y_grid < Get_DimY())
-            {
-                if(Check_Connector(Get_Connector(x_grid,y_grid,SOUTH),Get_Connector(x_grid,y_grid+1,NORTH)) == false) correct=false;
-            }
+            if (y_grid < Get_DimY()-1)
+                if(Check_Connector(Get_Connector(x_grid,y_grid,SOUTH),Get_Connector(x_grid,y_grid+1,NORTH)) == false)
+                {
+                    correct=false;
+                    break;
+                }
 
             if (x_grid > 0)
-            {
-                if(Check_Connector(Get_Connector(x_grid,y_grid,WEST),Get_Connector(x_grid-1,y_grid,EAST)) == false) correct=false;
-            }
-            y_grid++;
+                if(Check_Connector(Get_Connector(x_grid,y_grid,WEST),Get_Connector(x_grid-1,y_grid,EAST)) == false)
+                {
+                    correct=false;
+                    break;
+                }
+
+            if ((*Get_Track(x_grid,y_grid,0)).Get_Start()) num_starts++;
         }
-        x_grid++;
+        if (!correct) break;
     }
+
+    if (!correct)
+    {
+        circuit_error.x = x_grid;
+        circuit_error.y = y_grid;
+    }
+
+     if (num_starts != 1) correct = false;
+
     return correct;
 }
 
@@ -814,7 +834,7 @@ Grid3D::Get_Connector(int x_grid, int y_grid, int coordenate)
 {
     int x_track = 0;
     int y_track = 0;
-    Point3D<int> top_left = *Get_Top_Left_Syster(x_track, y_track);
+    Point3D<int> top_left = *Get_Top_Left_Syster(x_grid, y_grid);
 
     switch (coordenate)
     {

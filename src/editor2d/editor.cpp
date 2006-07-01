@@ -151,6 +151,9 @@ Editor::Run()
     int ratonx = 0;
     int ratony = 0;
 
+    //point3d para detectar error
+    Point3D<int> circuit_error;
+
     // program main loop
     printf("Main Loop...\n");
     SDL_Event event;
@@ -182,6 +185,7 @@ Editor::Run()
                     if (event.key.keysym.sym == SDLK_LEFT)  world.Incr_Offset(-CELL_X,0,0);
                     if (event.key.keysym.sym == SDLK_RIGHT) world.Incr_Offset(CELL_X,0,0);
                     update_required=true;
+                    if (event.key.keysym.sym == SDLK_c) if (!world.Check_Circuit(circuit_error)) fprintf(stderr,"CIRCUITO ERRONEO. CASILLA(%d,%d.%d)", circuit_error.x,circuit_error.y,circuit_error.z);
                     if (event.key.keysym.sym == SDLK_m)
                     {
                         if(move_grid == 0)

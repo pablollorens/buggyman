@@ -113,7 +113,7 @@ class Grid3D
         void Debug_Print_Grid(char* fich, int sufix, char* ext, char* remmark);
 
         //Circuit Check
-        bool Check_Circuit();
+        bool Check_Circuit(Point3D<int> &circuit_error);
         bool Clear_Circuit();
 
 
