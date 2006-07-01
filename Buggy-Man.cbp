@@ -1,310 +1,317 @@
-<?xml version="1.0"?>
-<!DOCTYPE CodeBlocks_project_file>
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_project_file>
-	<FileVersion major="1" minor="1"/>
+	<FileVersion major="1" minor="4" />
 	<Project>
-		<Option title="Buggy-Man"/>
-		<Option makefile="Makefile"/>
-		<Option makefile_is_custom="0"/>
-		<Option active_target="0"/>
-		<Option compiler="0"/>
+		<Option title="Buggy-Man" />
+		<Option pch_mode="0" />
+		<Option compiler="gcc" />
 		<Build>
 			<Target title="default">
-				<Option output="bin\Buggy-Man.exe"/>
-				<Option working_dir="bin"/>
-				<Option object_output=".objs"/>
-				<Option deps_output=".deps"/>
-				<Option type="0"/>
-				<Option compiler="0"/>
-				<Option projectResourceIncludeDirsRelation="0"/>
+				<Option output="bin\Buggy-Man.exe" />
+				<Option working_dir="bin" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Option includeInTargetAll="1" />
+				<Option projectResourceIncludeDirsRelation="0" />
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-g"/>
-			<Add directory="include"/>
-			<Add directory="include\GL"/>
-			<Add directory="include\SDL"/>
-			<Add directory="include\SDL_Config"/>
-			<Add directory="include\ode"/>
-			<Add directory="include\drawstuff"/>
-			<Add directory="include\editor2d"/>
-			<Add directory="include\game"/>
-			<Add directory="include\menu"/>
-			<Add directory="include\defines"/>
+			<Add option="-g" />
+			<Add directory="include" />
+			<Add directory="include\GL" />
+			<Add directory="include\SDL" />
+			<Add directory="include\SDL_Config" />
+			<Add directory="include\ode" />
+			<Add directory="include\drawstuff" />
+			<Add directory="include\editor2d" />
+			<Add directory="include\game" />
+			<Add directory="include\menu" />
+			<Add directory="include\defines" />
 		</Compiler>
 		<Linker>
-			<Add option="-lmingw32"/>
-			<Add option="-lode"/>
-			<Add option="-lSDLmain"/>
-			<Add option="-lSDL"/>
-			<Add option="-lSDL_gfx"/>
-			<Add option="-lSDL_Image"/>
-			<Add option="-lSDL_mixer.dll"/>
-			<Add option="-lSDL_ttf"/>
-			<Add option="-lstdc++"/>
-			<Add option="-lComctl32"/>
-			<Add option="-lkernel32"/>
-			<Add option="-mwindows"/>
-			<Add option="-luser32"/>
-			<Add option="-lgdi32"/>
-			<Add option="-lwinmm"/>
-			<Add option="-ldxguid"/>
-			<Add option="-lOpenGL32"/>
-			<Add option="-lGlu32"/>
-			<Add option="-lGlut32"/>
-			<Add option="-lglaux"/>
-			<Add option="-lm"/>
-			<Add directory="lib"/>
+			<Add option="-lmingw32" />
+			<Add option="-lode" />
+			<Add option="-lSDLmain" />
+			<Add option="-lSDL" />
+			<Add option="-lSDL_gfx" />
+			<Add option="-lSDL_Image" />
+			<Add option="-lSDL_mixer.dll" />
+			<Add option="-lSDL_ttf" />
+			<Add option="-lstdc++" />
+			<Add option="-lComctl32" />
+			<Add option="-lkernel32" />
+			<Add option="-mwindows" />
+			<Add option="-luser32" />
+			<Add option="-lgdi32" />
+			<Add option="-lwinmm" />
+			<Add option="-ldxguid" />
+			<Add option="-lOpenGL32" />
+			<Add option="-lGlu32" />
+			<Add option="-lGlut32" />
+			<Add option="-lglaux" />
+			<Add option="-lm" />
+			<Add directory="lib" />
 		</Linker>
 		<Unit filename="include\SDL_Config\SDL_config.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\SDL_Config\SDL_config_auto_tests.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\SDL_Config\SDL_config_cfg.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\SDL_Config\SDL_config_types.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\defines\paths.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\defines\utils.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\drawstuff\drawstuff.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\drawstuff\internal.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\editor2d\cell3d.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\editor2d\editor.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\editor2d\functions.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\editor2d\grid3d.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\editor2d\img_collection.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\editor2d\point3d.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\editor2d\rect2d.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\editor2d\track.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\game\Camera.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\game\Car.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\game\Crono.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\game\Engine.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\game\Game.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\game\Ground.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\game\Ground_Cell.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\game\MilkshapeModel.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\game\Model.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\menu\button.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="include\menu\game_config.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="include\menu\menu.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="default"/>
+			<Option compilerVar="" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="src\SDL_Config\SDL_config.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
+			<Option compilerVar="CPP" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="src\drawstuff\drawstuff.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
+			<Option compilerVar="CPP" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="src\drawstuff\windows.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
+			<Option compilerVar="CPP" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="src\editor2d\cell3d.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
+			<Option compilerVar="CPP" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="src\editor2d\editor.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
+			<Option compilerVar="CPP" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="src\editor2d\functions.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
+			<Option compilerVar="CPP" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="src\editor2d\grid3d.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
+			<Option compilerVar="CPP" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="src\editor2d\img_collection.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
+			<Option compilerVar="CPP" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="src\editor2d\rect2d.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
+			<Option compilerVar="CPP" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="src\editor2d\track.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
+			<Option compilerVar="CPP" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="src\game\Camera.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
+			<Option compilerVar="CPP" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="src\game\Car.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
+			<Option compilerVar="CPP" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="src\game\Crono.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
+			<Option compilerVar="CPP" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="src\game\Engine.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
+			<Option compilerVar="CPP" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="src\game\Game.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
+			<Option compilerVar="CPP" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="src\game\Ground.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
+			<Option compilerVar="CPP" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="src\game\Ground_Cell.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
+			<Option compilerVar="CPP" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="src\game\MilkshapeModel.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
+			<Option compilerVar="CPP" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="src\game\Model.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
+			<Option compilerVar="CPP" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="src\main\main.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
+			<Option compilerVar="CPP" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="src\menu\button.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
+			<Option compilerVar="CPP" />
+			<Option target="default" />
+		</Unit>
+		<Unit filename="src\menu\game_config.cpp">
+			<Option compilerVar="CPP" />
+			<Option target="default" />
 		</Unit>
 		<Unit filename="src\menu\menu.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="default"/>
+			<Option compilerVar="CPP" />
+			<Option target="default" />
 		</Unit>
+		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
