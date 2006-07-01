@@ -26,7 +26,7 @@ class Game {
     static void WorldDestroy();
     static void GroundInit();
     static void GroundDestroy();
-    static void CarInit();
+    static void CarInit(string circuit, string car);
     static void CarDestroy();
 
     static Engine engine;

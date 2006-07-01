@@ -46,10 +46,10 @@ list<string> & Get_Directories(char* dir_work)
     return *list_directories;
 }
 
-list<string> & Get_MusicFiles(char* dir_work)
+vector<string> & Get_MusicFiles(char* dir_work)
 {
     char dirchain[300];
-    list<string> *list_directories = new list<string>;
+    vector<string> *list_directories = new vector<string>;
 
     string path_work = getcwd(dirchain,300);
     string full_path = path_work + "\\";
@@ -92,7 +92,7 @@ list<string> & Get_MusicFiles(char* dir_work)
                 for (int itr = position+1; itr < name_length; itr++)
                     cad_aux = cad_aux + name[itr];
 
-                if (cad_aux == "mp3" || cad_aux == "ogg" || cad_aux == "wav" || cad_aux == "wma")
+                if (cad_aux == "mp3" || cad_aux == "ogg" || cad_aux == "wav" )
                     (*list_directories).push_back(pent->d_name);
             }
         }

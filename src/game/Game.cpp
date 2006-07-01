@@ -41,7 +41,7 @@ void Game::Run()
   dsPrint("\tWorld Config OK\n");
   GroundInit();
   dsPrint("\tGround OK\n");
-  CarInit();
+  CarInit("terreno.cfg","panda.car");
   dsPrint("\tCar OK\n");
 
   /// Simulacion ///
@@ -140,18 +140,44 @@ void Game::GroundDestroy()
 /// //////////////////////////////////////////////////////////////////////// ///
 /// CAR
 
-void Game::CarInit()
+void Game::CarInit(string circuit, string car)
 {
-  // entramos dentro del directorio de los coches
   char fcadena[300];
+  CFG_File config;
+  bool start = 0;
+  int i=0;
+  int j=0;
+  int k=0;
+  int rotation=0;
+
+  /// Characteristics of Circuit
+  int result = CFG_OpenFile( circuit.c_str() , &config );
+  if ( result == CFG_ERROR || result == CFG_CRITICAL_ERROR )
+  {
+    dsPrint("Unable to load file: %s\n", SDL_GetError());
+    exit(1);
+  }
+  for ( CFG_StartGroupIteration(); !CFG_IsLastGroup(); CFG_SelectNextGroup() )
+  {
+      start = CFG_ReadBool("start",0);
+      if (start)
+      {
+          i = CFG_ReadInt("x",0);
+          j = CFG_ReadInt("y",0);
+          k = CFG_ReadInt("z",0);
+          rotation = CFG_ReadInt("rotation",0);
+          break;
+      }
+  }
+
+  // entramos dentro del directorio de los coches
   string ruta = getcwd(fcadena,300);
   string ruta_nueva = ruta + "\\";
   ruta_nueva += DIR_VEHICLES;
   chdir(ruta_nueva.c_str());
-  CFG_File config;
 
   /// We can use "golgotha.car" too
-  int result = CFG_OpenFile("panda.car", &config );
+  result = CFG_OpenFile( car.c_str() , &config );
 
   if ( result == CFG_ERROR || result == CFG_CRITICAL_ERROR )
   {
@@ -174,7 +200,7 @@ void Game::CarInit()
 
   chdir(ruta.c_str());
 
-  engine.car = new Car(engine.World, engine.Space,car_info,1,1,0,90);
+  engine.car = new Car(engine.World, engine.Space,car_info,i,j,k,rotation);
 }
 
 void Game::CarDestroy()

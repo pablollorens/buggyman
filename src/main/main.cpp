@@ -120,7 +120,14 @@ int main ( int argc, char** argv )
 
     /// Musica del juego
     //coche_arranque = Mix_LoadMUS("music/arranque.mp3");
-    musica_fondo   = Mix_LoadMUS("music/song1.mp3");
+    vector< string > songs = Get_MusicFiles("music/game");
+    if (songs.size())
+    {
+        srand(SDL_GetTicks());
+        int cont = rand()%songs.size();
+        string ruta = "music/game/" + songs[cont];
+        musica_fondo = Mix_LoadMUS(ruta.c_str());
+    }
 //    if ( !musica_fondo || !coche_arranque ) {
 //        printf("No pude cargar musica: %s\n", Mix_GetError());
 //        exit(1);
