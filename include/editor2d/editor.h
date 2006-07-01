@@ -52,6 +52,7 @@ class Editor : public Menu
         void Load_Tracks(Grid3D & grid);
         static int New_Circuit(void* data);
         static int Quit_Editor(void* data);
+        static int Check_Circuit(void* data);
     private:
         map<string, Track* > tracks_map;
 };

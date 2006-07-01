@@ -63,6 +63,8 @@ Editor::Run()
 //    printf("Setting window icon... \0");
 //    SDL_WM_SetIcon(IMG_Load("textures/icon.gif"), NULL);
 
+    //point3d para detectar error
+    Point3D<int> circuit_error;
 
     // ///////////////////////////////////////////////////////////////////////
     printf("Loading background and cursors... \n");
@@ -137,12 +139,18 @@ Editor::Run()
     Add_Button(button_quit_editor, SDLK_ESCAPE);
 
 
+    pair<Grid3D*, Point3D<int> * > par;
+    par.first = &world;
+    par.second = &circuit_error;
+    void* data = (pair<Grid3D*, Point3D<int> * >*)&par;
 
+    Button button_check_circuit("Check Circuit",4,436,
+                    "menu/button_check_def.png","menu/button_check_press.png",
+                    "menu/button_check_over.png","menu/button_check_dis.png",
+                    Check_Circuit,data);
+    Add_Button(button_check_circuit, SDLK_c);
 
-
-
-
-
+    //bool error_circuit = false;
 
 
     Track* floating = NULL;
@@ -151,8 +159,6 @@ Editor::Run()
     int ratonx = 0;
     int ratony = 0;
 
-    //point3d para detectar error
-    Point3D<int> circuit_error;
 
     // program main loop
     printf("Main Loop...\n");
@@ -451,4 +457,13 @@ Editor::Quit_Editor(void* data)
 {
     *((bool*)data) = true;
     return 0;
+}
+
+int
+Editor::Check_Circuit(void* data)
+{
+    pair<Grid3D*, Point3D<int> * > par;
+    par = *((pair<Grid3D*, Point3D<int> * >*)data);
+    int a = (*par.first).Check_Circuit(*par.second);
+    return a;
 }
