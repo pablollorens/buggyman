@@ -924,3 +924,9 @@ Grid3D::Activate_Tracks_Error(Uint16 x,Uint16 y,Uint16 z)
     return window_changed;
 }
 
+int
+Grid3D::Activate_Tracks_Error(Point3D<int> & p)
+{
+    return Activate_Tracks_Error(p.x,p.y,p.z);
+}
+

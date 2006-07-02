@@ -483,5 +483,15 @@ Editor::Check_Circuit(void* data)
     pair<Grid3D*, Error_Track_List * > par;
     par = *((pair<Grid3D*, Error_Track_List * >*)data);
     int a = (*par.first).Check_Circuit(*par.second);
+
+    if((*par.second).error_circuit)
+    {
+        for(list <Point3D<int> >::iterator itr = (*par.second).track_error.begin(),
+            end = (*par.second).track_error.end(); itr != end; ++itr)
+        {
+            (*par.first).Activate_Tracks_Error(*itr);
+            //(*par.first).Set_Offset(*par.second);
+        }
+    }
     return a;
 }

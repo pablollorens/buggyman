@@ -125,6 +125,7 @@ class Grid3D
         bool Clear_Circuit();
 
         int Activate_Tracks_Error(Uint16 x,Uint16 y,Uint16 z);
+        int Activate_Tracks_Error(Point3D<int> & p);
 
 
     private methods:
