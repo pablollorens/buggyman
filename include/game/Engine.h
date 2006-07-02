@@ -1,11 +1,11 @@
 #ifndef CLASS_ENGINE
 #define CLASS_ENGINE
 
-#include <ode/ode.h>
-#include <drawstuff/drawstuff.h>
-
 #include <SDL/SDL.h>
 #include <SDL/SDL_TTF.h>
+
+#include <ode/ode.h>
+#include <drawstuff/drawstuff.h>
 
 #include <game/Car.h>
 #include <game/Ground.h>

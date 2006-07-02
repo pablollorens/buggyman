@@ -2,9 +2,12 @@
 #define CLASS_GROUND_CELL
 
 #include <ode/ode.h>
+
 #include <game/milkshapemodel.h>
+
 #include <string>
 #include <utils.h>
+
 using namespace std;
 
 class Ground_Cell {

@@ -2,6 +2,7 @@
 #define CLASS_GAME
 
 #include <SDL/SDL.h>
+
 #include <ode/ode.h>
 #include <drawstuff/drawstuff.h>
 

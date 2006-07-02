@@ -1,11 +1,13 @@
 #ifndef CLASS_GROUND
 #define CLASS_GROUND
 
+#include <SDL_Config/SDL_Config.h>
+
 #include <ode/ode.h>
 #include <drawstuff/drawstuff.h>
+
 #include <game/milkshapemodel.h>
 #include <game/Ground_Cell.h>
-#include <SDL_Config/SDL_Config.h>
 
 #include <map>
 #include <string>

@@ -48,16 +48,18 @@ extern "C" {
 #endif
 
 #include <SDL/SDL.h>
-#include <drawstuff/version.h>
 #include <SDL_Config/SDL_Config.h>
 
-#include <ode/config.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
+#include <GL/glaux.h>
+
+#include <ode/config.h>
+#include <drawstuff/version.h>
+
 #include <defines/utils.h>
 
-#include <GL/glaux.h>
 												    // Our Local Copy Of The Header File
 typedef struct CarInfo {
   // car name and file

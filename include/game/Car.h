@@ -1,14 +1,17 @@
 #ifndef CLASS_CAR
 #define CLASS_CAR
 
-#include <list>
 #include <ode/ode.h>
 #include <drawstuff/drawstuff.h>
+
+#include <game/Camera.h>
 #include <game/MilkshapeModel.h>
+
+#include <list>
 #include <utils.h>
 #include <unistd.h>
-#include <game/Camera.h>
 #include <string>
+
 using namespace std;
 
 #define DENSITY (0.5)		// density of all objects
