@@ -27,9 +27,13 @@ extern Mix_Music *musica_juego;
 extern Mix_Music *musica_menu;
 extern Mix_Music *musica_editor;
 
+int Run_Parametrized_Game(int, char**);
 int Quit_Game(void* data);
 int Run_Game(void* data);
 int Select_Car(void* data);
+int Run_Configuration(void* data);
+int Run_Editor(void* data);
+int Run_Main_Menu(void* data);
 
 
 
