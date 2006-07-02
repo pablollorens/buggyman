@@ -312,9 +312,9 @@ void Car::Draw()
 //    dsDrawBox ( dBodyGetPosition(Stuff_BodyID[2]), dBodyGetRotation(Stuff_BodyID[2]), sides1);
 //    dsDrawBox ( dBodyGetPosition(Stuff_BodyID[3]), dBodyGetRotation(Stuff_BodyID[3]), sides1);
 
-    dsSetColorAlpha (0,0,0,0.4);
-    dReal sides2[3] = {length,width,height};
-    dsDrawBox ( dBodyGetPosition(Chassis_BodyID), dBodyGetRotation(Chassis_BodyID), sides2);
+//    dsSetColorAlpha (0,0,0,0.4);
+//    dReal sides2[3] = {length,width,height};
+//    dsDrawBox ( dBodyGetPosition(Chassis_BodyID), dBodyGetRotation(Chassis_BodyID), sides2);
 
     /// DIBUJAMOS LOS CUADROS DE LA CAMARA
 //    dsSetColorAlpha (0,1,0,0.5);
