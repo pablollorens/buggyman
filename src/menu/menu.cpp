@@ -202,6 +202,8 @@ Menu::Init_Menu()
         dsError( "Unable to init SDL: %s\n", SDL_GetError() );
         exit( 100 );
     }
+
+    SDL_WM_SetIcon(SDL_LoadBMP("menu/icon.bmp"),0);
 }
 
 void
