@@ -26,6 +26,7 @@ extern SDL_Surface *screen;
 extern Mix_Music *musica_juego;
 extern Mix_Music *musica_menu;
 extern Mix_Music *musica_editor;
+extern Mix_Music *musica_creditos;
 
 int Run_Parametrized_Game(int, char**);
 int Quit_Game(void* data);

@@ -206,5 +206,18 @@ int Run_Credits(void* data)
     menu.Set_Video_Mode_CFG(VIDEO_x,VIDEO_y,VIDEO_bpp,SDL_HWSURFACE|SDL_DOUBLEBUF);
     menu.Set_Video_Mode();
 
-    return menu.Run();
+    vector< string > songs = Get_MusicFiles("music/credits");
+    if (songs.size())
+    {
+        srand(SDL_GetTicks());
+        int cont = rand()%songs.size();
+        string ruta = "music/credits/" + songs[cont];
+        musica_creditos = Mix_LoadMUS(ruta.c_str());
+    }
+    if(musica_creditos) Mix_PlayMusic(musica_creditos, -1);
+
+    menu.Run();
+
+    Mix_HaltMusic();
+    if(musica_menu) Mix_PlayMusic(musica_menu, -1);
 }

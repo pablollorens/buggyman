@@ -25,6 +25,7 @@ SDL_Surface *screen;
 Mix_Music *musica_juego;
 Mix_Music *musica_menu;
 Mix_Music *musica_editor;
+Mix_Music *musica_creditos;
 using namespace std;
 
 int main ( int argc, char** argv )

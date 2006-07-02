@@ -9,7 +9,7 @@ dWorldID Engine::World;
 dSpaceID Engine::Space;
 dJointGroupID Engine::ContactGroup;
 
-float Engine::xyz[3] = { ((GRID_X-1)*7)-3.5f, -1.5f, 3.0f };
+float Engine::xyz[3] = { (((GRID_X-1)*7)+(-10.0f*7)),-1.5f+(10.0f*7), 3.0f };
 float Engine::hpr[3] = { 75.0f, -27.5f, 0.0f };
 
 int Engine::car_Cell_X = 0;
