@@ -194,10 +194,10 @@ Car::Car(dWorldID world, dSpaceID space,CarInfo car_info,int x1,int y1,int z1,in
 
 
   dMatrix3 R;
-  if (rotation==180) dRFromAxisAndAngle(R,0,0,1,+M_PI);
-  if (rotation==270) dRFromAxisAndAngle(R,0,0,1,+(3*M_PI)/2);
-  if (rotation==0)   dRFromAxisAndAngle(R,0,0,1,0);
-  if (rotation==90)  dRFromAxisAndAngle(R,0,0,1,+M_PI/2);
+  if (rotation==180) dRFromAxisAndAngle(R,0,0,1,0);
+  if (rotation==90) dRFromAxisAndAngle(R,0,0,1,+(3*M_PI)/2);
+  if (rotation==0)   dRFromAxisAndAngle(R,0,0,1,+M_PI);
+  if (rotation==270)  dRFromAxisAndAngle(R,0,0,1,+M_PI/2);
   dBodySetRotation(Chassis_BodyID,R);
 
   /// CAMERA BOX
@@ -229,10 +229,10 @@ void Car::setPosCar(int i, int j, int z, int rotation)
     dBodySetPosition (Wheel_BodyID[3],(i*7)+(-0.25*1.7),(j*7)-0.35,z-0.2);
 
     dMatrix3 R;
-    if (rotation==180) dRFromAxisAndAngle(R,0,0,1,+M_PI);
-    if (rotation==270)  dRFromAxisAndAngle(R,0,0,1,+(3*M_PI)/2);
-    if (rotation==0)  dRFromAxisAndAngle(R,0,0,1,0);
-    if (rotation==90)  dRFromAxisAndAngle(R,0,0,1,+M_PI/2);
+    if (rotation==180) dRFromAxisAndAngle(R,0,0,1,0);
+    if (rotation==90) dRFromAxisAndAngle(R,0,0,1,+(3*M_PI)/2);
+    if (rotation==0)   dRFromAxisAndAngle(R,0,0,1,+M_PI);
+    if (rotation==270)  dRFromAxisAndAngle(R,0,0,1,+M_PI/2);
     dBodySetRotation(Chassis_BodyID,R);
 
 
