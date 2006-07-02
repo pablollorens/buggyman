@@ -77,7 +77,7 @@ void Engine::SimLoop (int pause)
             Car::max_speed = Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].speed_factor;
         if ( Car::max_speed > MAX_SPEED ) Car::max_speed--;
 
-        dsPrint("%d \n",Car::max_speed);
+        //dsPrint("%d \n",Car::max_speed);
 
 
         dSpaceCollide (Space,0,&nearCallback);
