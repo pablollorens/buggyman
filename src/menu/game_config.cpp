@@ -100,7 +100,7 @@ Game_Config::Load(char* path)
         resolution.z = CFG_ReadInt("resolution_bpp", VIDEO_bpp);
         full_screen = CFG_ReadInt("full_screen", VIDEO_full_screen);
         draw_ratio = CFG_ReadInt("draw_ratio", DRAW_RATIO);
-        activate_sky = CFG_ReadBool("show_sky", DRAW_SKY);
+        activate_sky = CFG_ReadInt("show_sky", DRAW_SKY);
         hour_to_game = CFG_ReadInt("hour_to_game", HOUR_RANDOM);
     }
     else

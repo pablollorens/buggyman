@@ -22,6 +22,8 @@ Configuration::Run()
     SDL_initFramerate(&manager);
     SDL_setFramerate(&manager, 30);
 
+    Game_Config gc(GAME_CONFIG_NAME);
+
     Set_Background("menu/backg_configuration.jpg");
 
     Button button_quit("Quit Configuration",376,496,
@@ -56,6 +58,7 @@ Configuration::Run()
     some->x = 320;
     some->y = 240;
     resolutions.push_back(some);
+    if(gc.resolution.x == 320) resolutions_index = 0;
 
     some = new sub_Config;
     some->def = image_collection("menu/sprite_resolution_512_def.png");
@@ -63,6 +66,7 @@ Configuration::Run()
     some->x = 512;
     some->y = 384;
     resolutions.push_back(some);
+    if(gc.resolution.x == 512) resolutions_index = 1;
 
     some = new sub_Config;
     some->def = image_collection("menu/sprite_resolution_640_def.png");
@@ -70,6 +74,7 @@ Configuration::Run()
     some->x = 640;
     some->y = 480;
     resolutions.push_back(some);
+    if(gc.resolution.x == 640) resolutions_index = 2;
 
     some = new sub_Config;
     some->def = image_collection("menu/sprite_resolution_800_def.png");
@@ -77,6 +82,7 @@ Configuration::Run()
     some->x = 800;
     some->y = 600;
     resolutions.push_back(some);
+    if(gc.resolution.x == 800) resolutions_index = 3;
 
     some = new sub_Config;
     some->def = image_collection("menu/sprite_resolution_1024_def.png");
@@ -84,6 +90,7 @@ Configuration::Run()
     some->x = 1024;
     some->y = 768;
     resolutions.push_back(some);
+    if(gc.resolution.x == 1024) resolutions_index = 4;
 
     some = new sub_Config;
     some->def = image_collection("menu/sprite_resolution_1280_def.png");
@@ -91,6 +98,7 @@ Configuration::Run()
     some->x = 1280;
     some->y = 1024;
     resolutions.push_back(some);
+    if(gc.resolution.x == 1280) resolutions_index = 5;
 
     some = new sub_Config;
     some->def = image_collection("menu/sprite_resolution_1600_def.png");
@@ -98,6 +106,7 @@ Configuration::Run()
     some->x = 1600;
     some->y = 1200;
     resolutions.push_back(some);
+    if(gc.resolution.x == 1600) resolutions_index = 6;
 
 
 
@@ -118,6 +127,9 @@ Configuration::Run()
     some->fullscreen = 1;
     fullscreen.push_back(some);
 
+    if(!gc.full_screen) fullscreen_index = 0;
+    else                fullscreen_index = 1;
+
 
 
 
@@ -135,6 +147,9 @@ Configuration::Run()
     some->sky = 1;
     sky.push_back(some);
 
+    if(gc.activate_sky == 0) sky_index = 0;
+    else                     sky_index = 1;
+
 
 
 
@@ -145,18 +160,21 @@ Configuration::Run()
     some->press = image_collection("menu/sprite_random_press.png");
     some->scenery = HOUR_RANDOM;
     scenery.push_back(some);
+    if(gc.hour_to_game == HOUR_RANDOM) scenery_index = 0;
 
     some = new sub_Config;
     some->def = image_collection("menu/sprite_day_def.png");
     some->press = image_collection("menu/sprite_day_press.png");
     some->scenery = HOUR_DAY;
     scenery.push_back(some);
+    if(gc.hour_to_game == HOUR_DAY) scenery_index = 1;
 
     some = new sub_Config;
     some->def = image_collection("menu/sprite_night_def.png");
     some->press = image_collection("menu/sprite_night_press.png");
     some->scenery = HOUR_NIGHT;
     scenery.push_back(some);
+    if(gc.hour_to_game == HOUR_NIGHT) scenery_index = 2;
 
 
 
@@ -168,18 +186,21 @@ Configuration::Run()
     some->press = image_collection("menu/sprite_low_press.png");
     some->draw_ratio = DRAW_RATIO_LOW;
     draw_ratios.push_back(some);
+    if(gc.draw_ratio == DRAW_RATIO_LOW) draw_ratios_index = 0;
 
     some = new sub_Config;
     some->def = image_collection("menu/sprite_medium_def.png");
     some->press = image_collection("menu/sprite_medium_press.png");
     some->draw_ratio = DRAW_RATIO_MEDIUM;
     draw_ratios.push_back(some);
+    if(gc.draw_ratio == DRAW_RATIO_MEDIUM) draw_ratios_index = 1;
 
     some = new sub_Config;
     some->def = image_collection("menu/sprite_high_def.png");
     some->press = image_collection("menu/sprite_high_press.png");
     some->draw_ratio = DRAW_RATIO_HIGH;
     draw_ratios.push_back(some);
+    if(gc.draw_ratio == DRAW_RATIO_HIGH) draw_ratios_index = 2;
 
 
 
@@ -210,7 +231,6 @@ Configuration::Run()
         SDL_framerateDelay(&manager);
     } // end main loop
 
-    Game_Config gc;
     gc.resolution.Set_Values(
         resolutions[resolutions_index]->x,
         resolutions[resolutions_index]->y,
