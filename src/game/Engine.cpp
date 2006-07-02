@@ -75,7 +75,7 @@ void Engine::SimLoop (int pause)
 
         if (Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].speed_factor > 1 )
             Car::max_speed *= Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].speed_factor;
-        else if ( Car::max_speed > MAX_SPEED ) Car::SpeedDecrease();
+        else if ( Car::max_speed > MAX_SPEED ) Car::max_speed--;
 
         dSpaceCollide (Space,0,&nearCallback);
 

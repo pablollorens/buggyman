@@ -31,6 +31,11 @@ float Car::width;
 float Car::height;
 float Car::distance;
 
+int Car::x_initial;
+int Car::y_initial;
+int Car::z_initial;
+int Car::rot_initial;
+
 dVector3 Car::car_prey;
 float Car::factor_equilibrio;
 
@@ -53,6 +58,11 @@ Model *Car::wheel_Model = NULL;												// Holds The Model Data
 
 Car::Car(dWorldID world, dSpaceID space,CarInfo car_info,int x1,int y1,int z1,int rotation)
 {
+  x_initial = x1;
+  y_initial = y1;
+  z_initial = z1;
+  rot_initial = rotation;
+
   x1=GRID_X-1-x1;
 
   /// CARGA DE MODELOS
@@ -373,7 +383,10 @@ void Car::DoAction(int action)
        // Tecla "R" = reiniciar partida
        speed = 0;           // Paramos el coche
        steer = 0;           // Ponemos las ruedas rectas
-       setPosCar(1,1,0,90); // Nos movemos al principio
+       setPosCar(x_initial, // Nos movemos al principio
+                 y_initial,
+                 z_initial,
+                 rot_initial);
        setJugando(0);       // Volvemos a jugar
        setCronometro(0);    // Pararemos el cronometro al final
        resetTempo();        // Reseteamos la cuenta atras

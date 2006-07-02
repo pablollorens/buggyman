@@ -93,6 +93,11 @@ class Car {
     static float height;
     static float distance;
 
+    static int x_initial;
+    static int y_initial;
+    static int z_initial;
+    static int rot_initial;
+
     static dVector3 car_prey;
 
 //    static Model *stuff1_Model;
