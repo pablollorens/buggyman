@@ -7,6 +7,9 @@
 #include"game_config.h"
 
 #include <menu.h>
+#include <functions.h>
+#include <game_menus.h>
+#include "grid3d.h"
 #include <configuration.h>
 #include <vector>
 #include <map>
@@ -17,45 +20,12 @@
 
 #include <img_collection.h>
 IMG_Collection image_collection;
+
 SDL_Surface *screen;
 Mix_Music *musica_juego;
 Mix_Music *musica_menu;
 Mix_Music *musica_editor;
 using namespace std;
-
-int Run_Game_with_System_call(void* data)
-{
-    vector< string > songs = Get_MusicFiles("music/game");
-    if (songs.size())
-    {
-        srand(SDL_GetTicks());
-        int cont = rand()%songs.size();
-        string ruta = "music/game/" + songs[cont];
-        musica_juego = Mix_LoadMUS(ruta.c_str());
-    }
-    if(musica_juego) Mix_PlayMusic(musica_juego, -1);
-
-    system("Buggy-Man.exe game\n");
-
-    Mix_HaltMusic();
-    if(musica_menu) Mix_PlayMusic(musica_menu, -1);
-
-    return(0);
-}
-
-int Run_Game(void* data)
-{
-    dsPrint("\t### RUN GAME ###\n");
-
-    Game::SetResolution(((int*)data)[0],((int*)data)[1]);
-    Game::SetFullScreen(false);
-
-    Game::Run();
-
-    dsPrint("\t### END GAME ###\n");
-
-    return 0;
-}
 
 int Run_Editor(void* data)
 {
@@ -99,46 +69,39 @@ int Run_Configuration(void* data)
     return 0;
 }
 
-int Quit_Game(void* data)
-{
-    *((bool*)data) = true;
-    return 0;
-}
-
 int main ( int argc, char** argv )
 {
-    Game_Config gc;
-    gc.Save(GAME_CONFIG_NAME);
     dsPrint("### MAIN ###\n");
 
-    if(argc == 2 && !strcmp(argv[1],"game"))
+    if(argc == 3)
     {
-        void* data = (int*)new int(2);
-        ((int*)data)[0]=1024;
-        ((int*)data)[1]=768;
-        return(Run_Game(data));
+        Game_Config gc("game.cfg");
+        Game::SetResolution(gc.resolution.x,gc.resolution.y);
+        fprintf(stderr,"fullscreen = %d\n",gc.full_screen);
+        Game::SetFullScreen(gc.full_screen);
+        string circuit = argv[2];
+        string car = argv[1];
+        Game::Run(circuit,car);//circuit and car
+        exit(0);
     }
-
 
     Menu main_menu("Main",screen);
     main_menu.Init_Menu();
     main_menu.Set_Background("menu/backg_main.png");
 
-    Button playlow( "Play LowRes",242,208,
+    Button select_car( "Play",242,208,
                     "menu/button_play320_def.png","menu/button_play320_press.png",
                     "menu/button_play320_over.png","menu/button_play320_dis.png",
-                    Run_Game_with_System_call,NULL);
-//    ((int*)playlow.Get_Click_Data())[0]=320;
-//    ((int*)playlow.Get_Click_Data())[1]=240;
-    main_menu.Add_Button(playlow, SDLK_l);
+                    Select_Car,NULL);
+    main_menu.Add_Button(select_car, SDLK_p);
 
-    Button playhigh("Play HighRes",241,268,
-                    "menu/button_play640_def.png","menu/button_play640_press.png",
-                    "menu/button_play640_over.png","menu/button_play640_dis.png",
-                    Run_Game,(int*)new int(2));
-    ((int*)playhigh.Get_Click_Data())[0]=800;
-    ((int*)playhigh.Get_Click_Data())[1]=600;
-    main_menu.Add_Button(playhigh, SDLK_h);
+//    Button playhigh("Play HighRes",241,268,
+//                    "menu/button_play640_def.png","menu/button_play640_press.png",
+//                    "menu/button_play640_over.png","menu/button_play640_dis.png",
+//                    Run_Game,(int*)new int(2));
+//    ((int*)playhigh.Get_Click_Data())[0]=800;
+//    ((int*)playhigh.Get_Click_Data())[1]=600;
+//    main_menu.Add_Button(playhigh, SDLK_h);
 
     Button runeditor("Run Editor",277,324,
                     "menu/button_editor_def.png","menu/button_editor_press.png",

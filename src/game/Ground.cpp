@@ -15,7 +15,7 @@ int Ground::sky = 1;
 /// //////////////////////////////////////////////////////////////////////// ///
 /// CONSTRUCTOR
 
-Ground::Ground(dWorldID world, dSpaceID space)
+Ground::Ground(dWorldID world, dSpaceID space, string & circuit)
 {
     int id = 1000;
     char fcadena[300];
@@ -72,7 +72,7 @@ Ground::Ground(dWorldID world, dSpaceID space)
     /// TRACK READING
     CFG_File config;
 
-    int result = CFG_OpenFile("terreno.cfg", &config );
+    int result = CFG_OpenFile(circuit.c_str(), &config );
 
     if ( result == CFG_ERROR || result == CFG_CRITICAL_ERROR )
     {

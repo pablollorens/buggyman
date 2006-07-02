@@ -32,7 +32,7 @@ class Ground {
 
   public:
 
-    Ground(dWorldID world, dSpaceID space);
+    Ground(dWorldID world, dSpaceID space, string & circuit);
 
     static void LoadTextures();
     static void Draw(int cell_x, int cell_y);

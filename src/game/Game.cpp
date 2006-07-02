@@ -27,7 +27,7 @@ SDLKey Game::Key_Action = SDLK_z;
 /// //////////////////////////////////////////////////////////////////////// ///
 /// RUN
 
-void Game::Run()
+void Game::Run(string & circuit, string & car)
 {
   /// Init ///
   dsPrint("\tInitializing Functions & Interfaces...\n");
@@ -39,9 +39,9 @@ void Game::Run()
   dsPrint("\tWorld OK\n");
   WorldConfig();
   dsPrint("\tWorld Config OK\n");
-  GroundInit();
+  GroundInit(circuit);
   dsPrint("\tGround OK\n");
-  CarInit("terreno.cfg","panda.car");
+  CarInit(circuit,car);
   dsPrint("\tCar OK\n");
 
   /// Simulacion ///
@@ -125,10 +125,10 @@ void Game::WorldDestroy()
   dWorldDestroy (Engine::World);
 }
 
-void Game::GroundInit()
+void Game::GroundInit(string & circuit)
 {
   // Generación del Suelo
-  engine.ground = new Ground(engine.World, engine.Space);
+  engine.ground = new Ground(engine.World, engine.Space, circuit);
 }
 
 void Game::GroundDestroy()

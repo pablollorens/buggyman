@@ -16,7 +16,7 @@ class Game {
 
   public:
 
-    static void Run();
+    static void Run(string & circuit, string & car);
 
     static void FunctionsInit();
     static void InterfacesInit();
@@ -24,7 +24,7 @@ class Game {
     static void WorldInit();
     static void WorldConfig();
     static void WorldDestroy();
-    static void GroundInit();
+    static void GroundInit(string & circuit);
     static void GroundDestroy();
     static void CarInit(string circuit, string car);
     static void CarDestroy();

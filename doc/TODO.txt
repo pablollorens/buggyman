@@ -11,7 +11,7 @@ VISUALES Y SONOROS
 	- (?) Numero de vueltas.
 
  - Texturizado de pistas en general
- - Musica y efectos de sonido
+ - efectos de sonido
  - Logo
 
 JUGABILIDAD
@@ -22,25 +22,12 @@ JUGABILIDAD
 
 OPTIMIZACION
 
-  - Cambio entre pantallas (todavia con errores)
-  - Reiniciar el juego cada vez q se salga de él
-	Idea:	al salir del juego, este sigue en ejecución (no se reinicia)
-		y el usuario desde el menu tiene la opción de:
-			- Continuar (lo q habría ahora mismo más o menos)
-			- Partida Nueva (invicar el reinicio de las variables del juego)
-  - Al finalizar el juego no se libera toda la memoria
-    (si se ejecuta varias veces, la memoria va en aumento)
+MENUS
+
+ - Texturizado de pistas en general
+ - La pantalla de conffiguracion debe leer el fichero game.cfg
+ - Pistas de aceleracion
+ - Refinar y limpiar el main.cpp
 
 
-EDITOR
-
-  - Minimapa
-  - Diseño
-  - Reglas de construccion
-  - Funcionalidad (cargar / guardar)
-
-  - Clase Menu. De esta clase, que provee metodos basicos para la gestion de botones
-    y eventos, heredan otras clases como editor, menu principal, menu de seleccion
-    de pistas, etc
-  - Clase Cursor, usada por Menu y demas.
-  - Modificar la clase editor y lo que hay en el main para que hereden de Menu.
+ 
