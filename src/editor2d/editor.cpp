@@ -191,7 +191,7 @@ Editor::Run()
                     if (event.key.keysym.sym == SDLK_LEFT)  world.Incr_Offset(-CELL_X,0,0);
                     if (event.key.keysym.sym == SDLK_RIGHT) world.Incr_Offset(CELL_X,0,0);
                     update_required=true;
-                    if (event.key.keysym.sym == SDLK_c)
+                    /*if (event.key.keysym.sym == SDLK_c)
                     {
                         if (!world.Check_Circuit(circuit_error))
                         {
@@ -214,7 +214,7 @@ Editor::Run()
                                 circuit_error.error_circuit = false;
                             }
                         }
-                    }
+                    }*/
                     if (event.key.keysym.sym == SDLK_m)
                     {
                         if(move_grid == 0)
@@ -480,7 +480,6 @@ Editor::Check_Circuit(void* data)
 {
     pair<Grid3D*, Error_Track_List * > par;
     par = *((pair<Grid3D*, Error_Track_List * >*)data);
-    //int a = (*par.first).Check_Circuit(*par.second);
 
     (*par.first).Deactivate_All_Tracks();
 
@@ -494,9 +493,20 @@ Editor::Check_Circuit(void* data)
             }
             if ((*par.second).start_error.size() != 1)
             {
-                for (list< Point3D<int> >::iterator itr = (*par.second).start_error.begin(), end = (*par.second).start_error.end(); itr != end ; ++itr)
+                if ((*par.second).start_error.size() == 0)
                 {
-                    (*par.first).Activate_Tracks_Error((*itr).x, (*itr).y, (*itr).z);
+                    for (int itr_x = 0; itr_x < (*par.first).Get_DimX(); itr_x++)
+                        for (int itr_y = 0; itr_y < (*par.first).Get_DimY(); itr_y++)
+                        {
+                            (*par.first).Activate_Tracks_Error(itr_x, itr_y, 0);
+                        }
+                }
+                else
+                {
+                    for (list< Point3D<int> >::iterator itr = (*par.second).start_error.begin(), end = (*par.second).start_error.end(); itr != end ; ++itr)
+                    {
+                        (*par.first).Activate_Tracks_Error((*itr).x, (*itr).y, (*itr).z);
+                    }
                 }
             }
             (*par.second).track_error.clear();
@@ -506,20 +516,4 @@ Editor::Check_Circuit(void* data)
     }
 
     return 0;
-
-
-//    if((*par.second).error_circuit)
-//    {
-//        for(list <Point3D<int> >::iterator itr = (*par.second).track_error.begin(),
-//            end = (*par.second).track_error.end(); itr != end; ++itr)
-//        {
-//            (*par.first).Activate_Tracks_Error(*itr);
-//            //(*par.first).Set_Offset(*par.second);
-//        }
-//    }
-//    circuit_error.track_error.clear();
-//    circuit_error.start_error.clear();
-//    circuit_error.error_circuit = false;
-//
-//    return a;
 }
