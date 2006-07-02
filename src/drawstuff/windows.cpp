@@ -4,7 +4,7 @@
 #include <SDL/SDL_Framerate.h>
 #include <ode/config.h>
 #include <GL/gl.h>
-#include <game\Game.h>
+#include <game/Game.h>
 
 #include "drawstuff/internal.h"
 

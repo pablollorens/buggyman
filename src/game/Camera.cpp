@@ -81,38 +81,49 @@ void Camera::SetView(int view)
     switch (view)
     {
         case 0:
+        {
           distance_view = 5.0;
           camera_height = 3.5;
           cam_speed = 0.1;
           interior = vista_micro = 0;
           break;
+        }
         case 1:
+        {
           distance_view = 10.0;
           camera_height = 7.0;
           cam_speed = 0.1;
           interior = vista_micro = 0;
           break;
+        }
         case 2:
+        {
           distance_view = 2.0;
           camera_height = 1.0;
           cam_speed = 0.1;
           interior = vista_micro = 0;
           break;
+        }
         case 3:
+        {
           distance_view = 16.0;
           camera_height = 15.0;
           cam_speed = 0.12;
           interior = vista_micro = 0;
           break;
+        }
         case 4:
+        {
           vista_micro = 0;
           interior = 1;
           break;
+        }
         case 5:
+        {
           interior = 0;
           vista_micro = 1;
           break;
+        }
     }
-
-    move = true;
+    //move = true;
 }
