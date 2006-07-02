@@ -74,7 +74,7 @@ int Select_Car(void* data)
                     Run_Game,(char*)"Buggy-Man.exe panda.car terreno.cfg\n");
     menu.Add_Button(play_panda, SDLK_4);
 
-    Button quit_game("Return",376,510,
+    Button quit_game("Return",376,514,
                     "menu/button_exit2_def.png","menu/button_exit2_press.png",
                     "menu/button_exit2_over.png","menu/button_exit2_dis.png",
                     Quit_Game,(bool*)menu.Get_Loop_Boolean());
@@ -134,25 +134,31 @@ int Run_Main_Menu(void* data)
     main_menu.Init_Menu();
     main_menu.Set_Background("menu/backg_main.png");
 
-    Button select_car( "Play",367,199,
+    Button select_car( "Play",365,188,
                     "menu/button_play_def.png","menu/button_play_press.png",
                     "menu/button_play_over.png","menu/button_play_dis.png",
                     Select_Car,NULL);
     main_menu.Add_Button(select_car, SDLK_p);
 
-    Button runeditor("Run Editor",284,266,
+    Button runeditor("Run Editor",282,259,
                     "menu/button_editor_def.png","menu/button_editor_press.png",
                     "menu/button_editor_over.png","menu/button_editor_dis.png",
                     Run_Editor,NULL);
     main_menu.Add_Button(runeditor, SDLK_e);
 
-    Button configuration("Configuration",273,335,
+    Button configuration("Configuration",271,322,
                     "menu/button_configuration_def.png","menu/button_configuration_press.png",
                     "menu/button_configuration_over.png","menu/button_configuration_dis.png",
                     Run_Configuration,NULL);
     main_menu.Add_Button(configuration, SDLK_c);
 
-    Button quit_game("Quit Game",369,406,
+    Button credits("Credits",335,394,
+                    "menu/button_credits_def.png","menu/button_credits_press.png",
+                    "menu/button_credits_over.png","menu/button_credits_dis.png",
+                    Run_Credits,NULL);
+    main_menu.Add_Button(credits, SDLK_k);
+
+    Button quit_game("Quit Game",367,462,
                     "menu/button_exit_def.png","menu/button_exit_press.png",
                     "menu/button_exit_over.png","menu/button_exit_dis.png",
                     Quit_Game,(bool*)main_menu.Get_Loop_Boolean());
@@ -183,4 +189,22 @@ int Run_Main_Menu(void* data)
 
     main_menu.Quit_Menu();
     return 0;
+}
+
+int Run_Credits(void* data)
+{
+    Menu menu("Credits",screen);
+    menu.Init_Menu();
+    menu.Set_Background("menu/backg_credits.jpg");
+
+    Button quit_game("Return",376,514,
+                    "menu/button_exit2_def.png","menu/button_exit2_press.png",
+                    "menu/button_exit2_over.png","menu/button_exit2_dis.png",
+                    Quit_Game,(bool*)menu.Get_Loop_Boolean());
+    menu.Add_Button(quit_game, SDLK_ESCAPE);
+
+    menu.Set_Video_Mode_CFG(VIDEO_x,VIDEO_y,VIDEO_bpp,SDL_HWSURFACE|SDL_DOUBLEBUF);
+    menu.Set_Video_Mode();
+
+    return menu.Run();
 }

@@ -34,6 +34,7 @@ int Select_Car(void* data);
 int Run_Configuration(void* data);
 int Run_Editor(void* data);
 int Run_Main_Menu(void* data);
+int Run_Credits(void* data);
 
 
 
