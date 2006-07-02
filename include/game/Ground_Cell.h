@@ -20,6 +20,7 @@ class Ground_Cell {
     int id;
     int i_checkpoint;
     int start;
+    int speed_factor;
 
   private:
 

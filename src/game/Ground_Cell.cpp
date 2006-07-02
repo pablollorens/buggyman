@@ -8,5 +8,6 @@ Ground_Cell::Ground_Cell()
     start = 0;
     road_model = NULL;
     road_geom = NULL;
+    speed_factor = 1;
     geomID = dCreateBox(0,CELL_TAM,CELL_TAM,0.1);
 }

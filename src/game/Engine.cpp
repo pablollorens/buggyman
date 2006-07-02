@@ -70,8 +70,12 @@ void Engine::SimLoop (int pause)
             }
         }
         if (Ground::Checkpoints_Total == Car::Checkpoints &&
-            Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].name == "start")
+            Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].start)
             setAcabado(1);
+
+        if (Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].speed_factor > 1 )
+            Car::max_speed *= Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].speed_factor;
+        else if ( Car::max_speed > MAX_SPEED ) Car::SpeedDecrease();
 
         dSpaceCollide (Space,0,&nearCallback);
 

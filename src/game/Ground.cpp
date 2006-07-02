@@ -91,6 +91,7 @@ Ground::Ground(dWorldID world, dSpaceID space, string & circuit)
         string s_model = CFG_ReadText("model",(*track_map.begin()).first.c_str());
         if ( CFG_ReadBool("i_checkpoint",0) ) Cell_Matrix[GRID_X-1-i][j].i_checkpoint = ++Checkpoints_Total;
         Cell_Matrix[GRID_X-1-i][j].start = CFG_ReadBool("start",0);
+        Cell_Matrix[GRID_X-1-i][j].speed_factor = CFG_ReadInt("speedfactor",1);
 
         Cell_Matrix[GRID_X-1-i][j].id = track_map[s_model]->id;
         Cell_Matrix[GRID_X-1-i][j].road_model = track_map[s_model]->roadmodel;
