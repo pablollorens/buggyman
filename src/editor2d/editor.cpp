@@ -195,8 +195,6 @@ Editor::Run()
                     {
                         if (!world.Check_Circuit(circuit_error))
                         {
-                            //fprintf(stderr,"CIRCUITO ERRONEO. CASILLA(%d,%d.%d)", circuit_error.x,circuit_error.y,circuit_error.z);
-                            //world.Activate_Tracks_Error(circuit_error.x,circuit_error.y,circuit_error.z);
                             if (circuit_error.error_circuit)
                             {
                                 world.Deactivate_All_Tracks();
@@ -482,16 +480,46 @@ Editor::Check_Circuit(void* data)
 {
     pair<Grid3D*, Error_Track_List * > par;
     par = *((pair<Grid3D*, Error_Track_List * >*)data);
-    int a = (*par.first).Check_Circuit(*par.second);
+    //int a = (*par.first).Check_Circuit(*par.second);
 
-    if((*par.second).error_circuit)
+    (*par.first).Deactivate_All_Tracks();
+
+    if (!(*par.first).Check_Circuit(*par.second))
     {
-        for(list <Point3D<int> >::iterator itr = (*par.second).track_error.begin(),
-            end = (*par.second).track_error.end(); itr != end; ++itr)
+        if ((*par.second).error_circuit)
         {
-            (*par.first).Activate_Tracks_Error(*itr);
-            //(*par.first).Set_Offset(*par.second);
+            for (list< Point3D<int> >::iterator itr = (*par.second).track_error.begin(), end = (*par.second).track_error.end(); itr != end ; ++itr)
+            {
+                (*par.first).Activate_Tracks_Error((*itr).x, (*itr).y, (*itr).z);
+            }
+            if ((*par.second).start_error.size() != 1)
+            {
+                for (list< Point3D<int> >::iterator itr = (*par.second).start_error.begin(), end = (*par.second).start_error.end(); itr != end ; ++itr)
+                {
+                    (*par.first).Activate_Tracks_Error((*itr).x, (*itr).y, (*itr).z);
+                }
+            }
+            (*par.second).track_error.clear();
+            (*par.second).start_error.clear();
+            (*par.second).error_circuit = false;
         }
     }
-    return a;
+
+    return 0;
+
+
+//    if((*par.second).error_circuit)
+//    {
+//        for(list <Point3D<int> >::iterator itr = (*par.second).track_error.begin(),
+//            end = (*par.second).track_error.end(); itr != end; ++itr)
+//        {
+//            (*par.first).Activate_Tracks_Error(*itr);
+//            //(*par.first).Set_Offset(*par.second);
+//        }
+//    }
+//    circuit_error.track_error.clear();
+//    circuit_error.start_error.clear();
+//    circuit_error.error_circuit = false;
+//
+//    return a;
 }
