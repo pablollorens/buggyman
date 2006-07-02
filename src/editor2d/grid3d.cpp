@@ -289,6 +289,7 @@ Grid3D::Set_Track(Uint16 x, Uint16 y, Uint16 z, Track& some_track)
                 grid[p.x+i][p.y+j][p.z+k] = newtrack;
             }
 
+//    Deactivate_All_Tracks();
     Draw(p,(*newtrack), true);
     Update_Minimap();
     return true;
@@ -343,6 +344,7 @@ Grid3D::Delete_Track(Uint16 x, Uint16 y, Uint16 z)
     Point3D<int> p0 = *Get_Top_Left_Syster(p.x,p.y);
     Clear_Cell_Sisters(p.x,p.y,p.z,aux);
 
+//    Deactivate_All_Tracks();
     Draw(p0,(*aux), false);
     Update_Minimap();
     delete aux;
@@ -385,6 +387,7 @@ Grid3D::Delete_Track(Uint16 x, Uint16 y)
 int
 Grid3D::Activate_Tracks_Under(Uint16 x,Uint16 y,Uint16 z, Track* some_track)
 {
+    Deactivate_All_Tracks();
     if(dim < 1) return false;
     if(!(&some_track)) return false;
 
@@ -398,7 +401,6 @@ Grid3D::Activate_Tracks_Under(Uint16 x,Uint16 y,Uint16 z, Track* some_track)
     if(p.y + ny -1 >= dim.y) return false;
     if(p.z + nz -1 >= dim.z) return false;
 
-    Deactivate_All_Tracks();
 
     Track* aux = NULL;
     for(int i=0; i<nx; i++)

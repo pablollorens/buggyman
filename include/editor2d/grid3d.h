@@ -99,6 +99,8 @@ class Grid3D
         inline void Decr_Offset_Z() { Point3D<int> aux(0,0,1); Set_Offset(offset - aux);}
         inline void Decr_Offset(int x, int y, int z) { Point3D<int> aux(x,y,z); Set_Offset(offset - aux);}
         inline Point3D<int> & Get_Offset() { return offset; }
+        inline void Set_Center_Offset(){ Set_Offset((window_surface->w - window.w)/2,
+                                                    (window_surface->h - window.h)/2,offset.z); }
 
         //Render 2D methods
         void Draw(SDL_Surface* screen);

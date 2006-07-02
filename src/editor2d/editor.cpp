@@ -102,6 +102,7 @@ Editor::Run()
         EDITOR_CIRCUIT_MINIMAP_WINDOW_W, EDITOR_CIRCUIT_MINIMAP_WINDOW_H);
 
     world.Load("terreno.cfg",tracks_map);
+    world.Set_Center_Offset();
 
 
 
@@ -132,23 +133,23 @@ Editor::Run()
                     NULL,NULL,BUTTON_STATUS_DISABLED);
     Add_Button(button_save_as_circuit, SDLK_a);
 
-    Button button_quit_editor("Quit Editor",4,383,
-                    "menu/button_exit2_def.png","menu/button_exit2_press.png",
-                    "menu/button_exit2_over.png","menu/button_exit2_dis.png",
-                    Quit_Editor,(bool*)&done);
-    Add_Button(button_quit_editor, SDLK_ESCAPE);
-
-
     pair<Grid3D*, Error_Track_List * > par;
     par.first = &world;
     par.second = &circuit_error;
     void* data = (pair<Grid3D*, Error_Track_List * >*)&par;
 
-    Button button_check_circuit("Check Circuit",4,436,
+    Button button_check_circuit("Check Circuit",4,383,
                     "menu/button_check_def.png","menu/button_check_press.png",
                     "menu/button_check_over.png","menu/button_check_dis.png",
                     Check_Circuit,data);
     Add_Button(button_check_circuit, SDLK_c);
+
+    Button button_quit_editor("Quit Editor",4,436,
+                    "menu/button_exit2_def.png","menu/button_exit2_press.png",
+                    "menu/button_exit2_over.png","menu/button_exit2_dis.png",
+                    Quit_Editor,(bool*)&done);
+    Add_Button(button_quit_editor, SDLK_ESCAPE);
+
 
     //bool error_circuit = false;
 
@@ -183,8 +184,7 @@ Editor::Run()
                     Button * button = keys[(int)event.key.keysym.sym];
                     if(button){ (*button).Click(); /*done=true;*/}
 
-                    if (event.key.keysym.sym == SDLK_ESCAPE)
-                        done = true;
+                    //if (event.key.keysym.sym == SDLK_ESCAPE) done = true;
                     if (event.key.keysym.sym == SDLK_LSHIFT) mode_displacement_on = true;
                     if (event.key.keysym.sym == SDLK_UP)    world.Incr_Offset(0,-CELL_Y,0);
                     if (event.key.keysym.sym == SDLK_DOWN)  world.Incr_Offset(0,CELL_Y,0);
