@@ -26,6 +26,14 @@ extern int world_frame;
 #define GRID_Background "textures/land.jpg"
 //Global variable of SDL_Surface* collecion
 #include <img_collection.h>
+
+struct Error_Track_List
+{
+    bool error_circuit;
+    list <Point3D<int> > track_error;
+    list <Point3D<int> > start_error;
+};
+
 extern IMG_Collection image_collection;
 using namespace std;
 
@@ -113,7 +121,7 @@ class Grid3D
         void Debug_Print_Grid(char* fich, int sufix, char* ext, char* remmark);
 
         //Circuit Check
-        bool Check_Circuit(Point3D<int> &circuit_error);
+        bool Check_Circuit(Error_Track_List &circuit_error);
         bool Clear_Circuit();
 
         int Activate_Tracks_Error(Uint16 x,Uint16 y,Uint16 z);

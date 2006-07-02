@@ -770,62 +770,94 @@ Grid3D::Debug_Print_Grid(char* fich, int sufix, char* ext, char* remmark)
 // //////////////////////////////////////////////////////////////////////// //
 
 bool
-Grid3D::Check_Circuit(Point3D<int> & circuit_error)
+Grid3D::Check_Circuit(Error_Track_List & circuit_error)
 {
     bool correct = true;
     int num_starts = 0;
     int x_grid = 0;
     int y_grid = 0;
 
-    for (x_grid = 0; x_grid < Get_DimX() && correct == true; x_grid++)
+    for (x_grid = 0; x_grid < Get_DimX() /*&& correct == true*/; x_grid++)
     //while (x_grid < Get_DimX() && correct == true)
     {
-        for (y_grid = 0; y_grid < Get_DimY() && correct == true; y_grid++)
+        for (y_grid = 0; y_grid < Get_DimY() /*&& correct == true*/; y_grid++)
         //while (y_grid < Get_DimY() && correct == true)
         {
-            //fprintf(stderr,"<%d,%d> --- (%d,%d,%d,%d)\n", x_grid,y_grid,Get_Connector(x_grid,y_grid,NORTH),Get_Connector(x_grid,y_grid,WEST),Get_Connector(x_grid,y_grid,SOUTH),Get_Connector(x_grid,y_grid,EAST));
+            fprintf(stderr,"<%d,%d> --- (%d,%d,%d,%d)\n", x_grid,y_grid,Get_Connector(x_grid,y_grid,NORTH),Get_Connector(x_grid,y_grid,WEST),Get_Connector(x_grid,y_grid,SOUTH),Get_Connector(x_grid,y_grid,EAST));
             //fprintf(stderr,"<%d,%d> --- (%d,%d,%d,%d)\n", x_grid,y_grid+1,Get_Connector(x_grid,y_grid+1,NORTH),Get_Connector(x_grid,y_grid+1,WEST),Get_Connector(x_grid,y_grid+1,SOUTH),Get_Connector(x_grid,y_grid+1,EAST));
+            Point3D<int> aux(x_grid, y_grid,0);
 
             if (y_grid > 0)
                 if(Check_Connector(Get_Connector(x_grid,y_grid,NORTH),Get_Connector(x_grid,y_grid-1,SOUTH)) == false)
                 {
+                    circuit_error.track_error.push_back(aux);
                     correct=false;
-                    break;
+                    //break;
                 }
 
             if (x_grid < Get_DimX()-1)
                 if(Check_Connector(Get_Connector(x_grid,y_grid,EAST),Get_Connector(x_grid+1,y_grid,WEST)) == false)
                 {
+                    circuit_error.track_error.push_back(aux);
                     correct=false;
-                    break;
+                    //break;
                 }
 
             if (y_grid < Get_DimY()-1)
                 if(Check_Connector(Get_Connector(x_grid,y_grid,SOUTH),Get_Connector(x_grid,y_grid+1,NORTH)) == false)
                 {
+                    circuit_error.track_error.push_back(aux);
                     correct=false;
-                    break;
+                    //break;
                 }
 
             if (x_grid > 0)
                 if(Check_Connector(Get_Connector(x_grid,y_grid,WEST),Get_Connector(x_grid-1,y_grid,EAST)) == false)
                 {
+                    circuit_error.track_error.push_back(aux);
                     correct=false;
-                    break;
+                   // break;
                 }
 
-            if ((*Get_Track(x_grid,y_grid,0)).Get_Start()) num_starts++;
+            if ((*Get_Track(x_grid,y_grid,0)).Get_Start())
+            {
+                Point3D<int> aux_start = *Get_Top_Left_Syster(x_grid, y_grid);
+                if (circuit_error.start_error.size() == 0)
+                    circuit_error.start_error.push_back(aux);
+
+                for (list< Point3D<int> >::iterator itr = circuit_error.start_error.begin(), end = circuit_error.start_error.end(); itr != end ; ++itr)
+                {
+                    if (!(aux_start.x == (*itr).x && aux_start.y == (*itr).y && aux_start.z == (*itr).z))
+                    {
+                        circuit_error.start_error.push_back(aux);
+                        break;
+                    }
+                }
+
+                //num_starts++;
+            }
         }
-        if (!correct) break;
+        //if (!correct) break;
+    }
+
+    //circuit_error.start_error.unique();
+
+    //int a = circuit_error.start_error.size();
+
+    if(circuit_error.start_error.size() != 1)
+    {
+        correct = false;
     }
 
     if (!correct)
     {
-        circuit_error.x = x_grid;
-        circuit_error.y = y_grid;
+        circuit_error.error_circuit = true;
+        //circuit_error.x = x_grid;
+        //circuit_error.y = y_grid;
     }
 
-     if (num_starts != 1) correct = false;
+     //if (num_starts != 1) correct = false;
+     fprintf(stderr,"Salidas: %d\n", num_starts);
 
     return correct;
 }
@@ -881,8 +913,6 @@ Grid3D::Activate_Tracks_Error(Uint16 x,Uint16 y,Uint16 z)
     if(dim < 1) return false;
 
     Point3D<int> p(x,y,z);
-
-    Deactivate_All_Tracks();
 
     Track* aux = NULL;
     aux = grid[p.x][p.y][p.z];

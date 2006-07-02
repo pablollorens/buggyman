@@ -64,7 +64,7 @@ Editor::Run()
 //    SDL_WM_SetIcon(IMG_Load("textures/icon.gif"), NULL);
 
     //point3d para detectar error
-    Point3D<int> circuit_error;
+    Error_Track_List circuit_error;
 
     // ///////////////////////////////////////////////////////////////////////
     printf("Loading background and cursors... \n");
@@ -139,10 +139,10 @@ Editor::Run()
     Add_Button(button_quit_editor, SDLK_ESCAPE);
 
 
-    pair<Grid3D*, Point3D<int> * > par;
+    pair<Grid3D*, Error_Track_List * > par;
     par.first = &world;
     par.second = &circuit_error;
-    void* data = (pair<Grid3D*, Point3D<int> * >*)&par;
+    void* data = (pair<Grid3D*, Error_Track_List * >*)&par;
 
     Button button_check_circuit("Check Circuit",4,436,
                     "menu/button_check_def.png","menu/button_check_press.png",
@@ -195,8 +195,26 @@ Editor::Run()
                     {
                         if (!world.Check_Circuit(circuit_error))
                         {
-                            fprintf(stderr,"CIRCUITO ERRONEO. CASILLA(%d,%d.%d)", circuit_error.x,circuit_error.y,circuit_error.z);
-                            world.Activate_Tracks_Error(circuit_error.x,circuit_error.y,circuit_error.z);
+                            //fprintf(stderr,"CIRCUITO ERRONEO. CASILLA(%d,%d.%d)", circuit_error.x,circuit_error.y,circuit_error.z);
+                            //world.Activate_Tracks_Error(circuit_error.x,circuit_error.y,circuit_error.z);
+                            if (circuit_error.error_circuit)
+                            {
+                                world.Deactivate_All_Tracks();
+                                for (list< Point3D<int> >::iterator itr = circuit_error.track_error.begin(), end = circuit_error.track_error.end(); itr != end ; ++itr)
+                                {
+                                    world.Activate_Tracks_Error((*itr).x, (*itr).y, (*itr).z);
+                                }
+                                if (circuit_error.start_error.size() != 1)
+                                {
+                                    for (list< Point3D<int> >::iterator itr = circuit_error.start_error.begin(), end = circuit_error.start_error.end(); itr != end ; ++itr)
+                                    {
+                                        world.Activate_Tracks_Error((*itr).x, (*itr).y, (*itr).z);
+                                    }
+                                }
+                                circuit_error.track_error.clear();
+                                circuit_error.start_error.clear();
+                                circuit_error.error_circuit = false;
+                            }
                         }
                     }
                     if (event.key.keysym.sym == SDLK_m)
@@ -462,8 +480,8 @@ Editor::Quit_Editor(void* data)
 int
 Editor::Check_Circuit(void* data)
 {
-    pair<Grid3D*, Point3D<int> * > par;
-    par = *((pair<Grid3D*, Point3D<int> * >*)data);
+    pair<Grid3D*, Error_Track_List * > par;
+    par = *((pair<Grid3D*, Error_Track_List * >*)data);
     int a = (*par.first).Check_Circuit(*par.second);
     return a;
 }
