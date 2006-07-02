@@ -73,9 +73,11 @@ void Engine::SimLoop (int pause)
             Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].start)
             setAcabado(1);
 
-        if ((Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].speed_factor > 1) && (Car::max_speed <= 100))
+        if ((Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].speed_factor > 1) && (Car::max_speed <= 50))
             Car::max_speed = Ground::Cell_Matrix[car_Cell_X][car_Cell_Y].speed_factor;
-        if ( Car::max_speed > MAX_SPEED ) Car::max_speed-=3;
+        if ( Car::max_speed > MAX_SPEED ) Car::max_speed--;
+
+        dsPrint("%d \n",Car::max_speed);
 
 
         dSpaceCollide (Space,0,&nearCallback);
