@@ -24,6 +24,7 @@ Track::Track(
     num_connectors = 0;
     start = 0;
     i_checkpoint = 0;
+    speedfactor = 1;
 }
 
 Track::Track(
@@ -51,6 +52,7 @@ Track::Track(
     num_connectors = 0;
     start = 0;
     i_checkpoint = 0;
+    speedfactor = 1;
 }
 
 Track::Track(
@@ -78,6 +80,7 @@ Track::Track(
     num_connectors = 0;
     start = 0;
     i_checkpoint = 0;
+    speedfactor = 1;
 }
 
 Track::Track(string & file)
@@ -102,6 +105,7 @@ Track::Track(string & file)
         num_connectors = CFG_ReadInt("connectors", 2);
         start = CFG_ReadBool("start", false);
         i_checkpoint = CFG_ReadBool("i_checkpoint", false);
+        speedfactor  = CFG_ReadInt("speedfactor", 1);
 
         char fcadena[300];
         string ruta = getcwd(fcadena,300);
@@ -123,6 +127,7 @@ Track::Track(string & file)
         Set_Icon(TRACK_icon_void);      //en el directorio del ejecutable!!
         start = 0;
         i_checkpoint = 0;
+        speedfactor = 1;
     }
 
     Cell3D aux(this);
@@ -155,15 +160,15 @@ Track::Track(string & file)
         cells[x][y][z].Set_East(CFG_ReadText("east","NONE"));
         cells[x][y][z].Set_Track(this);
 
-        fprintf(stderr,"  celda[%d][%d][%d]\n",x,y,z);
-        if(cells[x][y][z].Get_North())
-            fprintf(stderr,"  north = %d\n",cells[x][y][z].Get_North());
-        if(cells[x][y][z].Get_West())
-            fprintf(stderr,"  west = %d\n",cells[x][y][z].Get_West());
-        if(cells[x][y][z].Get_South())
-            fprintf(stderr,"  south = %d\n",cells[x][y][z].Get_South());
-        if(cells[x][y][z].Get_East())
-            fprintf(stderr,"  east = %d\n",cells[x][y][z].Get_East());
+//        fprintf(stderr,"  celda[%d][%d][%d]\n",x,y,z);
+//        if(cells[x][y][z].Get_North())
+//            fprintf(stderr,"  north = %d\n",cells[x][y][z].Get_North());
+//        if(cells[x][y][z].Get_West())
+//            fprintf(stderr,"  west = %d\n",cells[x][y][z].Get_West());
+//        if(cells[x][y][z].Get_South())
+//            fprintf(stderr,"  south = %d\n",cells[x][y][z].Get_South());
+//        if(cells[x][y][z].Get_East())
+//            fprintf(stderr,"  east = %d\n",cells[x][y][z].Get_East());
     }
     CFG_CloseFile(0);
 }
@@ -183,6 +188,7 @@ Track::~Track()
     rotation = 0;
     start = 0;
     i_checkpoint = 0;
+    speedfactor = 1;
 }
 
 Track &
@@ -211,6 +217,7 @@ Track::operator=(const Track & some)
     rotation = some.rotation;
     start = some.start;
     i_checkpoint = some.i_checkpoint;
+    speedfactor = some.speedfactor;
 
     return(*this);
 }
@@ -228,7 +235,8 @@ Track::operator==(const Track & some)
         icon == some.icon &&
         icon3D == some.icon3D &&
         start == some.start &&
-        i_checkpoint == some.i_checkpoint);
+        i_checkpoint == some.i_checkpoint &&
+        speedfactor == some.speedfactor);
     return ok;
 }
 

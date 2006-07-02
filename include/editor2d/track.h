@@ -95,6 +95,7 @@ class Track
         inline bool Get_Start() {return start;}
         inline void Set_I_CheckPoint(bool value) {i_checkpoint = value;}
         inline bool Get_I_CheckPoint() {return i_checkpoint;}
+        inline int Get_SpeedFactor() {return speedfactor;}
 
         void Clear();
         bool Is_Clear();
@@ -117,6 +118,7 @@ class Track
         Rect2D window;
         string description;
         bool start;
+        int speedfactor;
         bool i_checkpoint;
 };
 

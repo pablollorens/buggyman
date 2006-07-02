@@ -663,6 +663,7 @@ Grid3D::Save(char* path)
                     o<<"rotation = "<<(*aux).Get_Rotation() %360<<"\n";
                     if((*aux).Get_Start()) o<<"start = true\n";
                     if((*aux).Get_I_CheckPoint()) o<<"i_checkpoint = true\n";
+                    if((*aux).Get_SpeedFactor() >1) o<<"speedfactor = "<<(*aux).Get_SpeedFactor()<<"\n";
                     o<<endl;
                     painted[aux]=aux;
                 }
