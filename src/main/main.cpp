@@ -114,8 +114,8 @@ int main ( int argc, char** argv )
     if(argc == 2 && !strcmp(argv[1],"game"))
     {
         void* data = (int*)new int(2);
-        ((int*)data)[0]=320;
-        ((int*)data)[1]=240;
+        ((int*)data)[0]=1024;
+        ((int*)data)[1]=768;
         return(Run_Game(data));
     }
 
