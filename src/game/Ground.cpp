@@ -76,7 +76,7 @@ Ground::Ground(dWorldID world, dSpaceID space, string & circuit)
 
     if ( result == CFG_ERROR || result == CFG_CRITICAL_ERROR )
     {
-        dsPrint("Unable to load file: %s\n", SDL_GetError());
+        dsError("Unable to load file: %s\n", SDL_GetError());
         exit(1);
     }
     for ( CFG_StartGroupIteration(); !CFG_IsLastGroup(); CFG_SelectNextGroup() )

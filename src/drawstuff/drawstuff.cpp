@@ -802,7 +802,7 @@ extern "C" void dsDrawCappedCylinder (const float pos[3], const float R[12], flo
 }
 
 
-void dsDrawLine (const float pos1[3], const float pos2[3])
+extern "C" void dsDrawLine (const float pos1[3], const float pos2[3])
 {
   bool change = glIsEnabled(GL_LIGHTING);
   int old_shade_model;
@@ -833,9 +833,16 @@ void dsSetCappedCylinderQuality (int n)
   capped_cylinder_quality = n;
 }
 
-void drawCap(float l, float r)
+static int cap_quality = 10;
+
+void dsSetCapQuality (int n)
 {
-  const int n = capped_cylinder_quality*4;
+    cap_quality = n;
+}
+
+extern "C" void drawCap(float l, float r)
+{
+  const int n = cap_quality*4;
 
   l *= 0.5;
   float a = float(M_PI*2.0)/float(n);
@@ -971,12 +978,9 @@ GLuint dsLoadGLTexture( const char *filename )						// Load Bitmaps And Convert 
 
 	pImage = dsLoadBMP( filename );									// Loads The Bitmap Specified By filename
 
-	// Load The Bitmap, Check For Errors, If Bitmap's Not Found Quit
 	if ( pImage != NULL && pImage->data != NULL )					// If Texture Image Exists
 	{
 		glGenTextures(1, &texture);									// Create The Texture
-
-		// Typical Texture Generation Using Data From The Bitmap
 		glBindTexture(GL_TEXTURE_2D, texture);
 		glTexImage2D(GL_TEXTURE_2D, 0, 3, pImage->sizeX, pImage->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, pImage->data);
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
@@ -998,17 +1002,13 @@ GLuint dsLoadGLMipMap( const char *filename )						// Load Bitmaps And Convert T
 
 	pImage = dsLoadBMP( filename );									// Loads The Bitmap Specified By filename
 
-	// Load The Bitmap, Check For Errors, If Bitmap's Not Found Quit
 	if ( pImage != NULL && pImage->data != NULL )					// If Texture Image Exists
 	{
 		glGenTextures(1, &texture);									// Create The Texture
-
-		// Typical Texture Generation Using Data From The Bitmap
 		glBindTexture(GL_TEXTURE_2D, texture);
-		//glTexImage2D(GL_TEXTURE_2D, 0, 3, pImage->sizeX, pImage->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, pImage->data);
 		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, pImage->sizeX, pImage->sizeY, GL_RGB, GL_UNSIGNED_BYTE, pImage->data);
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR_MIPMAP_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR_MIPMAP_LINEAR);
 
 		free(pImage->data);											// Free The Texture Image Memory
 		free(pImage);												// Free The Image Structure

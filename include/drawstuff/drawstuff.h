@@ -178,6 +178,7 @@ void dsDrawCone(const float pos[3], const float R[12], float length, float radiu
 void dsDrawCylinder2 (const float pos[3], const float R[12], float length, float radius,float radius2);
 void dsDrawCappedCylinder (const float pos[3], const float R[12], float length, float radius);
 void dsDrawLine (const float pos1[3], const float pos2[3]);
+void drawCap (float l, float r);
 
 /* Set the drawn quality of the objects. Higher numbers are higher quality,
  * but slower to draw. This must be set before the first objects are drawn to
