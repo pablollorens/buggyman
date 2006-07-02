@@ -19,6 +19,13 @@ float Camera::cam_speed = 0.1;
 
 void Camera::Update()
 {
+//    if (!AutoCamera())
+//    {
+//        //recuperar el movimiento antiguo y aplicarlo
+//        //el raton actualiza: view_hpr y view_xyz
+//        return;
+//    }
+
     //Camera Stuff
     const dReal * pos = dBodyGetPosition(Car::Chassis_BodyID);
     dVector3 pos_Camara;
@@ -34,7 +41,8 @@ void Camera::Update()
          for(int j=0;j<3;j++) seguir[j]=pos[j];
     }
 
-    if (move){
+    if (move)
+    {
         for(int p = 0 ; p < 2; p++)
         {
             if (seguir[p] < 0)
@@ -70,7 +78,6 @@ void Camera::Update()
     /// RESTO DE CAMARAS
     else
         dsSetCameraLookAt(pos[1], pos[2],pos[0], pos_Camara[0],pos_Camara[1],pos_Camara[2],0,0,1);
-
 }
 
 /// //////////////////////////////////////////////////////////////////////// ///

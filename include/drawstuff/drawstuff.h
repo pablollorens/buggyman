@@ -59,7 +59,6 @@ extern "C" {
 #include <drawstuff/version.h>
 
 #include <defines/utils.h>
-
 												    // Our Local Copy Of The Header File
 typedef struct CarInfo {
   // car name and file
@@ -137,6 +136,7 @@ int getCronometro();
 void resetTempo();
 float getRecord();
 void resetRecord();
+bool AutoCamera();
 
 /* set and get the camera position. xyz is the cameria position (x,y,z).
  * hpr contains heading, pitch and roll numbers in degrees. heading=0

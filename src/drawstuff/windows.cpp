@@ -21,6 +21,8 @@ int jugando = 0;
 Uint32 tempo = 0;
 float record = 0;
 
+bool autoCamera = true;
+
 bool done = false;          // variable global, finaliza el MAIN LOOP
 
 GLuint glHUDTexture;
@@ -185,6 +187,8 @@ extern "C" void resetTempo(){tempo = SDL_GetTicks(); }
 extern "C" float getRecord(){ return( record ); }
 extern "C" void resetRecord(){ record = 0; }
 
+extern "C" bool AutoCamera(){ return autoCamera; }
+
 /// //////////////////////////////////////////////////////////////////////// ///
 /// EVENTS MANAGEMENT
 
@@ -317,6 +321,8 @@ void EventsMouse(SDL_Event event)
   /// DOWN
   if (event.button.type == 	SDL_MOUSEBUTTONDOWN)
   {
+      autoCamera = false;
+
     switch (event.button.button)
     {
         case SDL_BUTTON_LEFT:
@@ -341,6 +347,8 @@ void EventsMouse(SDL_Event event)
   /// UP
   if (event.button.type == SDL_MOUSEBUTTONUP)
   {
+      autoCamera = true;
+
     switch (event.button.button)
     {
         case SDL_BUTTON_LEFT:
