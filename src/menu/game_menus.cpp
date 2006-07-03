@@ -80,7 +80,7 @@ int Select_Car(void* data)
                     Quit_Game,(bool*)menu.Get_Loop_Boolean());
     menu.Add_Button(quit_game, SDLK_ESCAPE);
 
-    menu.Set_Video_Mode_CFG(VIDEO_x,VIDEO_y,VIDEO_bpp,SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN);
+    menu.Set_Video_Mode_CFG(VIDEO_x,VIDEO_y,VIDEO_bpp,SDL_HWSURFACE|SDL_DOUBLEBUF/*|SDL_FULLSCREEN*/);
     menu.Set_Video_Mode();
 
     return menu.Run();
@@ -91,7 +91,7 @@ int Run_Editor(void* data)
     dsPrint("\t### RUN EDITOR ###\n");
 
     Editor ed("Editor",screen);
-    ed.Set_Video_Mode_CFG(VIDEO_x,VIDEO_y,VIDEO_bpp,SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN);
+    ed.Set_Video_Mode_CFG(VIDEO_x,VIDEO_y,VIDEO_bpp,SDL_HWSURFACE|SDL_DOUBLEBUF/*|SDL_FULLSCREEN*/);
     ed.Set_Video_Mode();
 
     vector< string > songs = Get_MusicFiles("music/editor");
@@ -119,7 +119,7 @@ int Run_Configuration(void* data)
     dsPrint("\t### RUN Configuration ###\n");
 
     Configuration conf("Configuration",screen);
-    conf.Set_Video_Mode_CFG(VIDEO_x,VIDEO_y,VIDEO_bpp,SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN);
+    conf.Set_Video_Mode_CFG(VIDEO_x,VIDEO_y,VIDEO_bpp,SDL_HWSURFACE|SDL_DOUBLEBUF/*|SDL_FULLSCREEN*/);
     conf.Set_Video_Mode();
     conf.Run();
 
@@ -164,7 +164,7 @@ int Run_Main_Menu(void* data)
                     Quit_Game,(bool*)main_menu.Get_Loop_Boolean());
     main_menu.Add_Button(quit_game, SDLK_ESCAPE);
 
-    main_menu.Set_Video_Mode_CFG(800,600,32,SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN);
+    main_menu.Set_Video_Mode_CFG(800,600,32,SDL_HWSURFACE|SDL_DOUBLEBUF/*|SDL_FULLSCREEN*/);
     main_menu.Set_Video_Mode();
 
     // Musica del juego
@@ -203,7 +203,7 @@ int Run_Credits(void* data)
                     Quit_Game,(bool*)menu.Get_Loop_Boolean());
     menu.Add_Button(quit_game, SDLK_ESCAPE);
 
-    menu.Set_Video_Mode_CFG(VIDEO_x,VIDEO_y,VIDEO_bpp,SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN);
+    menu.Set_Video_Mode_CFG(VIDEO_x,VIDEO_y,VIDEO_bpp,SDL_HWSURFACE|SDL_DOUBLEBUF/*|SDL_FULLSCREEN*/);
     menu.Set_Video_Mode();
 
     vector< string > songs = Get_MusicFiles("music/credits");
