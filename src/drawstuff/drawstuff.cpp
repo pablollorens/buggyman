@@ -532,12 +532,10 @@ void dsStartGraphics (int width, int height, dsFunctions *fn)
 
     int result = CFG_OpenFile(GAME_CONFIG_NAME, &config );
 
-    if ( result == CFG_ERROR || result == CFG_CRITICAL_ERROR )
-    {
-        dsPrint("Unable to load file: %s\n", SDL_GetError());
-        exit(1);
-    }
-    DayOrNight = CFG_ReadInt("hour_to_game",HOUR_RANDOM);
+    if ( !(result == CFG_ERROR || result == CFG_CRITICAL_ERROR) &&
+          ( CFG_OK == CFG_SelectGroup("configuration", 0) ))
+        DayOrNight = CFG_ReadInt("hour_to_game",HOUR_RANDOM);
+    else DayOrNight = HOUR_RANDOM;
 
     if ( DayOrNight == HOUR_RANDOM )
     {

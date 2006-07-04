@@ -109,14 +109,17 @@ Ground::Ground(dWorldID world, dSpaceID space, string & circuit)
     /// Leemos del fichero de configuración la información del cielo y el radio de dibujado.
     result = CFG_OpenFile(GAME_CONFIG_NAME, &config );
 
-    if ( result == CFG_ERROR || result == CFG_CRITICAL_ERROR )
+    if ( !(result == CFG_ERROR || result == CFG_CRITICAL_ERROR) &&
+          ( CFG_OK == CFG_SelectGroup("configuration", 0) ))
     {
-        dsPrint("Unable to load file: %s\n", SDL_GetError());
-        exit(1);
+        R = CFG_ReadInt("draw_ratio",DRAW_RATIO);
+        sky = CFG_ReadInt("show_sky",DRAW_SKY);
     }
-
-    R = CFG_ReadInt("draw_ratio",DRAW_RATIO);
-    sky = CFG_ReadInt("show_sky",1);
+    else
+    {
+        R = DRAW_RATIO;
+        sky = DRAW_SKY;
+    }
 }
 
 void Ground::LoadTextures()
