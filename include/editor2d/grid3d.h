@@ -13,8 +13,8 @@ extern int world_frame;
 #include <list>
 #include"utils.h"
 #include"track.h"
-#include"grid3d.h"
 #include"point3d.h"
+
 
 #define methods
 
@@ -123,9 +123,9 @@ class Grid3D
         void Debug_Print_Grid(char* fich, int sufix, char* ext, char* remmark);
 
         //Circuit Check
-        bool Check_Circuit(Error_Track_List &circuit_error);
+        //bool Check_Circuit(Error_Track_List &circuit_error);
+        bool Check_Circuit();
         bool Clear_Circuit();
-
         int Activate_Tracks_Error(Uint16 x,Uint16 y,Uint16 z);
         int Activate_Tracks_Error(Point3D<int> & p);
 
@@ -134,9 +134,7 @@ class Grid3D
         bool Delete_Track_without_Update(Uint16 x, Uint16 y, Uint16 z);
         Point3D<int>& Normalize_Offset(Point3D<int>& some_offset);
         Point3D<int>* Get_Top_Left_Syster(int x, int y);
-        //Circuit Check
-        int Get_Connector(int x_grid, int y_grid, int coordenate);
-        bool Check_Connector(int conn_1, int conn_2);
+
 
 
     private:
@@ -156,6 +154,12 @@ class Grid3D
         Point3D<int> offset;
         vector< vector< vector< Track* > > > grid;
         //list< pair<Track*, Point3D<int> > > activated_tracks;
+
+        // METHODS
+        //Circuit Check
+        bool Check_Tracks(Error_Track_List & circuit_error);
+        int Get_Connector(int x_grid, int y_grid, int coordenate);
+        bool Check_Connector(int conn_1, int conn_2);
 };
 
 #endif // __GRID3D_H__

@@ -770,12 +770,48 @@ Grid3D::Debug_Print_Grid(char* fich, int sufix, char* ext, char* remmark)
 // //////////////////////////////////////////////////////////////////////// //
 // //////////////////////////////////////////////////////////////////////// //
 // //////////////////////////////////////////////////////////////////////// //
+bool
+Grid3D::Check_Circuit()
+{
+    Error_Track_List error;
+
+    Deactivate_All_Tracks();
+
+    if (!Check_Tracks(error))
+    {
+        if (error.error_circuit)
+        {
+            for (list< Point3D<int> >::iterator itr = error.track_error.begin(), end = error.track_error.end(); itr != end ; ++itr)
+            {
+                Activate_Tracks_Error((*itr).x, (*itr).y, (*itr).z);
+            }
+
+            if (error.start_error.size() != 1)
+            {
+                if (error.start_error.size() == 0)
+                {
+                    for (int itr_x = 0; itr_x < Get_DimX(); itr_x++)
+                        for (int itr_y = 0; itr_y < Get_DimY(); itr_y++)
+                        {
+                            Activate_Tracks_Error(itr_x, itr_y, 0);
+                        }
+                }
+                else
+                {
+                    for (list< Point3D<int> >::iterator itr = error.start_error.begin(), end = error.start_error.end(); itr != end ; ++itr)
+                    {
+                        Activate_Tracks_Error((*itr).x, (*itr).y, (*itr).z);
+                    }
+                }
+            }
+        }
+    }
+}
 
 bool
-Grid3D::Check_Circuit(Error_Track_List & circuit_error)
+Grid3D::Check_Tracks(Error_Track_List & circuit_error)
 {
     bool correct = true;
-    //int num_starts = 0;
     int x_grid = 0;
     int y_grid = 0;
 

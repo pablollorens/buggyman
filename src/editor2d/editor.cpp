@@ -63,8 +63,6 @@ Editor::Run()
 //    printf("Setting window icon... \0");
 //    SDL_WM_SetIcon(IMG_Load("textures/icon.gif"), NULL);
 
-    //point3d para detectar error
-    Error_Track_List circuit_error;
 
     // ///////////////////////////////////////////////////////////////////////
     printf("Loading background and cursors... \n");
@@ -133,15 +131,10 @@ Editor::Run()
                     NULL,NULL,BUTTON_STATUS_DISABLED);
     Add_Button(button_save_as_circuit, SDLK_a);
 
-    pair<Grid3D*, Error_Track_List * > par;
-    par.first = &world;
-    par.second = &circuit_error;
-    void* data = (pair<Grid3D*, Error_Track_List * >*)&par;
-
     Button button_check_circuit("Check Circuit",4,383,
                     "menu/button_check_def.png","menu/button_check_press.png",
                     "menu/button_check_over.png","menu/button_check_dis.png",
-                    Check_Circuit,data);
+                    Check_Circuit,(Grid3D*)&world);
     Add_Button(button_check_circuit, SDLK_c);
 
     Button button_quit_editor("Quit Editor",4,436,
@@ -151,7 +144,8 @@ Editor::Run()
     Add_Button(button_quit_editor, SDLK_ESCAPE);
 
 
-    //bool error_circuit = false;
+    // Checked the circuit to enter into editor
+    world.Check_Circuit();
 
 
     Track* floating = NULL;
@@ -191,30 +185,6 @@ Editor::Run()
                     if (event.key.keysym.sym == SDLK_LEFT)  world.Incr_Offset(-CELL_X,0,0);
                     if (event.key.keysym.sym == SDLK_RIGHT) world.Incr_Offset(CELL_X,0,0);
                     update_required=true;
-                    /*if (event.key.keysym.sym == SDLK_c)
-                    {
-                        if (!world.Check_Circuit(circuit_error))
-                        {
-                            if (circuit_error.error_circuit)
-                            {
-                                world.Deactivate_All_Tracks();
-                                for (list< Point3D<int> >::iterator itr = circuit_error.track_error.begin(), end = circuit_error.track_error.end(); itr != end ; ++itr)
-                                {
-                                    world.Activate_Tracks_Error((*itr).x, (*itr).y, (*itr).z);
-                                }
-                                if (circuit_error.start_error.size() != 1)
-                                {
-                                    for (list< Point3D<int> >::iterator itr = circuit_error.start_error.begin(), end = circuit_error.start_error.end(); itr != end ; ++itr)
-                                    {
-                                        world.Activate_Tracks_Error((*itr).x, (*itr).y, (*itr).z);
-                                    }
-                                }
-                                circuit_error.track_error.clear();
-                                circuit_error.start_error.clear();
-                                circuit_error.error_circuit = false;
-                            }
-                        }
-                    }*/
                     if (event.key.keysym.sym == SDLK_m)
                     {
                         if(move_grid == 0)
@@ -478,42 +448,6 @@ Editor::Quit_Editor(void* data)
 int
 Editor::Check_Circuit(void* data)
 {
-    pair<Grid3D*, Error_Track_List * > par;
-    par = *((pair<Grid3D*, Error_Track_List * >*)data);
-
-    (*par.first).Deactivate_All_Tracks();
-
-    if (!(*par.first).Check_Circuit(*par.second))
-    {
-        if ((*par.second).error_circuit)
-        {
-            for (list< Point3D<int> >::iterator itr = (*par.second).track_error.begin(), end = (*par.second).track_error.end(); itr != end ; ++itr)
-            {
-                (*par.first).Activate_Tracks_Error((*itr).x, (*itr).y, (*itr).z);
-            }
-            if ((*par.second).start_error.size() != 1)
-            {
-                if ((*par.second).start_error.size() == 0)
-                {
-                    for (int itr_x = 0; itr_x < (*par.first).Get_DimX(); itr_x++)
-                        for (int itr_y = 0; itr_y < (*par.first).Get_DimY(); itr_y++)
-                        {
-                            (*par.first).Activate_Tracks_Error(itr_x, itr_y, 0);
-                        }
-                }
-                else
-                {
-                    for (list< Point3D<int> >::iterator itr = (*par.second).start_error.begin(), end = (*par.second).start_error.end(); itr != end ; ++itr)
-                    {
-                        (*par.first).Activate_Tracks_Error((*itr).x, (*itr).y, (*itr).z);
-                    }
-                }
-            }
-            (*par.second).track_error.clear();
-            (*par.second).start_error.clear();
-            (*par.second).error_circuit = false;
-        }
-    }
-
+    (*((Grid3D*)data)).Check_Circuit();
     return 0;
 }
