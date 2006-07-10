@@ -24,7 +24,6 @@ using namespace std;
 #define WHEELS 4
 #define WHEEL_WIDTH 0.1f
 
-//#define MAX_SPEED 18
 #define MIN_SPEED 10
 #define MAX_STEER 1.3
 

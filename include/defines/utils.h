@@ -20,7 +20,7 @@
 #define RUN                     1
 #define STOP                    2
 
-#define MAX_SPEED               16
+#define MAX_SPEED               19
 #define ODE_STEP_SENSIVILITY    (float)1/20
 
 //Render constants
