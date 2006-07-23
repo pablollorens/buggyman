@@ -111,6 +111,7 @@ Section "Uninstall"
 
   ; Remove shortcuts, if any
   Delete "$SMPROGRAMS\Buggy-Man\*.*"
+  Delete "$DESKTOP\Buggy-Man.lnk"
 
   ; Remove directories used
   RMDir "$SMPROGRAMS\Buggy-Man"
