@@ -1,0 +1,26 @@
+* MANUAL DE USUARIO: 
+  Las opciones del juegos son:
+	- Menu Principal: Desde este menu podemos acceder a cualquier parte del juego.
+	  Nada más entrar se nos muestran las diferentes opciones, tales como Jugar (Play),
+	  Editar terrenos (Track Editor), Configurar el juego y Ver los Créditos.
+	- Editor de Terrenos: Mediante el editor de terrenos podemos crear nuestras propias
+	  pistas para disfrute personal. A la izquierda de la pantalla se encuentran los
+	  botones de Nuevo circuito, Guardar, Guardar como, Chequear circuito (para
+	  verificar si es correcto) y Volver al menu principal.
+	  Distinguimos 2 zonas principales: por un lado, en la zona central, nuestro
+	  circuito, y a la derecha, la caja de pistas o Toolbox, ambas con Scrolling, 
+	  activable con la tecla 'M'. Podemos ver en que parte del mapa nos encontramos
+	  gracias al minimapa de la esquina inferior derecha.
+	- Pantalla de Configuración: Desde esta sección podemos dar valores al juego, esto
+	  es, cambiar la resolución, alternar entre pantalla completa y ventana, dibujar o
+	  no el cielo, elegir jugar de día o de noche, y establecer una calidad de dibujado.
+	- El juego: Cuando seleccionamos esta opción, deberemos elegir entre los cuatro 
+	  modelos de coches y, a continuación podremos correr en el circuito que hayamos
+	  diseñado.
+	  Durante la carrera, podremos tener control sobre el juego mediante las siguientes
+	  teclas:
+		- Cursores de dirección: controlan directamente la dirección del coche.
+		- Tecla 'R': reinicia la carrera (vuelve a situar al coche en la salida).
+		- Teclas '1'-'6': Diferentes cámaras móviles (1-4) y fijas (5,6).
+		- Barra espaciadora: Eleva el coche para volver a ponerlo derecho.
+		- ESC: vuelve al menú principal.
